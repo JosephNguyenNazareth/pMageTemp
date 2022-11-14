@@ -7,19 +7,28 @@ public class UserRepo {
     private String realName;
     private String userName;
     private String personalToken;
-    private Repo originRepo;
-    private Map<String, String> repoMap;
+    private String originRepo;
+    private String repoLink;
+    private String repoDir;
 
-    public UserRepo(String userName, String userRealName, String personalToken, Repo originRepo) {
+    public UserRepo() {
+    }
+
+    public UserRepo(String realName, String userName, String personalToken, String originRepo, String repoLink, String repoDir) {
+        this.realName = realName;
         this.userName = userName;
-        this.realName = userRealName;
         this.personalToken = personalToken;
         this.originRepo = originRepo;
-        this.repoMap = new HashMap<>();
+        this.repoLink = repoLink;
+        this.repoDir = repoDir;
     }
 
     public String getRealName() {
         return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 
     public String getUserName() {
@@ -38,23 +47,35 @@ public class UserRepo {
         this.personalToken = personalToken;
     }
 
-    public Repo getOriginRepo() {
+    public String getOriginRepo() {
         return originRepo;
     }
 
-    public void setOriginRepo(Repo originRepo) {
+    public void setOriginRepo(String originRepo) {
         this.originRepo = originRepo;
     }
 
-    public Map<String, String> getRepoMap() {
-        return repoMap;
+    public String getRepoLink() {
+        return repoLink;
     }
 
-    public void setRepoMap(Map<String, String> repoMap) {
-        this.repoMap = repoMap;
+    public void setRepoLink(String repoLink) {
+        this.repoLink = repoLink;
     }
 
-    public void addRepoMap(String repoLink, String repoDir) {
-        this.repoMap.put(repoLink, repoDir);
+    public String getRepoDir() {
+        return repoDir;
+    }
+
+    public void setRepoDir(String repoDir) {
+        this.repoDir = repoDir;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof UserRepo))
+            return false;
+        UserRepo otherUser = (UserRepo) other;
+        return this.realName.equals(((UserRepo) other).getRealName()) && this.userName.equals(otherUser.getUserName()) && this.originRepo.equals(otherUser.getOriginRepo());
     }
 }
