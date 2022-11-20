@@ -37,7 +37,13 @@ public class ConnectorAsyncService {
     public void monitorProcessInstance(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
-        this.watchProject(connector);
+        if (!connector.isMonitoring()) {
+            connector.setMonitoring(true);
+            connectorRepository.save(connector);
+            this.watchProject(connector);
+        } else {
+            throw new IllegalStateException("This connector is already monitored");
+        }
     }
 
 
@@ -51,8 +57,15 @@ public class ConnectorAsyncService {
         // then run this as a background service to check commit status
         while(true) {
             try {
-                // check last commit every 5 seconds
-                Thread.sleep(5000);
+                // check last commit every 10 seconds
+                Thread.sleep(10000);
+
+                // check if there is a stop monitoring request
+                Connector updatedConnector = connectorRepository.findById(connector.getId()).orElseThrow(() -> new IllegalStateException("Connector with id " + connector.getId() + "does not exist."));
+                if (!updatedConnector.isMonitoring())
+                    return;
+
+                System.out.println("Monitoring connector " + connector.getId() + " of project id" + connector.getPmsProjectId() + " of user " + connector.getUserRepo().getUserName());
                 this.retrieveLatestCommit(connector);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -76,9 +89,15 @@ public class ConnectorAsyncService {
                 String commitMessage = jObject.get("title").toString();
                 String commitId = jObject.get("id").toString();
 
+                // if this commit is already in the history commit log of that connection
                 if (!connector.getHistoryCommitList().contains(commitId))
                     connector.addHistoryCommitList(commitId);
                 else
+                    continue;
+
+                // skip validating the commit if the connector's owner is not the committer
+                String commiterName = jObject.get("committer_name").toString();
+                if (!commiterName.equals(connector.getUserRepo().getUserName()))
                     continue;
 
                 String taskFound = detectTaskFromCommit(commitMessage);
@@ -115,6 +134,11 @@ public class ConnectorAsyncService {
             }
 
             connector.addHistoryCommitList(commitId);
+
+            // skip validating the commit if the connector's owner is not the committer
+            String commiterName = jObject.get("committer_name").toString();
+            if (!commiterName.equals(connector.getUserRepo().getUserName()))
+                return;
 
             String taskFound = detectTaskFromCommit(commitMessage);
 
@@ -258,7 +282,8 @@ public class ConnectorAsyncService {
                 Integer isPermitted = Integer.parseInt(responseBody);
 
                 if (isPermitted == -1) {
-                    System.out.println("Task corresponding with commit " + commitId + " is not found in this process model");
+                    System.out.println("Task corresponding with commit " + commitId + " is not found in this process model. A revert commit is launched");
+                    rollbackCommit(commitId, directory, connector.getUserRepo());
                 }
                 else if (isPermitted == 0) {
                     System.out.println("Commit is invalidated. A revert commit is launched. No task is launched");
@@ -267,6 +292,8 @@ public class ConnectorAsyncService {
                     System.out.println("Commit is validated. Task is launched");
                     completeTaskCommitted(connector, taskDetected, commitMessage);
                     connectorRepository.save(connector);
+                } else if (isPermitted == 2) {
+                    System.out.println("Task has been completed.");
                 }
             }
         } catch (URISyntaxException e) {
@@ -328,7 +355,8 @@ public class ConnectorAsyncService {
 
             String finalUri = builder.build().toString();
             HttpPut putMethod = new HttpPut(finalUri);
-            StringEntity entity = new StringEntity(preDefinedArtifactInstanceList.toString());
+            putMethod.addHeader("Content-Type", "application/json");
+            StringEntity entity = new StringEntity(preDefinedArtifactInstanceList.toString(), "UTF-8");
             putMethod.setEntity(entity);
 
             HttpResponse getResponse = client.execute(putMethod);
@@ -368,5 +396,13 @@ public class ConnectorAsyncService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void endTaskInstance(String connectorId, String taskId, String commitMessage) {
+        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        List<PreDefinedArtifactInstance> preDefinedArtifactInstanceList = detectArtifactFromCommit(commitMessage);
+
+        endTaskInstance(connector, taskId, preDefinedArtifactInstanceList);
     }
 }

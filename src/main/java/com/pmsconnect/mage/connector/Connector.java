@@ -16,6 +16,7 @@ public class Connector {
     private String pmsProjectId;
     private UserRepo userRepo;
     private List<String> historyCommitList;
+    private boolean isMonitoring;
 
     public Connector() {
     }
@@ -26,6 +27,7 @@ public class Connector {
         this.url = url;
         this.userRepo = userRepo;
         this.historyCommitList = new ArrayList<>();
+        this.isMonitoring = false;
     }
 
     public String getId() {
@@ -70,5 +72,13 @@ public class Connector {
 
     public void addHistoryCommitList(String historyCommit) {
         this.historyCommitList.add(historyCommit);
+    }
+
+    public boolean isMonitoring() {
+        return isMonitoring;
+    }
+
+    public void setMonitoring(boolean monitoring) {
+        isMonitoring = monitoring;
     }
 }

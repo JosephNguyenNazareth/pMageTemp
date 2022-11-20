@@ -7,6 +7,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -115,6 +116,39 @@ public class ConnectorService {
                 connector.setPmsProjectId(responseBody);
                 return true;
             }
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (ClientProtocolException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void stopMonitoringProcessInstance(String connectorId) {
+        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        connector.setMonitoring(false);
+        connectorRepository.save(connector);
+        this.closeProcess(connector);
+        System.out.println("Stop monitoring connector with id " + connectorId);
+    }
+
+    private void closeProcess(Connector connector) {
+        HttpClient client = HttpClients.createDefault();
+        URIBuilder builder = null;
+        try {
+            builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/change-state");
+            builder.addParameter("processInstanceState", Boolean.toString(true));
+
+            String finalUri = builder.build().toString();
+            HttpPut putMethod = new HttpPut(finalUri);
+            HttpResponse getResponse = client.execute(putMethod);
+
+            int getStatusCode = getResponse.getStatusLine()
+                    .getStatusCode();
+            if (getStatusCode != 200)
+                throw new IllegalStateException("Cannot close process instance id " + connector.getPmsProjectId());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         } catch (ClientProtocolException e) {

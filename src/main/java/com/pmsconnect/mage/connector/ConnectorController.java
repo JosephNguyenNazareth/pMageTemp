@@ -51,4 +51,18 @@ public class ConnectorController {
             @PathVariable("connectorId") String connectorId) {
         connectorAsyncService.monitorProcessInstance(connectorId);
     }
+
+    @GetMapping(path = "{connectorId}/end-monitor")
+    public void stopMonitoringProcessInstance(
+            @PathVariable("connectorId") String connectorId) {
+        connectorService.stopMonitoringProcessInstance(connectorId);
+    }
+
+    @GetMapping(path = "{connectorId}/end-task")
+    public void endTaskInstance(
+            @PathVariable("connectorId") String connectorId,
+            @RequestParam String taskId,
+            @RequestParam String commitMessage) {
+        connectorAsyncService.endTaskInstance(connectorId, taskId,  commitMessage);
+    }
 }
