@@ -34,9 +34,10 @@ public class ConnectorController {
     @PutMapping(path = "{connectorId}")
     public void updateConnector(
             @PathVariable("connectorId") String connectorId,
+            @RequestParam(required = false) String url,
             @RequestParam(required = false) String pmsProjectId,
             @RequestBody(required = false) UserRepo user) {
-        connectorService.updateConnector(connectorId, pmsProjectId, user);
+        connectorService.updateConnector(connectorId, url, pmsProjectId, user);
     }
 
     @PutMapping(path = "{connectorId}/create-process")

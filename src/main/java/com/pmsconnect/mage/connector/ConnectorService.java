@@ -43,7 +43,7 @@ public class ConnectorService {
     }
 
     @Transactional
-    public void updateConnector(String connectorId, String pmsProjectId, UserRepo user) {
+    public void updateConnector(String connectorId, String url, String pmsProjectId, UserRepo user) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
         if (pmsProjectId != null && !pmsProjectId.equals(connector.getPmsProjectId())) {
@@ -51,6 +51,9 @@ public class ConnectorService {
                 throw new IllegalStateException("Cannot verify pms projectId " + pmsProjectId);
             connector.setPmsProjectId(pmsProjectId);
         }
+
+        if (url != null && !url.equals(connector.getUrl()))
+            connector.setUrl(url);
 
         if (user != null && !user.equals(connector.getUserRepo()))
             connector.setUserRepo(user);
