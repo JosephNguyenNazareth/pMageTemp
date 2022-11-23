@@ -74,7 +74,7 @@ public class ConnectorAsyncService {
     }
 
     public void retrieveAllCommit(Connector connector) {
-        File directory = new File("/home/ngmkhoi/Documents/workspace/gitlab/processmining/src/main/python/software_heritage");
+        File directory = new File("./src/main/python");
         File dirRepo = new File(connector.getUserRepo().getRepoDir());
         String controller = "python3 retrieve_latest.py " + connector.getUserRepo().getRepoLink() + " all";
         try {
@@ -116,7 +116,7 @@ public class ConnectorAsyncService {
 
 
     public void retrieveLatestCommit(Connector connector) {
-        File directory = new File("../processmining/src/main/python/software_heritage");
+        File directory = new File("./src/main/python");
         File dirRepo = new File(connector.getUserRepo().getRepoDir());
         String controller = "python3 retrieve_latest.py " + connector.getUserRepo().getRepoLink();
         try {
