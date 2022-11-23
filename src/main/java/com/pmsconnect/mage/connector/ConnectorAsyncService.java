@@ -79,6 +79,7 @@ public class ConnectorAsyncService {
         String controller = "python3 retrieve_latest.py " + connector.getUserRepo().getRepoLink() + " all";
         try {
             String commit = runCommandPython(directory, controller);
+            System.out.println(commit);
             String commitForJSONParser = commit.replace("\"", "\\\"").replace("'", "\"");
             JSONParser jParser = new JSONParser();
             Object obj = jParser.parse(commitForJSONParser);
