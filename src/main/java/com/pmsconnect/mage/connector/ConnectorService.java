@@ -32,6 +32,13 @@ public class ConnectorService {
         return connectorRepository.findAll();
     }
 
+    public Connector getConnector(String connectorId) {
+
+        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        return connector;
+    }
+
     public String addNewConnector(String url, String pmsProjectId, UserRepo user) {
         if (!verifyPmsExist(url, pmsProjectId))
             throw new IllegalStateException("Cannot verify pms url " + url);

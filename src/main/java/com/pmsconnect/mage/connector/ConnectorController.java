@@ -24,6 +24,11 @@ public class ConnectorController {
         return connectorService.getConnectors();
     }
 
+    @GetMapping(path = "{connectorId}")
+    public Connector getConnector(@PathVariable("connectorId") String connectorId) {
+        return connectorService.getConnector(connectorId);
+    }
+
     @PostMapping
     public String addNewConnector(
             @RequestParam String url,
