@@ -103,8 +103,12 @@ public class ConnectorAsyncService {
                 String taskFound = detectTaskFromCommit(commitMessage);
 
                 // skip revert commit
-                if (taskFound.equals(""))
+                if (taskFound.equals("revert"))
                     continue;
+                else if (taskFound.equals("unknown")) {
+                    System.out.println("Task unknown. Revert commit.");
+                    rollbackCommit(commitId, directory, connector.getUserRepo());
+                }
 
                 validateCommit(connector, commitMessage, taskFound, commitId, dirRepo);
             }
@@ -142,9 +146,13 @@ public class ConnectorAsyncService {
 
             String taskFound = detectTaskFromCommit(commitMessage);
 
-            // skip revert commit
-            if (taskFound.equals(""))
+            // skip revert commit but revert unknown task
+            if (taskFound.equals("revert"))
                 return;
+            else if (taskFound.equals("unknown")) {
+                System.out.println("Task unknown. Revert commit.");
+                rollbackCommit(commitId, directory, connector.getUserRepo());
+            }
 
             validateCommit(connector, commitMessage, taskFound, commitId, dirRepo);
 
@@ -234,7 +242,7 @@ public class ConnectorAsyncService {
 
         // skip revert commit
         if (commitMessage.contains("Revert"))
-            return taskDetect;
+            return "revert";
 
         if (commitMessage.contains("end task") || commitMessage.contains("finish task")) {
             if (commitMessage.contains("|"))
@@ -243,6 +251,8 @@ public class ConnectorAsyncService {
                 taskDetect = commitMessage.substring(commitMessage.indexOf("task") + 5,  commitMessage.indexOf(";"));
             else
                 taskDetect = commitMessage.substring(commitMessage.indexOf("task") + 5);
+        } else {
+            taskDetect = "unknown";
         }
         System.out.println(taskDetect);
         return taskDetect;
