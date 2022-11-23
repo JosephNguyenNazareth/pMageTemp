@@ -191,7 +191,7 @@ class Adapter:
             tmp_time = tmp_time.astimezone(local_tz)
             extract_info["created_at"] = tmp_time.isoformat(sep='T', timespec='milliseconds')
             
-            extract_info["title"] = self.traverse_message_level(commit, message_info_config["title"]).strip()
+            extract_info["title"] = self.traverse_message_level(commit, message_info_config["title"]).strip().replace("\'", "\"")
             extract_info["committer_name"] = self.traverse_message_level(commit, message_info_config["committer"]).strip()
             extract_info["project_id"] = repo_link
             extract_info["origin"] = repo_config["origin"]
