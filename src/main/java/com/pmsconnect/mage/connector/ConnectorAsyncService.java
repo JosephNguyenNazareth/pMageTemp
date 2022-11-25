@@ -2,6 +2,7 @@ package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.casestudy.PreDefinedArtifactInstance;
 import com.pmsconnect.mage.repo.UserRepo;
+import com.pmsconnect.mage.retrieve.Retriever;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -74,93 +76,89 @@ public class ConnectorAsyncService {
     }
 
     public void retrieveAllCommit(Connector connector) {
-        File directory = new File("./src/main/python");
-        File dirRepo = new File(connector.getUserRepo().getRepoDir());
-        String controller = "python3 retrieve_latest.py " + connector.getUserRepo().getRepoLink() + " all";
-        try {
-            String commit = runCommandPython(directory, controller);
-            System.out.println(commit);
-            String commitForJSONParser = commit.replace("\"", "\\\"").replace("'", "\"");
-            JSONParser jParser = new JSONParser();
-            Object obj = jParser.parse(commitForJSONParser);
-            JSONArray commitList = (JSONArray) obj;
+        String configPath =  "./src/main/python/repo_config.json";
+        Retriever retriever = new Retriever(configPath);
+        retriever.addRepo(connector.getUserRepo().getRepoLink());
+        List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(true);
 
-            for (int i = 0; i < commitList.size(); i++) {
-                JSONObject jObject = (JSONObject) commitList.get(i);
-                String commitMessage = jObject.get("title").toString();
-                String commitId = jObject.get("id").toString();
+        for (Dictionary<String, String> commit : commitList) {
+            String commitMessage = commit.get("title");
+            String commitId = commit.get("id");
 
-                // if this commit is already in the history commit log of that connection
-                if (!connector.getHistoryCommitList().contains(commitId))
-                    connector.addHistoryCommitList(commitId);
-                else
-                    continue;
+            // if this commit is already in the history commit log of that connection
+            if (!connector.getHistoryCommitList().contains(commitId))
+                connector.addHistoryCommitList(commitId);
+            else
+                continue;
 
-                // skip validating the commit if the connector's owner is not the committer
-                String commiterName = jObject.get("committer_name").toString();
-                if (!commiterName.equals(connector.getUserRepo().getUserName()))
-                    continue;
+            // skip validating the commit if the connector's owner is not the committer
+            String committerName = commit.get("committer_name");
+            if (!committerName.equals(connector.getUserRepo().getUserName()))
+                continue;
 
-                String taskFound = detectTaskFromCommit(commitMessage);
+            String taskFound = detectTaskFromCommit(commitMessage);
 
-                // skip revert commit
-                if (taskFound.equals("revert"))
-                    continue;
-                else if (taskFound.equals("unknown")) {
-                    System.out.println("Task unknown. Revert commit.");
-                    rollbackCommit(commitId, directory, connector.getUserRepo());
-                }
-
-                validateCommit(connector, commitMessage, taskFound, commitId, dirRepo);
+            // skip revert commit
+            if (taskFound.equals("revert"))
+                continue;
+            else if (taskFound.equals("unknown")) {
+                System.out.println("Task unknown. Revert commit.");
+                rollbackCommit(commitId, connector.getUserRepo());
             }
-            connectorRepository.save(connector);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+
+            validateCommit(connector, commitMessage, taskFound, commitId);
         }
+        connectorRepository.save(connector);
+    }
+
+    public List<Dictionary<String, String>> getAllCommit(String connectorId) {
+        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        String configPath =  "./src/main/python/repo_config.json";
+        Retriever retriever = new Retriever(configPath);
+        retriever.addRepo(connector.getUserRepo().getRepoLink());
+        List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(true);
+
+        return commitList;
     }
 
 
     public void retrieveLatestCommit(Connector connector) {
-        File directory = new File("./src/main/python");
-        File dirRepo = new File(connector.getUserRepo().getRepoDir());
-        String controller = "python3 retrieve_latest.py " + connector.getUserRepo().getRepoLink();
-        try {
-            String commit = runCommandPython(directory, controller);
-            String commitForJSONParser = commit.replace("\"", "\\\"").replace("'", "\"");
-            JSONParser jParser = new JSONParser();
-            JSONObject jObject = (JSONObject) jParser.parse(commitForJSONParser);
-            String commitMessage = jObject.get("title").toString();
-            String commitId = jObject.get("id").toString();
+        String configPath =  "./src/main/python/repo_config.json";
+        Retriever retriever = new Retriever(configPath);
+        retriever.addRepo(connector.getUserRepo().getRepoLink());
+        List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(false);
 
-            // if the latest commit is already in the list of retrieved commit, skip ths later work
-            if (connector.getHistoryCommitList().contains(commitId)) {
-                System.out.println("Commit is up-to-date");
-                return;
-            }
+        Dictionary<String, String> commit = commitList.get(0);
+        String commitMessage = commit.get("title");
+        String commitId = commit.get("id");
 
-            connector.addHistoryCommitList(commitId);
-
-            // skip validating the commit if the connector's owner is not the committer
-            String commiterName = jObject.get("committer_name").toString();
-            if (!commiterName.equals(connector.getUserRepo().getUserName()))
-                return;
-
-            String taskFound = detectTaskFromCommit(commitMessage);
-
-            // skip revert commit but revert unknown task
-            if (taskFound.equals("revert"))
-                return;
-            else if (taskFound.equals("unknown")) {
-                System.out.println("Task unknown. Revert commit.");
-                rollbackCommit(commitId, directory, connector.getUserRepo());
-            }
-
-            validateCommit(connector, commitMessage, taskFound, commitId, dirRepo);
-
-            connectorRepository.save(connector);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        // if the latest commit is already in the list of retrieved commit, skip ths later work
+        if (connector.getHistoryCommitList().contains(commitId)) {
+            System.out.println("Commit is up-to-date");
+            return;
         }
+
+        connector.addHistoryCommitList(commitId);
+
+        // skip validating the commit if the connector's owner is not the committer
+        String committerName = commit.get("committer_name");
+        if (!committerName.equals(connector.getUserRepo().getUserName()))
+            return;
+
+        String taskFound = detectTaskFromCommit(commitMessage);
+
+        // skip revert commit but revert unknown task
+        if (taskFound.equals("revert"))
+            return;
+        else if (taskFound.equals("unknown")) {
+            System.out.println("Task unknown. Revert commit.");
+            rollbackCommit(commitId, connector.getUserRepo());
+        }
+
+        validateCommit(connector, commitMessage, taskFound, commitId);
+
+        connectorRepository.save(connector);
     }
 
 
@@ -274,7 +272,7 @@ public class ConnectorAsyncService {
         return preDefinedArtifactInstanceList;
     }
 
-    public void validateCommit(Connector connector, String commitMessage, String taskDetected, String commitId, File directory) {
+    public void validateCommit(Connector connector, String commitMessage, String taskDetected, String commitId) {
         HttpClient client = HttpClients.createDefault();
         URIBuilder builder = null;
         try {
@@ -290,15 +288,15 @@ public class ConnectorAsyncService {
                     .getStatusCode();
             if (getStatusCode == 200) {
                 String responseBody = EntityUtils.toString(getResponse.getEntity());
-                Integer isPermitted = Integer.parseInt(responseBody);
+                int isPermitted = Integer.parseInt(responseBody);
 
                 if (isPermitted == -1) {
                     System.out.println("Task corresponding with commit " + commitId + " is not found in this process model. A revert commit is launched");
-                    rollbackCommit(commitId, directory, connector.getUserRepo());
+                    rollbackCommit(commitId, connector.getUserRepo());
                 }
                 else if (isPermitted == 0) {
                     System.out.println("Commit is invalidated. A revert commit is launched. No task is launched");
-                    rollbackCommit(commitId, directory, connector.getUserRepo());
+                    rollbackCommit(commitId, connector.getUserRepo());
                 } else if (isPermitted == 1){
                     System.out.println("Commit is validated. Task is launched");
                     completeTaskCommitted(connector, taskDetected, commitMessage);
@@ -307,20 +305,16 @@ public class ConnectorAsyncService {
                     System.out.println("Task has been completed.");
                 }
             }
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (ClientProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void rollbackCommit(String commitId, File directory, UserRepo user) {
+    public void rollbackCommit(String commitId, UserRepo user) {
         try {
-            runCommand(directory, "git revert " + commitId);
+            runCommand(new File(user.getRepoDir()), "git revert " + commitId);
             String pushCommitCommand = "https://" + user.getUserName() + ":" + user.getPersonalToken() + "@" + user.getRepoLink().replace("https://","") + ".git";
-            runCommand(directory, "git push " + pushCommitCommand);
+            runCommand(new File(user.getRepoDir()), "git push " + pushCommitCommand);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -348,11 +342,7 @@ public class ConnectorAsyncService {
             if (getStatusCode != 200)
                 return "";
             return EntityUtils.toString(getResponse.getEntity());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (ClientProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -376,11 +366,7 @@ public class ConnectorAsyncService {
                     .getStatusCode();
             if (getStatusCode != 200)
                 throw new IllegalStateException("Cannot end task id " + newTaskInstanceId);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (ClientProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -400,11 +386,7 @@ public class ConnectorAsyncService {
                     .getStatusCode();
             if (getStatusCode != 200)
                 throw new IllegalStateException("Cannot open process instance id " + connector.getPmsProjectId());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (ClientProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }

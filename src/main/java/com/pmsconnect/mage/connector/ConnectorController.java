@@ -4,6 +4,7 @@ import com.pmsconnect.mage.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Dictionary;
 import java.util.List;
 
 @RestController
@@ -70,5 +71,11 @@ public class ConnectorController {
             @RequestParam String taskId,
             @RequestParam String commitMessage) {
         connectorAsyncService.endTaskInstance(connectorId, taskId,  commitMessage);
+    }
+
+    @GetMapping(path = "{connectorId}/all-commit")
+    public List<Dictionary<String, String>> getLatestCommit(
+            @PathVariable("connectorId") String connectorId) {
+        return connectorAsyncService.getAllCommit(connectorId);
     }
 }

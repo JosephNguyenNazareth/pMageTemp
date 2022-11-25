@@ -82,15 +82,8 @@ public class ConnectorService {
 
             int getStatusCode = getResponse.getStatusLine()
                     .getStatusCode();
-            if (getStatusCode == 200)
-                return true;
-            else
-                return false;
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (ClientProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+            return getStatusCode == 200;
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -126,11 +119,7 @@ public class ConnectorService {
                 connector.setPmsProjectId(responseBody);
                 return true;
             }
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (ClientProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -159,11 +148,7 @@ public class ConnectorService {
                     .getStatusCode();
             if (getStatusCode != 200)
                 throw new IllegalStateException("Cannot close process instance id " + connector.getPmsProjectId());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (ClientProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
