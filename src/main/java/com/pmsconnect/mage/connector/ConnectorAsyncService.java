@@ -76,7 +76,7 @@ public class ConnectorAsyncService {
     }
 
     public void retrieveAllCommit(Connector connector) {
-        String configPath =  "./src/main/python/repo_config.json";
+        String configPath =  "./src/main/resources/repo_config.json";
         Retriever retriever = new Retriever(configPath);
         retriever.addRepo(connector.getUserRepo().getRepoLink());
         List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(true);
@@ -114,7 +114,7 @@ public class ConnectorAsyncService {
     public List<Dictionary<String, String>> getAllCommit(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
-        String configPath =  "./src/main/python/repo_config.json";
+        String configPath =  "./src/main/resources/repo_config.json";
         Retriever retriever = new Retriever(configPath);
         retriever.addRepo(connector.getUserRepo().getRepoLink());
         List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(true);
@@ -124,7 +124,7 @@ public class ConnectorAsyncService {
 
 
     public void retrieveLatestCommit(Connector connector) {
-        String configPath =  "./src/main/python/repo_config.json";
+        String configPath =  "./src/main/resources/repo_config.json";
         Retriever retriever = new Retriever(configPath);
         retriever.addRepo(connector.getUserRepo().getRepoLink());
         List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(false);
