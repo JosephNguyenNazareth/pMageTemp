@@ -4,6 +4,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -19,22 +20,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Retriever {
-    private List<String> repoList;
+    private String repoLink;
     private JSONArray config;
     private String configPath;
 
     public Retriever(String configPath) {
-        this.repoList = new ArrayList<>();
         this.configPath = configPath;
         this.readConfig();
     }
 
-    public void addRepo(String repoLink) {
-        this.repoList.add(repoLink);
-    }
-
-    private void addRepoList(List<String> repoList) {
-        this.repoList.addAll(repoList);
+    public void setRepoLink(String repoLink) {
+        this.repoLink = repoLink;
     }
 
     private void readConfig() {
@@ -70,6 +66,19 @@ public class Retriever {
         return "";
     }
 
+    private String buildAPILinkRevertCommit(String commitId, String repoLink, JSONObject currentConfig) {
+        JSONObject configAPIInfo = (JSONObject) currentConfig.get("api_info");
+        String origin = currentConfig.get("origin").toString();
+
+        if (origin.equals("github.com"))
+            return "";
+        else if (origin.equals("gitlab.com")) {
+            String urlPath = repoLink.substring(repoLink.indexOf(origin) + origin.length() + 1).replace("/", "%2F");
+            return "http://" + configAPIInfo.get("api_prefix") + "/" + urlPath + "/" + configAPIInfo.get("api_postfix_commit") + "/" + commitId + "/" + configAPIInfo.get("api_postfix_revert");
+        }
+        return "";
+    }
+
     private JSONArray callAPI(String apiLink, JSONObject currentConfig) {
         JSONObject configInfo = (JSONObject) currentConfig.get("user_info");
         HttpClient client = HttpClients.createDefault();
@@ -96,6 +105,33 @@ public class Retriever {
                 return (JSONArray) obj;
             }
         } catch (URISyntaxException | IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean callAPIRevert(String apiLink, JSONObject currentConfig) {
+        JSONObject configInfo = (JSONObject) currentConfig.get("user_info");
+        HttpClient client = HttpClients.createDefault();
+        URIBuilder builder = null;
+        String auth = configInfo.get("user").toString() + ":" + configInfo.get("token").toString();
+        byte[] encodedAuth = Base64.getEncoder().encode(
+                auth.getBytes(StandardCharsets.ISO_8859_1));
+        String authHeader = "Basic " + new String(encodedAuth);
+        try {
+            builder = new URIBuilder(apiLink);
+            String finalUri = builder.build().toString();
+            HttpPost postMethod = new HttpPost(finalUri);
+            postMethod.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
+            HttpResponse getResponse = client.execute(postMethod);
+
+            int postStatusCode = getResponse.getStatusLine()
+                    .getStatusCode();
+            if (postStatusCode == 200)
+                return true;
+            else {
+                return false;
+            }
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -141,21 +177,30 @@ public class Retriever {
     public List<Dictionary<String, String>> getLatestCommitLog(Boolean takeAll) {
         List<Dictionary<String, String>> extractCommits = new ArrayList<>();
 
-        for (String repoLink : this.repoList) {
-            JSONObject repoDetected = this.getRepoOrigin(repoLink);
+        JSONObject repoDetected = this.getRepoOrigin(repoLink);
 
-            String apiLink = this.buildAPILinkCommit(repoLink, repoDetected);
-            JSONArray originalCommits = this.callAPI(apiLink, repoDetected);
+        String apiLink = this.buildAPILinkCommit(repoLink, repoDetected);
+        JSONArray originalCommits = this.callAPI(apiLink, repoDetected);
 
-            if (!takeAll) {
-                JSONObject tmp = (JSONObject) originalCommits.get(0);
-                originalCommits = new JSONArray();
-                originalCommits.add(tmp);
-            }
-
-            extractCommits.addAll(this.extractInfoCommit(repoLink, originalCommits, repoDetected));
+        if (!takeAll) {
+            JSONObject tmp = (JSONObject) originalCommits.get(0);
+            originalCommits = new JSONArray();
+            originalCommits.add(tmp);
         }
 
+        extractCommits.addAll(this.extractInfoCommit(repoLink, originalCommits, repoDetected));
+
         return extractCommits;
+    }
+
+    public boolean revertCommit(String commitId) {
+        JSONObject repoDetected = this.getRepoOrigin(repoLink);
+
+        String apiLink = this.buildAPILinkRevertCommit(commitId, repoLink, repoDetected);
+
+        if (!apiLink.equals(""))
+            return this.callAPIRevert(apiLink, repoDetected);
+        else
+            return false;
     }
 }

@@ -29,6 +29,7 @@
             "api_prefix": "gitlab.com/api/v4/projects",
             "api_postfix_commit": "repository/commits",
             "api_postfix_diff": "diff",
+            "api_postfix_revert": "revert",
             "time_format" : "%Y-%m-%dT%H:%M:%S.%f%z"
         },
         "user_info": {

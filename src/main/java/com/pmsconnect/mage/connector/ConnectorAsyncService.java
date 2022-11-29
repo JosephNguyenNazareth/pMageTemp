@@ -1,10 +1,8 @@
 package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.casestudy.PreDefinedArtifactInstance;
-import com.pmsconnect.mage.repo.UserRepo;
 import com.pmsconnect.mage.retrieve.Retriever;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -12,9 +10,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -24,7 +19,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ConnectorAsyncService {
@@ -78,7 +72,7 @@ public class ConnectorAsyncService {
     public void retrieveAllCommit(Connector connector) {
         String configPath =  "./src/main/resources/repo_config.json";
         Retriever retriever = new Retriever(configPath);
-        retriever.addRepo(connector.getUserRepo().getRepoLink());
+        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
         List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(true);
 
         for (Dictionary<String, String> commit : commitList) {
@@ -86,9 +80,7 @@ public class ConnectorAsyncService {
             String commitId = commit.get("id");
 
             // if this commit is already in the history commit log of that connection
-            if (!connector.getHistoryCommitList().contains(commitId))
-                connector.addHistoryCommitList(commitId);
-            else
+            if (connector.getHistoryCommitList().contains(commitId))
                 continue;
 
             // skip validating the commit if the connector's owner is not the committer
@@ -98,15 +90,16 @@ public class ConnectorAsyncService {
 
             String taskFound = detectTaskFromCommit(commitMessage);
 
-            // skip revert commit
-            if (taskFound.equals("revert"))
-                continue;
+            // skip reverted commit
+            if (taskFound.equals("revert")) {
+                connector.addHistoryCommitList(commitId);
+            }
             else if (taskFound.equals("unknown")) {
                 System.out.println("Task unknown. Revert commit.");
-                rollbackCommit(commitId, connector.getUserRepo());
+                revertCommit(commitId, connector);
+            } else {
+                validateCommit(connector, commitMessage, taskFound, commitId);
             }
-
-            validateCommit(connector, commitMessage, taskFound, commitId);
         }
         connectorRepository.save(connector);
     }
@@ -116,17 +109,15 @@ public class ConnectorAsyncService {
 
         String configPath =  "./src/main/resources/repo_config.json";
         Retriever retriever = new Retriever(configPath);
-        retriever.addRepo(connector.getUserRepo().getRepoLink());
-        List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(true);
-
-        return commitList;
+        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
+        return retriever.getLatestCommitLog(true);
     }
 
 
     public void retrieveLatestCommit(Connector connector) {
         String configPath =  "./src/main/resources/repo_config.json";
         Retriever retriever = new Retriever(configPath);
-        retriever.addRepo(connector.getUserRepo().getRepoLink());
+        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
         List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(false);
 
         Dictionary<String, String> commit = commitList.get(0);
@@ -148,96 +139,25 @@ public class ConnectorAsyncService {
 
         String taskFound = detectTaskFromCommit(commitMessage);
 
-        // skip revert commit but revert unknown task
-        if (taskFound.equals("revert"))
-            return;
+        // skip reverted commit
+        if (taskFound.equals("revert")) {
+            connector.addHistoryCommitList(commitId);
+        }
         else if (taskFound.equals("unknown")) {
             System.out.println("Task unknown. Revert commit.");
-            rollbackCommit(commitId, connector.getUserRepo());
+            revertCommit(commitId, connector);
+        } else {
+            validateCommit(connector, commitMessage, taskFound, commitId);
         }
-
-        validateCommit(connector, commitMessage, taskFound, commitId);
 
         connectorRepository.save(connector);
-    }
-
-
-
-    private String runCommandPython(File whereToRun, String command) throws Exception {
-        boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-        System.out.println("Running in: " + whereToRun);
-        System.out.println("Command: " + command);
-
-        ProcessBuilder builder = new ProcessBuilder();
-        builder.directory(whereToRun);
-
-        if(isWindows) {
-            builder.command("cmd.exe", "/c", command);
-        }else {
-            builder.command("sh", "-c", command);
-        }
-
-        Process process = builder.start();
-
-        OutputStream outputStream = process.getOutputStream();
-        InputStream inputStream = process.getInputStream();
-
-        String result = getOutputFromCommand(inputStream);
-
-        boolean isFinished = process.waitFor(30, TimeUnit.SECONDS);
-        outputStream.flush();
-        outputStream.close();
-
-        if(!isFinished) {
-            process.destroyForcibly();
-        }
-
-        return result;
-    }
-
-    private void runCommand(File whereToRun, String command) throws Exception {
-        boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-        System.out.println("Running in: " + whereToRun);
-        System.out.println("Command: " + command);
-
-        ProcessBuilder builder = new ProcessBuilder();
-        builder.directory(whereToRun);
-
-        if(isWindows) {
-            builder.command("cmd.exe", "/c", command);
-        }else {
-            builder.command("sh", "-c", command);
-        }
-
-        Process process = builder.start();
-
-        OutputStream outputStream = process.getOutputStream();
-
-        boolean isFinished = process.waitFor(30, TimeUnit.SECONDS);
-        outputStream.flush();
-        outputStream.close();
-
-        if(!isFinished) {
-            process.destroyForcibly();
-        }
-    }
-
-    private String getOutputFromCommand(InputStream inputStream) throws IOException {
-        StringBuilder content = new StringBuilder();
-        try(BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-            while((line = bufferedReader.readLine()) != null) {
-                content.append(line);
-            }
-        }
-        return content.toString();
     }
 
     public String detectTaskFromCommit(String commitMessage) {
         // TermDetect termDetector = new TermDetect();
         // return caseStudy.checkRelevant(commitMessage, termDetector);
         // cannot use this term detector in this use case, must build another system
-        String taskDetect = "";
+        String taskDetect;
 
         // skip revert commit
         if (commitMessage.contains("Revert"))
@@ -274,7 +194,7 @@ public class ConnectorAsyncService {
 
     public void validateCommit(Connector connector, String commitMessage, String taskDetected, String commitId) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder = null;
+        URIBuilder builder;
         try {
             builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/validate-task");
             builder.addParameter("taskName", taskDetected);
@@ -292,11 +212,11 @@ public class ConnectorAsyncService {
 
                 if (isPermitted == -1) {
                     System.out.println("Task corresponding with commit " + commitId + " is not found in this process model. A revert commit is launched");
-                    rollbackCommit(commitId, connector.getUserRepo());
+                    revertCommit(commitId, connector);
                 }
                 else if (isPermitted == 0) {
                     System.out.println("Commit is invalidated. A revert commit is launched. No task is launched");
-                    rollbackCommit(commitId, connector.getUserRepo());
+                    revertCommit(commitId, connector);
                 } else if (isPermitted == 1){
                     System.out.println("Commit is validated. Task is launched");
                     completeTaskCommitted(connector, taskDetected, commitMessage);
@@ -310,13 +230,16 @@ public class ConnectorAsyncService {
         }
     }
 
-    public void rollbackCommit(String commitId, UserRepo user) {
-        try {
-            runCommand(new File(user.getRepoDir()), "git revert " + commitId);
-            String pushCommitCommand = "https://" + user.getUserName() + ":" + user.getPersonalToken() + "@" + user.getRepoLink().replace("https://","") + ".git";
-            runCommand(new File(user.getRepoDir()), "git push " + pushCommitCommand);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public void revertCommit(String commitId, Connector connector) {
+        String configPath =  "./src/main/resources/repo_config.json";
+        Retriever retriever = new Retriever(configPath);
+        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
+        boolean reverted = retriever.revertCommit(commitId);
+
+        if (!reverted) {
+            System.out.println("Cannot revert automatically violated commit id " + commitId +  ". Please revert manually.");
+        } else {
+            connector.addHistoryCommitList(commitId);
         }
     }
 
@@ -327,7 +250,7 @@ public class ConnectorAsyncService {
 
     private String startTaskInstance(Connector connector, String taskDetected) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder = null;
+        URIBuilder builder;
         try {
             builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/start-task");
             builder.addParameter("taskName", taskDetected);
@@ -349,7 +272,7 @@ public class ConnectorAsyncService {
 
     private void endTaskInstance(Connector connector, String newTaskInstanceId, List<PreDefinedArtifactInstance> preDefinedArtifactInstanceList) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder = null;
+        URIBuilder builder;
         try {
             builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/end-task");
             builder.addParameter("taskId", newTaskInstanceId);
@@ -373,7 +296,7 @@ public class ConnectorAsyncService {
 
     private void openProcess(Connector connector) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder = null;
+        URIBuilder builder;
         try {
             builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/change-state");
             builder.addParameter("processInstanceState", Boolean.toString(false));
