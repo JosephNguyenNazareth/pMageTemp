@@ -29,6 +29,26 @@ public class Retriever {
         this.readConfig();
     }
 
+    public String getRepoLink() {
+        return repoLink;
+    }
+
+    public JSONArray getConfig() {
+        return config;
+    }
+
+    public void setConfig(JSONArray config) {
+        this.config = config;
+    }
+
+    public String getConfigPath() {
+        return configPath;
+    }
+
+    public void setConfigPath(String configPath) {
+        this.configPath = configPath;
+    }
+
     public void setRepoLink(String repoLink) {
         this.repoLink = repoLink;
     }

@@ -30,6 +30,22 @@ public class PmsConfig {
         this.pms = pms;
     }
 
+    public JSONObject getConfig() {
+        return config;
+    }
+
+    public void setConfig(JSONObject config) {
+        this.config = config;
+    }
+
+    public String getConfigPath() {
+        return configPath;
+    }
+
+    public void setConfigPath(String configPath) {
+        this.configPath = configPath;
+    }
+
     private void readConfig() {
         JSONParser parser = new JSONParser();
         try {
