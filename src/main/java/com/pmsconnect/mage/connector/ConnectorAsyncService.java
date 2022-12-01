@@ -1,7 +1,7 @@
 package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.casestudy.PreDefinedArtifactInstance;
-import com.pmsconnect.mage.retrieve.Retriever;
+import com.pmsconnect.mage.config.Retriever;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ConnectorAsyncService {
@@ -194,13 +192,16 @@ public class ConnectorAsyncService {
 
     public void validateCommit(Connector connector, String commitMessage, String taskDetected, String commitId) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder;
         try {
-            builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/validate-task");
-            builder.addParameter("taskName", taskDetected);
-            builder.addParameter("actorName", connector.getUserRepo().getRealName());
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
 
-            String finalUri = builder.build().toString();
+            urlMap.put("url", connector.getUrl());
+            urlMap.put("projectId", connector.getPmsProjectId());
+            paramMap.put("taskName", taskDetected);
+            paramMap.put("actorName", connector.getUserRepo().getRealName());
+
+            String finalUri = connector.getPmsConfig().buildAPI("validateTask", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
             HttpResponse getResponse = client.execute(getMethod);
 
@@ -250,13 +251,16 @@ public class ConnectorAsyncService {
 
     private String startTaskInstance(Connector connector, String taskDetected) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder;
         try {
-            builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/start-task");
-            builder.addParameter("taskName", taskDetected);
-            builder.addParameter("actorName", connector.getUserRepo().getRealName());
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
 
-            String finalUri = builder.build().toString();
+            urlMap.put("url", connector.getUrl());
+            urlMap.put("projectId", connector.getPmsProjectId());
+            paramMap.put("taskName", taskDetected);
+            paramMap.put("actorName", connector.getUserRepo().getRealName());
+
+            String finalUri = connector.getPmsConfig().buildAPI("startTask", urlMap, paramMap);
             HttpPut putMethod = new HttpPut(finalUri);
             HttpResponse getResponse = client.execute(putMethod);
 
@@ -272,12 +276,15 @@ public class ConnectorAsyncService {
 
     private void endTaskInstance(Connector connector, String newTaskInstanceId, List<PreDefinedArtifactInstance> preDefinedArtifactInstanceList) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder;
         try {
-            builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/end-task");
-            builder.addParameter("taskId", newTaskInstanceId);
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
 
-            String finalUri = builder.build().toString();
+            urlMap.put("url", connector.getUrl());
+            urlMap.put("projectId", connector.getPmsProjectId());
+            paramMap.put("taskId", newTaskInstanceId);
+
+            String finalUri = connector.getPmsConfig().buildAPI("endTask", urlMap, paramMap);
             HttpPut putMethod = new HttpPut(finalUri);
             putMethod.addHeader("Content-Type", "application/json");
             StringEntity entity = new StringEntity(preDefinedArtifactInstanceList.toString(), "UTF-8");
@@ -296,12 +303,15 @@ public class ConnectorAsyncService {
 
     private void openProcess(Connector connector) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder;
         try {
-            builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/change-state");
-            builder.addParameter("processInstanceState", Boolean.toString(false));
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
 
-            String finalUri = builder.build().toString();
+            urlMap.put("url", connector.getUrl());
+            urlMap.put("projectId", connector.getPmsProjectId());
+            paramMap.put("processInstanceState", "false");
+
+            String finalUri = connector.getPmsConfig().buildAPI("changeProjectState", urlMap, paramMap);
             HttpPut putMethod = new HttpPut(finalUri);
             HttpResponse getResponse = client.execute(putMethod);
 

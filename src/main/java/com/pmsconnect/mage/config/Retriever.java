@@ -1,4 +1,4 @@
-package com.pmsconnect.mage.retrieve;
+package com.pmsconnect.mage.config;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -61,7 +61,7 @@ public class Retriever {
             return repoLink.replace(origin, configAPIInfo.get("api_prefix").toString()) + "/" + configAPIInfo.get("api_postfix_commit").toString();
         else if (origin.equals("gitlab.com")) {
             String urlPath = repoLink.substring(repoLink.indexOf(origin) + origin.length() + 1).replace("/", "%2F");
-            return "http://" + configAPIInfo.get("api_prefix") + "/" + urlPath + "/" + configAPIInfo.get("api_postfix_commit");
+            return "https://" + configAPIInfo.get("api_prefix") + "/" + urlPath + "/" + configAPIInfo.get("api_postfix_commit");
         }
         return "";
     }
@@ -74,7 +74,7 @@ public class Retriever {
             return "";
         else if (origin.equals("gitlab.com")) {
             String urlPath = repoLink.substring(repoLink.indexOf(origin) + origin.length() + 1).replace("/", "%2F");
-            return "http://" + configAPIInfo.get("api_prefix") + "/" + urlPath + "/" + configAPIInfo.get("api_postfix_commit") + "/" + commitId + "/" + configAPIInfo.get("api_postfix_revert");
+            return "https://" + configAPIInfo.get("api_prefix") + "/" + urlPath + "/" + configAPIInfo.get("api_postfix_commit") + "/" + commitId + "/" + configAPIInfo.get("api_postfix_revert");
         }
         return "";
     }
@@ -113,18 +113,16 @@ public class Retriever {
         JSONObject configInfo = (JSONObject) currentConfig.get("user_info");
         HttpClient client = HttpClients.createDefault();
         URIBuilder builder = null;
-        String auth = configInfo.get("user").toString() + ":" + configInfo.get("token").toString();
-        byte[] encodedAuth = Base64.getEncoder().encode(
-                auth.getBytes(StandardCharsets.ISO_8859_1));
-        String authHeader = "Basic " + new String(encodedAuth);
         try {
             builder = new URIBuilder(apiLink);
+            builder.addParameter("branch", "main");
+
             String finalUri = builder.build().toString();
             HttpPost postMethod = new HttpPost(finalUri);
-            postMethod.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
-            HttpResponse getResponse = client.execute(postMethod);
+            postMethod.setHeader("PRIVATE-TOKEN", configInfo.get("token").toString());
+            HttpResponse postResponse = client.execute(postMethod);
 
-            int postStatusCode = getResponse.getStatusLine()
+            int postStatusCode = postResponse.getStatusLine()
                     .getStatusCode();
             if (postStatusCode == 200)
                 return true;

@@ -1,0 +1,31 @@
+[
+    {
+        "pms": "core-bape",
+        "api_info": {
+            "verify": {
+                "url" : "{url}/{projectId}",
+                "param" : []
+            },
+            "createProject": {
+                "url" : "{url}",
+                "param" : ["processName","creatorName"]
+            },
+            "changeProjectState" : {
+                "url" : "{url}/{projectId}/change-state",
+                "param" : ["processInstanceState"]
+            },
+            "validateTask" : {
+                "url" : "{url}/{projectId}/validate-task",
+                "param" : ["taskName","actorName"]
+            },
+            "startTask" : {
+                "url" : "{url}/{projectId}/start-task",
+                "param" : ["taskName","actorName"]
+            },
+            "endTask" : {
+                "url" : "{url}/{projectId}/end-task",
+                "param" : ["taskId"]
+            }
+        }
+    }
+]

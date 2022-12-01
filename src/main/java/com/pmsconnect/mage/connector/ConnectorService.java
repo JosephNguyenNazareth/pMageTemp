@@ -1,8 +1,8 @@
 package com.pmsconnect.mage.connector;
 
+import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.repo.UserRepo;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ConnectorService {
@@ -39,10 +41,10 @@ public class ConnectorService {
         return connector;
     }
 
-    public String addNewConnector(String url, String pmsProjectId, UserRepo user) {
-        if (!verifyPmsExist(url, pmsProjectId))
+    public String addNewConnector(String url, String pms, String pmsProjectId, UserRepo user) {
+        if (!verifyPmsExist(url, pms, pmsProjectId))
             throw new IllegalStateException("Cannot verify pms url " + url);
-        Connector connector = new Connector(url, pmsProjectId, user);
+        Connector connector = new Connector(url, pms, pmsProjectId, user);
 
         connectorRepository.save(connector);
 
@@ -50,14 +52,17 @@ public class ConnectorService {
     }
 
     @Transactional
-    public void updateConnector(String connectorId, String url, String pmsProjectId, UserRepo user) {
+    public void updateConnector(String connectorId, String url, String pms, String pmsProjectId, UserRepo user) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
         if (pmsProjectId != null && !pmsProjectId.equals(connector.getPmsProjectId())) {
-            if (!verifyPmsExist(connector.getUrl(), pmsProjectId))
+            if (!verifyPmsExist(connector.getUrl(), connector.getPmsConfig().getPms(), pmsProjectId))
                 throw new IllegalStateException("Cannot verify pms projectId " + pmsProjectId);
             connector.setPmsProjectId(pmsProjectId);
         }
+
+        if (pms != null && !pms.equals(connector.getPmsConfig().getPms()))
+            connector.getPmsConfig().setPms(pms);
 
         if (url != null && !url.equals(connector.getUrl()))
             connector.setUrl(url);
@@ -68,21 +73,48 @@ public class ConnectorService {
         connectorRepository.save(connector);
     }
 
-    private boolean verifyPmsExist(String url, String pmsProjectId) {
+    private boolean verifyPmsExist(String url, String pms, String pmsProjectId) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder = null;
         try {
-            if (pmsProjectId != null)
-                builder = new URIBuilder(url + "/" + pmsProjectId);
-            else
-                builder = new URIBuilder(url);
-            String finalUri = builder.build().toString();
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+
+            urlMap.put("url", url);
+            urlMap.put("projectId", pmsProjectId);
+
+            PmsConfig tmpConfig = new PmsConfig("./src/main/resources/pms_config.json", pms);
+            String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
             HttpResponse getResponse = client.execute(getMethod);
 
             int getStatusCode = getResponse.getStatusLine()
                     .getStatusCode();
             return getStatusCode == 200;
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getProcessInstance(String connectorId) {
+        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        HttpClient client = HttpClients.createDefault();
+        try {
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+
+            urlMap.put("url", connector.getUrl());
+            urlMap.put("projectId", connector.getPmsProjectId());
+
+            String finalUri = connector.getPmsConfig().buildAPI("verify", urlMap, paramMap);
+            HttpGet getMethod = new HttpGet(finalUri);
+            HttpResponse getResponse = client.execute(getMethod);
+
+            int getStatusCode = getResponse.getStatusLine()
+                    .getStatusCode();
+            if (getStatusCode == 200)
+                return EntityUtils.toString(getResponse.getEntity());
+            return "";
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -101,12 +133,15 @@ public class ConnectorService {
 
     private boolean createPMSProcessInstance(Connector connector, String processName, String creatorName) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder = null;
         try {
-            builder = new URIBuilder(connector.getUrl());
-            builder.addParameter("processName", processName);
-            builder.addParameter("creatorName", creatorName);
-            String finalUri = builder.build().toString();
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+
+            urlMap.put("url", connector.getUrl());
+            paramMap.put("processName", processName);
+            paramMap.put("creatorName", creatorName);
+
+            String finalUri = connector.getPmsConfig().buildAPI("createProject", urlMap, paramMap);
             HttpPost postMethod = new HttpPost(finalUri);
             HttpResponse getResponse = client.execute(postMethod);
 
@@ -135,12 +170,15 @@ public class ConnectorService {
 
     private void closeProcess(Connector connector) {
         HttpClient client = HttpClients.createDefault();
-        URIBuilder builder = null;
         try {
-            builder = new URIBuilder(connector.getUrl() + "/" + connector.getPmsProjectId() + "/change-state");
-            builder.addParameter("processInstanceState", Boolean.toString(true));
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
 
-            String finalUri = builder.build().toString();
+            urlMap.put("url", connector.getUrl());
+            urlMap.put("projectId", connector.getPmsProjectId());
+            paramMap.put("processInstanceState", "true");
+
+            String finalUri = connector.getPmsConfig().buildAPI("changeProjectState", urlMap, paramMap);
             HttpPut putMethod = new HttpPut(finalUri);
             HttpResponse getResponse = client.execute(putMethod);
 

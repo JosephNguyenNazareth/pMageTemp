@@ -1,9 +1,11 @@
 package com.pmsconnect.mage.connector;
 
+import com.pmsconnect.mage.config.PmsConfig;
+import com.pmsconnect.mage.config.Retriever;
 import com.pmsconnect.mage.repo.UserRepo;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -17,25 +19,25 @@ public class Connector {
     private UserRepo userRepo;
     private List<String> historyCommitList;
     private boolean isMonitoring;
+    private Retriever retriever;
+    private PmsConfig pmsConfig;
 
     public Connector() {
     }
 
-    public Connector(String url, String pmsProjectId, UserRepo userRepo) {
+    public Connector(String url, String pms, String pmsProjectId, UserRepo userRepo) {
         this.id = UUID.randomUUID().toString();
         this.pmsProjectId = pmsProjectId;
         this.url = url;
         this.userRepo = userRepo;
         this.historyCommitList = new ArrayList<>();
         this.isMonitoring = false;
+        this.retriever = new Retriever("./src/main/resources/repo_config.json");
+        this.pmsConfig = new PmsConfig("./src/main/resources/pms_config.json", pms);
     }
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getPmsProjectId() {
@@ -80,5 +82,21 @@ public class Connector {
 
     public void setMonitoring(boolean monitoring) {
         isMonitoring = monitoring;
+    }
+
+    public Retriever getRetriever() {
+        return retriever;
+    }
+
+    public void setRetriever(Retriever retriever) {
+        this.retriever = retriever;
+    }
+
+    public PmsConfig getPmsConfig() {
+        return pmsConfig;
+    }
+
+    public void setPmsConfig(PmsConfig pmsConfig) {
+        this.pmsConfig = pmsConfig;
     }
 }

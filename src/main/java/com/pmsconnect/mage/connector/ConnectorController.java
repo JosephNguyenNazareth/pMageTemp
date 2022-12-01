@@ -32,25 +32,33 @@ public class ConnectorController {
     @PostMapping
     public String addNewConnector(
             @RequestParam String url,
+            @RequestParam String pms,
             @RequestParam(required = false) String pmsProjectId,
             @RequestBody(required = false) UserRepo user) {
-        return connectorService.addNewConnector(url, pmsProjectId, user);
+        return connectorService.addNewConnector(url, pms, pmsProjectId, user);
     }
 
     @PutMapping(path = "{connectorId}")
     public void updateConnector(
             @PathVariable("connectorId") String connectorId,
             @RequestParam(required = false) String url,
+            @RequestParam(required = false) String pms,
             @RequestParam(required = false) String pmsProjectId,
             @RequestBody(required = false) UserRepo user) {
-        connectorService.updateConnector(connectorId, url, pmsProjectId, user);
+        connectorService.updateConnector(connectorId, url, pms, pmsProjectId, user);
     }
 
     @PutMapping(path = "{connectorId}/create-process")
     public String createProcessInstance(
             @PathVariable("connectorId") String connectorId,
-            @RequestParam(required = false) String processName) {
+            @RequestParam String processName) {
         return connectorService.createProcessInstance(connectorId, processName);
+    }
+
+    @GetMapping(path = "{connectorId}/get-process")
+    public String getProcessInstance(
+            @PathVariable("connectorId") String connectorId) {
+        return connectorService.getProcessInstance(connectorId);
     }
 
     @GetMapping(path = "{connectorId}/monitor")
