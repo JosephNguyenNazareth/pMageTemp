@@ -18,6 +18,7 @@ public class Connector {
     private String pmsProjectId;
     private UserRepo userRepo;
     private List<String> historyCommitList;
+    private List<String> violatedCommitList;
     private boolean isMonitoring;
     private Retriever retriever;
     private PmsConfig pmsConfig;
@@ -31,6 +32,7 @@ public class Connector {
         this.url = url;
         this.userRepo = userRepo;
         this.historyCommitList = new ArrayList<>();
+        this.violatedCommitList = new ArrayList<>();
         this.isMonitoring = false;
         this.retriever = new Retriever("./src/main/resources/repo_config.json");
         this.pmsConfig = new PmsConfig("./src/main/resources/pms_config.json", pms);
@@ -74,6 +76,18 @@ public class Connector {
 
     public void addHistoryCommitList(String historyCommit) {
         this.historyCommitList.add(historyCommit);
+    }
+
+    public List<String> getViolatedCommitList() {
+        return violatedCommitList;
+    }
+
+    public void setViolatedCommitList(List<String> violatedCommitList) {
+        this.violatedCommitList = violatedCommitList;
+    }
+
+    public void addViolatedCommitList(String violatedCommit) {
+        this.violatedCommitList.add(violatedCommit);
     }
 
     public boolean isMonitoring() {

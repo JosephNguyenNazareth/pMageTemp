@@ -6,7 +6,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -61,9 +60,17 @@ public class ConnectorAsyncService {
 
                 System.out.println("Monitoring connector " + connector.getId() + " of project id" + connector.getPmsProjectId() + " of user " + connector.getUserRepo().getUserName());
                 this.retrieveLatestCommit(connector);
+
+                this.notifyViolatedCommit(connector);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private void notifyViolatedCommit(Connector connector) {
+        for (String commitId : connector.getViolatedCommitList()) {
+            revertCommit(commitId, connector);
         }
     }
 
@@ -86,14 +93,15 @@ public class ConnectorAsyncService {
             if (!committerName.equals(connector.getUserRepo().getUserName()))
                 continue;
 
+            connector.addHistoryCommitList(commitId);
             String taskFound = detectTaskFromCommit(commitMessage);
 
             // skip reverted commit
             if (taskFound.equals("revert")) {
-                connector.addHistoryCommitList(commitId);
+                detectRevertedCommit(commitMessage, connector);
             }
             else if (taskFound.equals("unknown")) {
-                System.out.println("Task unknown. Revert commit.");
+                System.out.println("Task unknown.");
                 revertCommit(commitId, connector);
             } else {
                 validateCommit(connector, commitMessage, taskFound, commitId);
@@ -128,27 +136,32 @@ public class ConnectorAsyncService {
             return;
         }
 
-        connector.addHistoryCommitList(commitId);
-
         // skip validating the commit if the connector's owner is not the committer
         String committerName = commit.get("committer_name");
         if (!committerName.equals(connector.getUserRepo().getUserName()))
             return;
 
+        connector.addHistoryCommitList(commitId);
         String taskFound = detectTaskFromCommit(commitMessage);
 
         // skip reverted commit
         if (taskFound.equals("revert")) {
-            connector.addHistoryCommitList(commitId);
+            detectRevertedCommit(commitMessage, connector);
         }
         else if (taskFound.equals("unknown")) {
-            System.out.println("Task unknown. Revert commit.");
+            System.out.println("Task unknown.");
             revertCommit(commitId, connector);
         } else {
             validateCommit(connector, commitMessage, taskFound, commitId);
         }
 
         connectorRepository.save(connector);
+    }
+
+    private void detectRevertedCommit(String commitMessage, Connector connector) {
+        String revertedCommitId = commitMessage.substring(commitMessage.indexOf("This reverts commit ")).replace(".","").trim();
+
+        connector.getViolatedCommitList().remove(revertedCommitId);
     }
 
     public String detectTaskFromCommit(String commitMessage) {
@@ -212,11 +225,11 @@ public class ConnectorAsyncService {
                 int isPermitted = Integer.parseInt(responseBody);
 
                 if (isPermitted == -1) {
-                    System.out.println("Task corresponding with commit " + commitId + " is not found in this process model. A revert commit is launched");
+                    System.out.println("Task corresponding with commit " + commitId + " is not found in this process model.");
                     revertCommit(commitId, connector);
                 }
                 else if (isPermitted == 0) {
-                    System.out.println("Commit is invalidated. A revert commit is launched. No task is launched");
+                    System.out.println("Commit is invalidated. No task is launched");
                     revertCommit(commitId, connector);
                 } else if (isPermitted == 1){
                     System.out.println("Commit is validated. Task is launched");
@@ -232,16 +245,14 @@ public class ConnectorAsyncService {
     }
 
     public void revertCommit(String commitId, Connector connector) {
-        String configPath =  "./src/main/resources/repo_config.json";
-        Retriever retriever = new Retriever(configPath);
-        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
-        boolean reverted = retriever.revertCommit(commitId);
+//        String configPath =  "./src/main/resources/repo_config.json";
+//        Retriever retriever = new Retriever(configPath);
+//        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
 
-        if (!reverted) {
-            System.out.println("Cannot revert automatically violated commit id " + commitId +  ". Please revert manually.");
-        } else {
-            connector.addHistoryCommitList(commitId);
-        }
+        connector.addViolatedCommitList(commitId);
+//        boolean reverted = retriever.revertCommit(commitId);
+
+        System.out.println("Please revert commit id " + commitId + " manually.");
     }
 
     private void completeTaskCommitted(Connector connector, String taskDetected, String commitMessage) {
