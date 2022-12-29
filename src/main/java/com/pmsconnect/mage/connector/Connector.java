@@ -2,23 +2,21 @@ package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.config.Retriever;
-import com.pmsconnect.mage.repo.UserRepo;
+import com.pmsconnect.mage.user.UserPMage;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Document(collection = "connector")
 public class Connector {
     @Id
     private String id;
-    private String url;
-    private String pmsProjectId;
-    private UserRepo userRepo;
+    private UserPMage userPMage;
     private List<String> historyCommitList;
     private List<String> violatedCommitList;
+    private Map<String, String> monitoringLog;
     private boolean isMonitoring;
     private Retriever retriever;
     private PmsConfig pmsConfig;
@@ -26,44 +24,19 @@ public class Connector {
     public Connector() {
     }
 
-    public Connector(String url, String pms, String pmsProjectId, UserRepo userRepo) {
+    public Connector(UserPMage userPMage) {
         this.id = UUID.randomUUID().toString();
-        this.pmsProjectId = pmsProjectId;
-        this.url = url;
-        this.userRepo = userRepo;
+        this.userPMage = userPMage;
         this.historyCommitList = new ArrayList<>();
         this.violatedCommitList = new ArrayList<>();
+        this.monitoringLog = new HashMap<>();
         this.isMonitoring = false;
         this.retriever = new Retriever("./src/main/resources/repo_config.json");
-        this.pmsConfig = new PmsConfig("./src/main/resources/pms_config.json", pms);
+        this.pmsConfig = new PmsConfig("./src/main/resources/pms_config.json", this.userPMage.getPmsName());
     }
 
     public String getId() {
         return id;
-    }
-
-    public String getPmsProjectId() {
-        return pmsProjectId;
-    }
-
-    public void setPmsProjectId(String pmsProjectId) {
-        this.pmsProjectId = pmsProjectId;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public UserRepo getUserRepo() {
-        return userRepo;
-    }
-
-    public void setUserRepo(UserRepo userRepo) {
-        this.userRepo = userRepo;
     }
 
     public List<String> getHistoryCommitList() {
@@ -112,5 +85,25 @@ public class Connector {
 
     public void setPmsConfig(PmsConfig pmsConfig) {
         this.pmsConfig = pmsConfig;
+    }
+
+    public UserPMage getUserPMage() {
+        return userPMage;
+    }
+
+    public void setUserPMage(UserPMage userPMage) {
+        this.userPMage = userPMage;
+    }
+
+    public Map<String, String> getMonitoringLog() {
+        return monitoringLog;
+    }
+
+    public void setMonitoringLog(Map<String, String> monitoringLog) {
+        this.monitoringLog = monitoringLog;
+    }
+
+    public void addMonitoringLog(String monitoringMess) {
+        this.monitoringLog.put(LocalDateTime.now().toString(), monitoringMess);
     }
 }

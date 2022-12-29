@@ -1,6 +1,6 @@
 package com.pmsconnect.mage.connector;
 
-import com.pmsconnect.mage.repo.UserRepo;
+import com.pmsconnect.mage.user.UserPMage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,7 +8,7 @@ import java.util.Dictionary;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/mage")
+@RequestMapping(path = "api/pmage")
 public class ConnectorController {
     private final ConnectorService connectorService;
     private final ConnectorAsyncService connectorAsyncService;
@@ -29,23 +29,22 @@ public class ConnectorController {
         return connectorService.getConnector(connectorId);
     }
 
-    @PostMapping
-    public String addNewConnector(
-            @RequestParam String url,
-            @RequestParam String pms,
-            @RequestParam(required = false) String pmsProjectId,
-            @RequestBody(required = false) UserRepo user) {
-        return connectorService.addNewConnector(url, pms, pmsProjectId, user);
+    @PostMapping(path = "/add")
+    public String addNewConnector(@RequestBody UserPMage user) {
+        return connectorService.addNewConnector(user);
     }
 
-    @PutMapping(path = "{connectorId}")
+    @PutMapping(path = "/update/{connectorId}")
     public void updateConnector(
             @PathVariable("connectorId") String connectorId,
-            @RequestParam(required = false) String url,
-            @RequestParam(required = false) String pms,
-            @RequestParam(required = false) String pmsProjectId,
-            @RequestBody(required = false) UserRepo user) {
-        connectorService.updateConnector(connectorId, url, pms, pmsProjectId, user);
+            @RequestBody(required = false) UserPMage user) {
+        connectorService.updateConnector(connectorId, user);
+    }
+
+    @DeleteMapping(path = "/delete/{connectorId}")
+    public void deleteConnector(
+            @PathVariable("connectorId") String connectorId) {
+        connectorService.deleteConnector(connectorId);
     }
 
     @PutMapping(path = "{connectorId}/create-process")
@@ -71,14 +70,6 @@ public class ConnectorController {
     public void stopMonitoringProcessInstance(
             @PathVariable("connectorId") String connectorId) {
         connectorService.stopMonitoringProcessInstance(connectorId);
-    }
-
-    @GetMapping(path = "{connectorId}/end-task")
-    public void endTaskInstance(
-            @PathVariable("connectorId") String connectorId,
-            @RequestParam String taskId,
-            @RequestParam String commitMessage) {
-        connectorAsyncService.endTaskInstance(connectorId, taskId,  commitMessage);
     }
 
     @GetMapping(path = "{connectorId}/all-commit")

@@ -129,31 +129,6 @@ public class Retriever {
         }
     }
 
-    private boolean callAPIRevert(String apiLink, JSONObject currentConfig) {
-        JSONObject configInfo = (JSONObject) currentConfig.get("user_info");
-        HttpClient client = HttpClients.createDefault();
-        URIBuilder builder = null;
-        try {
-            builder = new URIBuilder(apiLink);
-            builder.addParameter("branch", "main");
-
-            String finalUri = builder.build().toString();
-            HttpPost postMethod = new HttpPost(finalUri);
-            postMethod.setHeader("PRIVATE-TOKEN", configInfo.get("token").toString());
-            HttpResponse postResponse = client.execute(postMethod);
-
-            int postStatusCode = postResponse.getStatusLine()
-                    .getStatusCode();
-            if (postStatusCode == 200)
-                return true;
-            else {
-                return false;
-            }
-        } catch (URISyntaxException | IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private String traverseMessageLevel(JSONObject message, String path) {
         JSONObject tmp = new JSONObject(message);
         String result = "";
@@ -209,16 +184,5 @@ public class Retriever {
         extractCommits.addAll(this.extractInfoCommit(repoLink, originalCommits, repoDetected));
 
         return extractCommits;
-    }
-
-    public boolean revertCommit(String commitId) {
-        JSONObject repoDetected = this.getRepoOrigin(repoLink);
-
-        String apiLink = this.buildAPILinkRevertCommit(commitId, repoLink, repoDetected);
-
-        if (!apiLink.equals(""))
-            return this.callAPIRevert(apiLink, repoDetected);
-        else
-            return false;
     }
 }

@@ -1,6 +1,7 @@
 package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.casestudy.PreDefinedArtifactInstance;
+import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.config.Retriever;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -44,8 +45,11 @@ public class ConnectorAsyncService {
         // allow process in pms to be run
         this.openProcess(connector);
 
+        StringBuilder monitoringMessAll = new StringBuilder();
+        monitoringMessAll.append("Fresh monitoring connector " + connector.getId() + " of project id" + connector.getUserPMage().getProjectId() + " of user " + connector.getUserPMage().getUserName() + "\n");
         // just in case, retrieve all the commits of this project
-        this.retrieveAllCommit(connector);
+        this.retrieveAllCommit(connector, monitoringMessAll);
+        connector.addMonitoringLog(monitoringMessAll.toString());
 
         // then run this as a background service to check commit status
         while(true) {
@@ -58,27 +62,28 @@ public class ConnectorAsyncService {
                 if (!updatedConnector.isMonitoring())
                     return;
 
-                System.out.println("Monitoring connector " + connector.getId() + " of project id" + connector.getPmsProjectId() + " of user " + connector.getUserRepo().getUserName());
-                this.retrieveLatestCommit(connector);
+                StringBuilder monitoringMess = new StringBuilder();
+                monitoringMess.append("Monitoring connector " + connector.getId() + " of project id" + connector.getUserPMage().getProjectId() + " of user " + connector.getUserPMage().getUserName() + "\n");
+                this.retrieveLatestCommit(connector, monitoringMess);
 
-                this.notifyViolatedCommit(connector);
+                this.notifyViolatedCommit(connector, monitoringMess);
+
+                connector.addMonitoringLog(monitoringMess.toString());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    private void notifyViolatedCommit(Connector connector) {
+    private void notifyViolatedCommit(Connector connector, StringBuilder monitoringMess) {
         for (String commitId : connector.getViolatedCommitList()) {
-            revertCommit(commitId, connector);
+            revertCommit(commitId, connector, monitoringMess);
         }
     }
 
-    public void retrieveAllCommit(Connector connector) {
-        String configPath =  "./src/main/resources/repo_config.json";
-        Retriever retriever = new Retriever(configPath);
-        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
-        List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(true);
+    public void retrieveAllCommit(Connector connector, StringBuilder monitoringMess) {
+        connector.getRetriever().setRepoLink(connector.getUserPMage().getRepoRemote());
+        List<Dictionary<String, String>> commitList = connector.getRetriever().getLatestCommitLog(true);
 
         for (Dictionary<String, String> commit : commitList) {
             String commitMessage = commit.get("title");
@@ -90,21 +95,21 @@ public class ConnectorAsyncService {
 
             // skip validating the commit if the connector's owner is not the committer
             String committerName = commit.get("committer_name");
-            if (!committerName.equals(connector.getUserRepo().getUserName()))
+            if (!committerName.equals(connector.getUserPMage().getUserName()))
                 continue;
 
             connector.addHistoryCommitList(commitId);
-            String taskFound = detectTaskFromCommit(commitMessage);
+            String taskFound = detectTaskFromCommit(commitMessage, monitoringMess);
 
             // skip reverted commit
             if (taskFound.equals("revert")) {
                 detectRevertedCommit(commitMessage, connector);
             }
             else if (taskFound.equals("unknown")) {
-                System.out.println("Task unknown.");
-                revertCommit(commitId, connector);
+                monitoringMess.append("Task unknown\n");
+                revertCommit(commitId, connector, monitoringMess);
             } else {
-                validateCommit(connector, commitMessage, taskFound, commitId);
+                validateCommit(connector, commitMessage, taskFound, commitId, monitoringMess);
             }
         }
         connectorRepository.save(connector);
@@ -115,16 +120,14 @@ public class ConnectorAsyncService {
 
         String configPath =  "./src/main/resources/repo_config.json";
         Retriever retriever = new Retriever(configPath);
-        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
+        retriever.setRepoLink(connector.getUserPMage().getRepoRemote());
         return retriever.getLatestCommitLog(true);
     }
 
 
-    public void retrieveLatestCommit(Connector connector) {
-        String configPath =  "./src/main/resources/repo_config.json";
-        Retriever retriever = new Retriever(configPath);
-        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
-        List<Dictionary<String, String>> commitList = retriever.getLatestCommitLog(false);
+    public void retrieveLatestCommit(Connector connector, StringBuilder monitoringMess) {
+        connector.getRetriever().setRepoLink(connector.getUserPMage().getRepoRemote());
+        List<Dictionary<String, String>> commitList = connector.getRetriever().getLatestCommitLog(false);
 
         Dictionary<String, String> commit = commitList.get(0);
         String commitMessage = commit.get("title");
@@ -132,27 +135,27 @@ public class ConnectorAsyncService {
 
         // if the latest commit is already in the list of retrieved commit, skip ths later work
         if (connector.getHistoryCommitList().contains(commitId)) {
-            System.out.println("Commit is up-to-date");
+            monitoringMess.append("Commit is up-to-date");
             return;
         }
 
         // skip validating the commit if the connector's owner is not the committer
         String committerName = commit.get("committer_name");
-        if (!committerName.equals(connector.getUserRepo().getUserName()))
+        if (!committerName.equals(connector.getUserPMage().getUserName()))
             return;
 
         connector.addHistoryCommitList(commitId);
-        String taskFound = detectTaskFromCommit(commitMessage);
+        String taskFound = detectTaskFromCommit(commitMessage, monitoringMess);
 
         // skip reverted commit
         if (taskFound.equals("revert")) {
             detectRevertedCommit(commitMessage, connector);
         }
         else if (taskFound.equals("unknown")) {
-            System.out.println("Task unknown.");
-            revertCommit(commitId, connector);
+            monitoringMess.append("Task unknown\n");
+            revertCommit(commitId, connector, monitoringMess);
         } else {
-            validateCommit(connector, commitMessage, taskFound, commitId);
+            validateCommit(connector, commitMessage, taskFound, commitId, monitoringMess);
         }
 
         connectorRepository.save(connector);
@@ -164,7 +167,7 @@ public class ConnectorAsyncService {
         connector.getViolatedCommitList().remove(revertedCommitId);
     }
 
-    public String detectTaskFromCommit(String commitMessage) {
+    public String detectTaskFromCommit(String commitMessage, StringBuilder monitoringMess) {
         // TermDetect termDetector = new TermDetect();
         // return caseStudy.checkRelevant(commitMessage, termDetector);
         // cannot use this term detector in this use case, must build another system
@@ -184,11 +187,11 @@ public class ConnectorAsyncService {
         } else {
             taskDetect = "unknown";
         }
-        System.out.println(taskDetect);
+        monitoringMess.append("Task detected: " + taskDetect + "\n");
         return taskDetect;
     }
 
-    public List<PreDefinedArtifactInstance> detectArtifactFromCommit(String commitMessage) {
+    public List<PreDefinedArtifactInstance> detectArtifactFromCommit(String commitMessage, StringBuilder monitoringMess) {
         List<PreDefinedArtifactInstance> preDefinedArtifactInstanceList = new ArrayList<>();
         if (commitMessage.contains(";")) {
             String importantMessage = commitMessage.contains("|") ? commitMessage.substring(0, commitMessage.indexOf("|")) : commitMessage;
@@ -196,23 +199,23 @@ public class ConnectorAsyncService {
             for (int i = 1; i < terms.length; i++) {
                 String[] artifact = terms[i].split(":");
                 if (artifact.length < 2)
-                    System.out.println("Invalid syntax. Cannot detect artifact.");
+                    monitoringMess.append("Invalid syntax. Cannot detect artifact\n");
                 preDefinedArtifactInstanceList.add(new PreDefinedArtifactInstance(artifact[0], artifact[1], Integer.parseInt(artifact[2])));
             }
         }
         return preDefinedArtifactInstanceList;
     }
 
-    public void validateCommit(Connector connector, String commitMessage, String taskDetected, String commitId) {
+    public void validateCommit(Connector connector, String commitMessage, String taskDetected, String commitId, StringBuilder monitoringMess) {
         HttpClient client = HttpClients.createDefault();
         try {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getUrl());
-            urlMap.put("projectId", connector.getPmsProjectId());
+            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("projectId", connector.getUserPMage().getProjectId());
             paramMap.put("taskName", taskDetected);
-            paramMap.put("actorName", connector.getUserRepo().getRealName());
+            paramMap.put("actorName", connector.getUserPMage().getRealName());
 
             String finalUri = connector.getPmsConfig().buildAPI("validateTask", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
@@ -225,18 +228,18 @@ public class ConnectorAsyncService {
                 int isPermitted = Integer.parseInt(responseBody);
 
                 if (isPermitted == -1) {
-                    System.out.println("Task corresponding with commit " + commitId + " is not found in this process model.");
-                    revertCommit(commitId, connector);
+                    monitoringMess.append("Task corresponding with commit " + commitId + " not found\n");
+                    revertCommit(commitId, connector, monitoringMess);
                 }
                 else if (isPermitted == 0) {
-                    System.out.println("Commit is invalidated. No task is launched");
-                    revertCommit(commitId, connector);
+                    monitoringMess.append("Commit is invalidated. No task is launched\n");
+                    revertCommit(commitId, connector, monitoringMess);
                 } else if (isPermitted == 1){
-                    System.out.println("Commit is validated. Task is launched");
-                    completeTaskCommitted(connector, taskDetected, commitMessage);
+                    monitoringMess.append("Commit is validated. Task is launched\n");
+                    completeTaskCommitted(connector, taskDetected, commitMessage, monitoringMess);
                     connectorRepository.save(connector);
                 } else if (isPermitted == 2) {
-                    System.out.println("Task has been completed.");
+                    monitoringMess.append("Task has been completed.");
                 }
             }
         } catch (URISyntaxException | IOException e) {
@@ -244,7 +247,7 @@ public class ConnectorAsyncService {
         }
     }
 
-    public void revertCommit(String commitId, Connector connector) {
+    public void revertCommit(String commitId, Connector connector, StringBuilder monitoringMess) {
 //        String configPath =  "./src/main/resources/repo_config.json";
 //        Retriever retriever = new Retriever(configPath);
 //        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
@@ -252,12 +255,12 @@ public class ConnectorAsyncService {
         connector.addViolatedCommitList(commitId);
 //        boolean reverted = retriever.revertCommit(commitId);
 
-        System.out.println("Please revert commit id " + commitId + " manually.");
+        monitoringMess.append("Need reverting commit id " + commitId + "\n");
     }
 
-    private void completeTaskCommitted(Connector connector, String taskDetected, String commitMessage) {
+    private void completeTaskCommitted(Connector connector, String taskDetected, String commitMessage, StringBuilder monitoringMess) {
         String newTaskInstanceId = startTaskInstance(connector, taskDetected);
-        endTaskInstance(connector, newTaskInstanceId, detectArtifactFromCommit(commitMessage));
+        endTaskInstance(connector, newTaskInstanceId, detectArtifactFromCommit(commitMessage, monitoringMess));
     }
 
     private String startTaskInstance(Connector connector, String taskDetected) {
@@ -266,10 +269,10 @@ public class ConnectorAsyncService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getUrl());
-            urlMap.put("projectId", connector.getPmsProjectId());
+            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("projectId", connector.getUserPMage().getProjectId());
             paramMap.put("taskName", taskDetected);
-            paramMap.put("actorName", connector.getUserRepo().getRealName());
+            paramMap.put("actorName", connector.getUserPMage().getRealName());
 
             String finalUri = connector.getPmsConfig().buildAPI("startTask", urlMap, paramMap);
             HttpPut putMethod = new HttpPut(finalUri);
@@ -291,8 +294,8 @@ public class ConnectorAsyncService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getUrl());
-            urlMap.put("projectId", connector.getPmsProjectId());
+            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("projectId", connector.getUserPMage().getProjectId());
             paramMap.put("taskId", newTaskInstanceId);
 
             String finalUri = connector.getPmsConfig().buildAPI("endTask", urlMap, paramMap);
@@ -318,8 +321,8 @@ public class ConnectorAsyncService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getUrl());
-            urlMap.put("projectId", connector.getPmsProjectId());
+            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("projectId", connector.getUserPMage().getProjectId());
             paramMap.put("processInstanceState", "false");
 
             String finalUri = connector.getPmsConfig().buildAPI("changeProjectState", urlMap, paramMap);
@@ -329,17 +332,9 @@ public class ConnectorAsyncService {
             int getStatusCode = getResponse.getStatusLine()
                     .getStatusCode();
             if (getStatusCode != 200)
-                throw new IllegalStateException("Cannot open process instance id " + connector.getPmsProjectId());
+                throw new IllegalStateException("Cannot open process instance id " + connector.getUserPMage().getProjectId());
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void endTaskInstance(String connectorId, String taskId, String commitMessage) {
-        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
-
-        List<PreDefinedArtifactInstance> preDefinedArtifactInstanceList = detectArtifactFromCommit(commitMessage);
-
-        endTaskInstance(connector, taskId, preDefinedArtifactInstanceList);
     }
 }
