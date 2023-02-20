@@ -3,6 +3,7 @@ package com.pmsconnect.mage.connector;
 import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.config.Retriever;
 import com.pmsconnect.mage.user.UserPMage;
+import com.pmsconnect.mage.utils.Alignment;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,8 +15,7 @@ public class Connector {
     @Id
     private String id;
     private UserPMage userPMage;
-    private List<String> historyCommitList;
-    private List<String> violatedCommitList;
+    private List<Alignment> historyCommitList;
     private Map<String, String> monitoringLog;
     private boolean isMonitoring;
     private Retriever retriever;
@@ -28,7 +28,6 @@ public class Connector {
         this.id = UUID.randomUUID().toString();
         this.userPMage = userPMage;
         this.historyCommitList = new ArrayList<>();
-        this.violatedCommitList = new ArrayList<>();
         this.monitoringLog = new HashMap<>();
         this.isMonitoring = false;
         this.retriever = new Retriever("./src/main/resources/repo_config.json");
@@ -39,28 +38,32 @@ public class Connector {
         return id;
     }
 
-    public List<String> getHistoryCommitList() {
+    public List<Alignment> getHistoryCommitList() {
         return historyCommitList;
     }
 
-    public void setHistoryCommitList(List<String> historyCommitList) {
+    public void setHistoryCommitList(List<Alignment> historyCommitList) {
         this.historyCommitList = historyCommitList;
     }
 
-    public void addHistoryCommitList(String historyCommit) {
-        this.historyCommitList.add(historyCommit);
+    public void addHistoryCommitList(String historyCommit, String processInstanceChange, String commitTime, String changeTime, boolean isViolated) {
+        this.historyCommitList.add(new Alignment(historyCommit, processInstanceChange, commitTime, changeTime, isViolated));
     }
 
-    public List<String> getViolatedCommitList() {
-        return violatedCommitList;
+    public void addHistoryCommitList(String historyCommit, String commitTime, boolean isViolated) {
+        this.historyCommitList.add(new Alignment(historyCommit, "", commitTime, "", isViolated));
     }
 
-    public void setViolatedCommitList(List<String> violatedCommitList) {
-        this.violatedCommitList = violatedCommitList;
+    public void addHistoryCommitList(Alignment alignment) {
+        this.historyCommitList.add(alignment);
     }
 
-    public void addViolatedCommitList(String violatedCommit) {
-        this.violatedCommitList.add(violatedCommit);
+    public Alignment findCommitId(String commitId) {
+        for (Alignment alignment: this.historyCommitList) {
+            if (alignment.getCommitId().equals(commitId))
+                return alignment;
+        }
+        return null;
     }
 
     public boolean isMonitoring() {
@@ -99,11 +102,11 @@ public class Connector {
         return monitoringLog;
     }
 
-    public void setMonitoringLog(Map<String, String> monitoringLog) {
-        this.monitoringLog = monitoringLog;
+    public void addMonitoringLog(String moniotringMess) {
+        this.monitoringLog.put(LocalDateTime.now().toString(), moniotringMess);
     }
 
-    public void addMonitoringLog(String monitoringMess) {
-        this.monitoringLog.put(LocalDateTime.now().toString(), monitoringMess);
+    public void setMonitoringLog(Map<String, String> monitoringLog) {
+        this.monitoringLog = monitoringLog;
     }
 }
