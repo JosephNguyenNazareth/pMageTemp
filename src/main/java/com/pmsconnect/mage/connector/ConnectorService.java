@@ -1,7 +1,7 @@
 package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.config.PmsConfig;
-import com.pmsconnect.mage.user.UserPMage;
+import com.pmsconnect.mage.user.Bridge;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -16,9 +16,12 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.pmsconnect.mage.utils.ActionEvent;
 
 @Service
 public class ConnectorService {
@@ -40,10 +43,10 @@ public class ConnectorService {
         return connector;
     }
 
-    public String addNewConnector(UserPMage user) {
-        if (!verifyPmsExist(user))
+    public String addNewConnector(Bridge bridge) {
+        if (!verifyPmsExist(bridge))
             throw new IllegalStateException("Cannot verify pms");
-        Connector connector = new Connector(user);
+        Connector connector = new Connector(bridge);
 
         connectorRepository.save(connector);
 
@@ -51,28 +54,23 @@ public class ConnectorService {
     }
 
     @Transactional
-    public void updateConnector(String connectorId, UserPMage user) {
+    public void updateConnector(String connectorId, Bridge bridge) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
-
-        if (user != null && !user.equals(connector.getUserPMage())) {
-            if (!verifyPmsExist(user))
-                throw new IllegalStateException("Cannot verify pms");
-            connector.setUserPMage(user);
-        }
+        connector.setBridge(bridge);
 
         connectorRepository.save(connector);
     }
 
-    private boolean verifyPmsExist(UserPMage user) {
+    private boolean verifyPmsExist(Bridge bridge) {
         HttpClient client = HttpClients.createDefault();
         try {
-            PmsConfig tmpConfig = new PmsConfig("./src/main/resources/pms_config.json", user.getPmsName());
+            PmsConfig tmpConfig = new PmsConfig("./src/main/resources/pms_config.json", bridge.getPmsName());
 
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
             urlMap.put("url", tmpConfig.getUrlPMS());
-            urlMap.put("projectId", user.getProjectId());
+            urlMap.put("processInstanceId", bridge.getProcessId());
 
             String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
@@ -95,7 +93,7 @@ public class ConnectorService {
             Map<String, String> paramMap = new HashMap<>();
 
             urlMap.put("url", connector.getPmsConfig().getUrlPMS());
-            urlMap.put("projectId", connector.getUserPMage().getProjectId());
+            urlMap.put("processInstanceId", connector.getBridge().getProcessId());
 
             String finalUri = connector.getPmsConfig().buildAPI("verify", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
@@ -115,11 +113,11 @@ public class ConnectorService {
     public String createProcessInstance(String connectorId, String processName) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
-        if (!createPMSProcessInstance(connector, processName, connector.getUserPMage().getRealName()))
+        if (!createPMSProcessInstance(connector, processName, connector.getBridge().getUserNamePms()))
             throw new IllegalStateException("Cannot create new process instance");
         connectorRepository.save(connector);
 
-        return connector.getUserPMage().getProjectId();
+        return connector.getBridge().getProcessId();
     }
 
     private boolean createPMSProcessInstance(Connector connector, String processName, String creatorName) {
@@ -142,7 +140,7 @@ public class ConnectorService {
                 return false;
             else {
                 String responseBody = EntityUtils.toString(getResponse.getEntity());
-                connector.getUserPMage().setProjectId(responseBody);
+                connector.getBridge().setProcessId(responseBody);
                 return true;
             }
         } catch (URISyntaxException | IOException e) {
@@ -166,17 +164,17 @@ public class ConnectorService {
             Map<String, String> paramMap = new HashMap<>();
 
             urlMap.put("url", connector.getPmsConfig().getUrlPMS());
-            urlMap.put("projectId", connector.getUserPMage().getProjectId());
+            urlMap.put("processInstanceId", connector.getBridge().getProcessId());
             paramMap.put("processInstanceState", "true");
 
-            String finalUri = connector.getPmsConfig().buildAPI("changeProjectState", urlMap, paramMap);
+            String finalUri = connector.getPmsConfig().buildAPI("changeProcessState", urlMap, paramMap);
             HttpPut putMethod = new HttpPut(finalUri);
             HttpResponse getResponse = client.execute(putMethod);
 
             int getStatusCode = getResponse.getStatusLine()
                     .getStatusCode();
             if (getStatusCode != 200)
-                throw new IllegalStateException("Cannot close process instance id " + connector.getUserPMage().getProjectId());
+                throw new IllegalStateException("Cannot close process instance id " + connector.getBridge().getProcessId());
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -186,5 +184,22 @@ public class ConnectorService {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
         connectorRepository.delete(connector);
+    }
+
+    public void addActionEventTable(String connectorId, String actionDescription) {
+        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+        connector.setActionEventDescription(actionDescription);
+
+        List<ActionEvent> updateActionEventList = new ArrayList<>();
+        String[] actionEventList = actionDescription.split("\n");
+        for (String actionEventStr : actionEventList) {
+            String[] actionEventToken = actionEventStr.split(",");
+            ActionEvent actionEvent = new ActionEvent(actionEventToken);
+            if (!updateActionEventList.contains(actionEvent))
+                updateActionEventList.add(actionEvent);
+        }
+
+        connector.setActionEventTable(updateActionEventList);
+        connectorRepository.save(connector);
     }
 }

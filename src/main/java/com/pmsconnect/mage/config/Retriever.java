@@ -65,7 +65,7 @@ public class Retriever {
 
     private JSONObject getRepoOrigin(String repoLink) {
         for (int i = 0; i < this.config.size(); i++) {
-            JSONObject jObject = (JSONObject) this.config.get(i);
+            JSONObject jObject =  new JSONObject((LinkedHashMap)this.config.get(i));
             String origin = jObject.get("origin").toString();
             if (repoLink.contains(origin))
                 return jObject;
@@ -74,7 +74,7 @@ public class Retriever {
     }
 
     private String buildAPILinkCommit(String repoLink, JSONObject currentConfig) {
-        JSONObject configAPIInfo = (JSONObject) currentConfig.get("api_info");
+        JSONObject configAPIInfo = new JSONObject((LinkedHashMap) currentConfig.get("api_info"));
         String origin = currentConfig.get("origin").toString();
 
         if (origin.equals("github.com"))
@@ -87,7 +87,7 @@ public class Retriever {
     }
 
     private String buildAPILinkRevertCommit(String commitId, String repoLink, JSONObject currentConfig) {
-        JSONObject configAPIInfo = (JSONObject) currentConfig.get("api_info");
+        JSONObject configAPIInfo = new JSONObject((LinkedHashMap) currentConfig.get("api_info"));
         String origin = currentConfig.get("origin").toString();
 
         if (origin.equals("github.com"))
@@ -100,7 +100,7 @@ public class Retriever {
     }
 
     private JSONArray callAPI(String apiLink, JSONObject currentConfig) {
-        JSONObject configInfo = (JSONObject) currentConfig.get("user_info");
+        JSONObject configInfo = new JSONObject((LinkedHashMap) currentConfig.get("user_info"));
         HttpClient client = HttpClients.createDefault();
         URIBuilder builder = null;
         String auth = configInfo.get("user").toString() + ":" + configInfo.get("token").toString();
@@ -139,7 +139,7 @@ public class Retriever {
                 if (tmp.get(keyword) instanceof String)
                     result = tmp.get(keyword).toString();
                 else
-                    tmp = (JSONObject) tmp.get(keyword);
+                    tmp = new JSONObject((LinkedHashMap) tmp.get(keyword));
             }
         }
 
@@ -147,7 +147,7 @@ public class Retriever {
     }
 
     private List<Dictionary<String, String>> extractInfoCommit(String repoLink, JSONArray originMessage, JSONObject currentConfig) {
-        JSONObject messageInfoConfig = (JSONObject) currentConfig.get("message_info");
+        JSONObject messageInfoConfig = new JSONObject((LinkedHashMap) currentConfig.get("message_info"));
         List<Dictionary<String, String>> extractCommits = new ArrayList<>();
 
         for (Object object : originMessage) {

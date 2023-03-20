@@ -1,6 +1,6 @@
 package com.pmsconnect.mage.connector;
 
-import com.pmsconnect.mage.user.UserPMage;
+import com.pmsconnect.mage.user.Bridge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,15 +30,16 @@ public class ConnectorController {
     }
 
     @PostMapping(path = "/add")
-    public String addNewConnector(@RequestBody UserPMage user) {
-        return connectorService.addNewConnector(user);
+    public String addNewConnector(
+            @RequestBody Bridge bridge) {
+        return connectorService.addNewConnector(bridge);
     }
 
     @PutMapping(path = "/update/{connectorId}")
     public void updateConnector(
             @PathVariable("connectorId") String connectorId,
-            @RequestBody(required = false) UserPMage user) {
-        connectorService.updateConnector(connectorId, user);
+            @RequestBody(required = false) Bridge bridge) {
+        connectorService.updateConnector(connectorId, bridge);
     }
 
     @DeleteMapping(path = "/delete/{connectorId}")
@@ -76,5 +77,11 @@ public class ConnectorController {
     public List<Dictionary<String, String>> getLatestCommit(
             @PathVariable("connectorId") String connectorId) {
         return connectorAsyncService.getAllCommit(connectorId);
+    }
+
+    @PutMapping(path = "{connectorId}/add-table")
+    public void addActionTable(@PathVariable("connectorId") String connectorId,
+                               @RequestParam String actionDescription) {
+        connectorService.addActionEventTable(connectorId, actionDescription);
     }
 }

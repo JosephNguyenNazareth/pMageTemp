@@ -2,7 +2,8 @@ package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.config.Retriever;
-import com.pmsconnect.mage.user.UserPMage;
+import com.pmsconnect.mage.user.Bridge;
+import com.pmsconnect.mage.utils.ActionEvent;
 import com.pmsconnect.mage.utils.Alignment;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,24 +15,27 @@ import java.util.*;
 public class Connector {
     @Id
     private String id;
-    private UserPMage userPMage;
+    private Bridge bridge;
+    private List<ActionEvent> actionEventTable;
+    private String actionEventDescription;
     private List<Alignment> historyCommitList;
     private Map<String, String> monitoringLog;
-    private boolean isMonitoring;
+    private boolean monitoring;
     private Retriever retriever;
     private PmsConfig pmsConfig;
 
     public Connector() {
     }
 
-    public Connector(UserPMage userPMage) {
+    public Connector(Bridge bridge) {
         this.id = UUID.randomUUID().toString();
-        this.userPMage = userPMage;
         this.historyCommitList = new ArrayList<>();
         this.monitoringLog = new HashMap<>();
-        this.isMonitoring = false;
+        this.actionEventTable = new ArrayList<>();
+        this.monitoring = false;
+        this.bridge = bridge;
         this.retriever = new Retriever("./src/main/resources/repo_config.json");
-        this.pmsConfig = new PmsConfig("./src/main/resources/pms_config.json", this.userPMage.getPmsName());
+        this.pmsConfig = new PmsConfig("./src/main/resources/pms_config.json", this.getBridge().getPmsName());
     }
 
     public String getId() {
@@ -67,11 +71,11 @@ public class Connector {
     }
 
     public boolean isMonitoring() {
-        return isMonitoring;
+        return monitoring;
     }
 
     public void setMonitoring(boolean monitoring) {
-        isMonitoring = monitoring;
+        this.monitoring = monitoring;
     }
 
     public Retriever getRetriever() {
@@ -90,23 +94,51 @@ public class Connector {
         this.pmsConfig = pmsConfig;
     }
 
-    public UserPMage getUserPMage() {
-        return userPMage;
-    }
-
-    public void setUserPMage(UserPMage userPMage) {
-        this.userPMage = userPMage;
-    }
-
     public Map<String, String> getMonitoringLog() {
         return monitoringLog;
     }
 
-    public void addMonitoringLog(String moniotringMess) {
-        this.monitoringLog.put(LocalDateTime.now().toString(), moniotringMess);
+    public void addMonitoringLog(String monitoringMess) {
+        this.monitoringLog.put(LocalDateTime.now().toString(), monitoringMess);
     }
 
     public void setMonitoringLog(Map<String, String> monitoringLog) {
         this.monitoringLog = monitoringLog;
+    }
+
+    public Bridge getBridge() {
+        return bridge;
+    }
+
+    public void setBridge(Bridge bridge) {
+        this.bridge = bridge;
+    }
+
+    public List<ActionEvent> getActionEventTable() {
+        return actionEventTable;
+    }
+
+    public void addActionEvent(ActionEvent actionEvent) {
+        this.actionEventTable.add(actionEvent);
+    }
+
+    public void setActionEventTable(List<ActionEvent> actionEventTable) {
+        this.actionEventTable = actionEventTable;
+    }
+
+    public String getActionEventDescription() {
+        return actionEventDescription;
+    }
+
+    public void setActionEventDescription(String actionEventDescription) {
+        this.actionEventDescription = actionEventDescription;
+    }
+
+    public boolean existActionEventType(String eventType) {
+        for (ActionEvent actionEvent : this.getActionEventTable()) {
+            if (actionEvent.getEvent().equals(eventType))
+                return true;
+        }
+        return false;
     }
 }
