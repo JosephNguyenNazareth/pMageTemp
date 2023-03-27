@@ -14,9 +14,10 @@ public class Bridge {
     private String userNamePms;
     private String passwordPms;
     private String pmsName;
+    private String pmsUrl;
     private String processId;
 
-    public Bridge(String appName, String userNameApp, String passwordApp, String projectLink, String projectDir, String userNamePms, String passwordPms, String pmsName, String processId) {
+    public Bridge(String appName, String userNameApp, String passwordApp, String projectLink, String projectDir, String userNamePms, String passwordPms, String pmsName, String pmsUrl, String processId) {
         this.appName = appName;
         this.userNameApp = userNameApp;
         this.passwordApp = passwordApp;
@@ -25,6 +26,7 @@ public class Bridge {
         this.userNamePms = userNamePms;
         this.passwordPms = passwordPms;
         this.pmsName = pmsName;
+        this.pmsUrl = pmsUrl;
         this.processId = processId;
     }
 
@@ -98,5 +100,13 @@ public class Bridge {
 
     public void setProcessId(String processId) {
         this.processId = processId;
+    }
+
+    public String getPmsUrl() {
+        return pmsUrl;
+    }
+
+    public void setPmsUrl(String pmsUrl) {
+        this.pmsUrl = pmsUrl;
     }
 }

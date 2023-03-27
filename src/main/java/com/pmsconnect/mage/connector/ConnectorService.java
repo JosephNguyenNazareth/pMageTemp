@@ -153,7 +153,7 @@ public class ConnectorService {
 
         connector.setMonitoring(false);
         connectorRepository.save(connector);
-        this.closeProcess(connector);
+//        this.closeProcess(connector);
         System.out.println("Stop monitoring connector with id " + connectorId);
     }
 

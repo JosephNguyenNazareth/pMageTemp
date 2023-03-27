@@ -108,7 +108,7 @@
         }
     },
     {
-        "pms" : "bonitasoft",
+        "pms" : "bonita",
         "url" : "http://localhost:1662/bonita",
         "user_info" : {
             "method" : "x-www-form-urlencoded",
