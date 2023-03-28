@@ -1,5 +1,9 @@
 package com.pmsconnect.mage.user;
 
+import com.pmsconnect.mage.connector.Connector;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 public class Bridge {
@@ -28,6 +32,7 @@ public class Bridge {
         this.pmsName = pmsName;
         this.pmsUrl = pmsUrl;
         this.processId = processId;
+        this.loadProperties();
     }
 
     public String getAppName() {
@@ -108,5 +113,22 @@ public class Bridge {
 
     public void setPmsUrl(String pmsUrl) {
         this.pmsUrl = pmsUrl;
+    }
+
+    public void loadProperties() {
+        try {
+            InputStream file = Connector.class.getResourceAsStream("/application.properties");
+            if (file!=null) System.getProperties().load(file);
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading application.properties", e);
+        }
+    }
+
+    public String getPMSConfig() {
+        return System.getProperty("pmsconfig");
+    }
+
+    public String getAppConfig() {
+        return System.getProperty("appconfig");
     }
 }

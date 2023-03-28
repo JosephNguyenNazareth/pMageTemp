@@ -129,7 +129,7 @@ public class ConnectorAsyncService {
     public List<Dictionary<String, String>> getAllCommit(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
-        String configPath =  "./src/main/resources/repo_config.json";
+        String configPath =  connector.getBridge().getAppConfig();
         Retriever retriever = new Retriever(configPath);
         retriever.setRepoLink(connector.getBridge().getProjectLink());
         return retriever.getLatestCommitLog(true);
@@ -294,7 +294,7 @@ public class ConnectorAsyncService {
     }
 
     public void alertCommit(String commitId, Connector connector, StringBuilder monitoringMess) {
-//        String configPath =  "./src/main/resources/repo_config.json";
+//        String configPath =  "./src/main/resources/app_config.json";
 //        Retriever retriever = new Retriever(configPath);
 //        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
 

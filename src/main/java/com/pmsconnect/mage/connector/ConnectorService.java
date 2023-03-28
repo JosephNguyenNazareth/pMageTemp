@@ -64,7 +64,7 @@ public class ConnectorService {
     private boolean verifyPmsExist(Bridge bridge) {
         HttpClient client = HttpClients.createDefault();
         try {
-            PmsConfig tmpConfig = new PmsConfig("./src/main/resources/pms_config.json", bridge.getPmsName());
+            PmsConfig tmpConfig = new PmsConfig(bridge.getPMSConfig(), bridge.getPmsName());
 
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();

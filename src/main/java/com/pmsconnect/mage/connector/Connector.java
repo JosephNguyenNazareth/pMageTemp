@@ -8,6 +8,8 @@ import com.pmsconnect.mage.utils.Alignment;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -27,6 +29,15 @@ public class Connector {
     public Connector() {
     }
 
+    public void loadProperties() {
+        try {
+            InputStream file = Connector.class.getResourceAsStream("/application.properties");
+            if (file!=null) System.getProperties().load(file);
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading application.properties", e);
+        }
+    }
+
     public Connector(Bridge bridge) {
         this.id = UUID.randomUUID().toString();
         this.historyCommitList = new ArrayList<>();
@@ -34,8 +45,9 @@ public class Connector {
         this.actionEventTable = new ArrayList<>();
         this.monitoring = false;
         this.bridge = bridge;
-        this.retriever = new Retriever("./src/main/resources/repo_config.json");
-        this.pmsConfig = new PmsConfig("./src/main/resources/pms_config.json", this.getBridge().getPmsName());
+        this.loadProperties();
+        this.retriever = new Retriever(System.getProperty("appconfig"));
+        this.pmsConfig = new PmsConfig(System.getProperty("appconfig"), this.getBridge().getPmsName());
     }
 
     public String getId() {
