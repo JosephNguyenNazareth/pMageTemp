@@ -192,6 +192,11 @@ public class ConnectorService {
 
         List<ActionEvent> updateActionEventList = new ArrayList<>();
         String[] actionEventList = actionDescription.split("\n");
+
+        if (actionEventList.length == 1)
+            if (actionEventList[0].equals(""))
+                return;
+
         for (String actionEventStr : actionEventList) {
             String[] actionEventToken = actionEventStr.split(",");
             ActionEvent actionEvent = new ActionEvent(actionEventToken);

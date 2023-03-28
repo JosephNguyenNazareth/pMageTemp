@@ -204,7 +204,7 @@ public class ConnectorAsyncService {
 
         boolean found = false;
         for (ActionEvent actionEvent : connector.getActionEventTable()) {
-            if (commitMessage.contains(actionEvent.getEventDetail())) {
+            if (commitMessage.contains(actionEvent.getActionDetail())) {
                 found = true;
                 taskDetect = actionEvent.getTask();
                 break;
