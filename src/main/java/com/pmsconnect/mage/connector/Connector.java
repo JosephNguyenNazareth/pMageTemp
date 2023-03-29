@@ -47,7 +47,7 @@ public class Connector {
         this.bridge = bridge;
         this.loadProperties();
         this.retriever = new Retriever(System.getProperty("appconfig"));
-        this.pmsConfig = new PmsConfig(System.getProperty("appconfig"), this.getBridge().getPmsName());
+        this.pmsConfig = new PmsConfig(System.getProperty("pmsconfig"), this.getBridge().getPmsName());
     }
 
     public String getId() {
