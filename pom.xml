@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.pmsconnect</groupId>
 	<artifactId>pmage</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>v2</version>
 	<name>pmage</name>
 	<description>pMage project Spring Boot</description>
 	<properties>
@@ -48,17 +48,6 @@
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
-		</dependency>
-		<!--	Protege api	-->
-		<dependency>
-			<groupId>edu.stanford.protege</groupId>
-			<artifactId>webprotege-backend-api</artifactId>
-			<version>0.9.1</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.owlapi</groupId>
-			<artifactId>org.semanticweb.hermit</artifactId>
-			<version>1.4.5.519</version>
 		</dependency>
 	</dependencies>
 

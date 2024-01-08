@@ -4,7 +4,6 @@ import com.pmsconnect.mage.connector.Connector;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 public class Bridge {
     // app connection
@@ -117,7 +116,7 @@ public class Bridge {
 
     public void loadProperties() {
         try {
-            InputStream file = Connector.class.getResourceAsStream("/application.properties");
+            InputStream file = Connector.class.getResourceAsStream("/config/application.properties");
             if (file!=null) System.getProperties().load(file);
         } catch (IOException e) {
             throw new RuntimeException("Error loading application.properties", e);

@@ -31,7 +31,7 @@ public class Connector {
 
     public void loadProperties() {
         try {
-            InputStream file = Connector.class.getResourceAsStream("/application.properties");
+            InputStream file = Connector.class.getResourceAsStream("/config/application.properties");
             if (file!=null) System.getProperties().load(file);
         } catch (IOException e) {
             throw new RuntimeException("Error loading application.properties", e);
