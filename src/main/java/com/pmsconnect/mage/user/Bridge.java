@@ -14,9 +14,9 @@ public class Bridge {
     private String projectDir;
 
     // pms connection
+    private String pmsName;
     private String userNamePms;
     private String passwordPms;
-    private String pmsName;
     private String pmsUrl;
     private String processId;
 

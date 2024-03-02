@@ -103,7 +103,7 @@ public class ConnectorService {
                     .getStatusCode();
             if (getStatusCode == 200)
                 return EntityUtils.toString(getResponse.getEntity());
-            return "";
+            return getResponse.toString();
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -206,5 +206,16 @@ public class ConnectorService {
 
         connector.setActionEventTable(updateActionEventList);
         connectorRepository.save(connector);
+    }
+
+    public void generateActionEventTable(String connectorId) {
+        // call get process instance from the pms
+        // get the task list
+
+
+        // transfer the task list into NLP engine to get the keywords
+
+
+        // generate the action linkage table
     }
 }

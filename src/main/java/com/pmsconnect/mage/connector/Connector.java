@@ -62,12 +62,12 @@ public class Connector {
         this.historyCommitList = historyCommitList;
     }
 
-    public void addHistoryCommitList(String historyCommit, String processInstanceChange, String commitTime, String changeTime, boolean isViolated) {
-        this.historyCommitList.add(new Alignment(historyCommit, processInstanceChange, commitTime, changeTime, isViolated));
+    public void addHistoryCommitList(String historyCommit, String processInstanceChange, String commitTime, String changeTime, boolean isViolated, String taskFound, String monitoringMessage) {
+        this.historyCommitList.add(new Alignment(historyCommit, processInstanceChange, commitTime, changeTime, isViolated, taskFound, monitoringMessage));
     }
 
     public void addHistoryCommitList(String historyCommit, String commitTime, boolean isViolated) {
-        this.historyCommitList.add(new Alignment(historyCommit, "", commitTime, "", isViolated));
+        this.historyCommitList.add(new Alignment(historyCommit, "", commitTime, "", isViolated, "", ""));
     }
 
     public void addHistoryCommitList(Alignment alignment) {

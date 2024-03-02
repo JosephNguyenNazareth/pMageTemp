@@ -3,19 +3,23 @@ package com.pmsconnect.mage.utils;
 public class Alignment {
     private String commitId;
     private String processInstanceChange;
-    private String  commitTime;
+    private String commitTime;
     private String processInstanceChangeTime;
+    private String taskFound;
+    private String monitoringMessage;
     private Boolean isViolated;
 
     public Alignment() {
     }
 
-    public Alignment(String commitId, String processInstanceChange, String commitTime, String processInstanceChangeTime, Boolean isViolated) {
+    public Alignment(String commitId, String processInstanceChange, String commitTime, String processInstanceChangeTime, Boolean isViolated, String taskFound, String monitoringMessage) {
         this.commitId = commitId;
         this.processInstanceChange = processInstanceChange;
         this.commitTime = commitTime;
         this.processInstanceChangeTime = processInstanceChangeTime;
         this.isViolated = isViolated;
+        this.taskFound = taskFound;
+        this.monitoringMessage = monitoringMessage;
     }
 
     public String getCommitId() {
@@ -56,5 +60,21 @@ public class Alignment {
 
     public void setViolated(Boolean violated) {
         isViolated = violated;
+    }
+
+    public String getTaskFound() {
+        return taskFound;
+    }
+
+    public void setTaskFound(String taskFound) {
+        this.taskFound = taskFound;
+    }
+
+    public String getMonitoringMessage() {
+        return monitoringMessage;
+    }
+
+    public void setMonitoringMessage(String monitoringMessage) {
+        this.monitoringMessage = monitoringMessage;
     }
 }

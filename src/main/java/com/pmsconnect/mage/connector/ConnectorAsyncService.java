@@ -147,12 +147,13 @@ public class ConnectorAsyncService {
 
         // if the latest commit is already in the list of retrieved commit, skip ths later work
         if (connector.findCommitId(commitId) != null) {
-            monitoringMess.append("Commit is up-to-date");
+            String currentMonitoringMessage = "Commit is up-to-date";
+            monitoringMess.append(currentMonitoringMessage);
             String[] updatePMS = currentProcessInstanceState(connector, monitoringMess);
             if (updatePMS != null) {
                 boolean noViolated = compareLatestUpdate(connector, updatePMS);
                 if (!noViolated) {
-                    connector.addHistoryCommitList(new Alignment("", updatePMS[0], "", updatePMS[1], true));
+                    connector.addHistoryCommitList(new Alignment("", updatePMS[0], "", updatePMS[1], true, "", currentMonitoringMessage));
                 }
             }
             return;
@@ -164,12 +165,6 @@ public class ConnectorAsyncService {
             return;
 
         String[] updatePMS = currentProcessInstanceState(connector, monitoringMess);
-        if (updatePMS != null) {
-            boolean noViolated = compareLatestUpdate(connector, updatePMS);
-            if (!noViolated) {
-                connector.addHistoryCommitList(new Alignment(commitId,updatePMS[0], commitTime, updatePMS[1], false));
-            }
-        }
         String taskFound = detectTaskFromCommit(connector, commitMessage, monitoringMess);
 
         // skip reverted commit
@@ -181,6 +176,13 @@ public class ConnectorAsyncService {
             alertCommit(commitId, connector, monitoringMess);
         } else {
             validateCommit(connector, commitMessage, taskFound, commitId, monitoringMess);
+        }
+
+        if (updatePMS != null) {
+            boolean noViolated = compareLatestUpdate(connector, updatePMS);
+            if (!noViolated) {
+                connector.addHistoryCommitList(new Alignment(commitId, updatePMS[0], commitTime, updatePMS[1], false, taskFound, monitoringMess.toString()));
+            }
         }
 
         connectorRepository.save(connector);
