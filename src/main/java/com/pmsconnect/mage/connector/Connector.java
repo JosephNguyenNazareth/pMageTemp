@@ -27,11 +27,12 @@ public class Connector {
     private PmsConfig pmsConfig;
 
     public Connector() {
+        this.loadProperties();
     }
 
     public void loadProperties() {
         try {
-            InputStream file = Connector.class.getResourceAsStream("/config/application.properties");
+            InputStream file = Connector.class.getResourceAsStream("/application.properties");
             if (file!=null) System.getProperties().load(file);
         } catch (IOException e) {
             throw new RuntimeException("Error loading application.properties", e);

@@ -10,16 +10,17 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.pmsconnect.mage.utils.ActionEvent;
 
@@ -103,7 +104,7 @@ public class ConnectorService {
                     .getStatusCode();
             if (getStatusCode == 200)
                 return EntityUtils.toString(getResponse.getEntity());
-            return getResponse.toString();
+            return "";
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -208,14 +209,66 @@ public class ConnectorService {
         connectorRepository.save(connector);
     }
 
-    public void generateActionEventTable(String connectorId) {
+    public List<String> getTaskList(Connector connector ) {
+        HttpClient client = HttpClients.createDefault();
+        try {
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+
+            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("processInstanceId", connector.getBridge().getProcessId());
+
+            String finalUri = connector.getPmsConfig().buildAPI("getTask", urlMap, paramMap);
+            HttpGet getMethod = new HttpGet(finalUri);
+            HttpResponse getResponse = client.execute(getMethod);
+
+            int getStatusCode = getResponse.getStatusLine()
+                    .getStatusCode();
+            if (getStatusCode == 200) {
+                String content = EntityUtils.toString(getResponse.getEntity());
+
+                if (connector.getBridge().getPmsName().equals("core-bape")) {
+                    content = content.replace("[","").replace("]","").replace("\"","");
+                    return Arrays.asList(content.split(","));
+                }
+//                JSONParser parser = new JSONParser();
+//                Object obj = parser.parse(content);
+//                JSONArray contentJSON = (JSONArray) obj;
+//                for (JSONObject)
+            }
+//                return EntityUtils.toString(getResponse.getEntity());
+            return null;
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String generateActionEventTable(String connectorId) {
+        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + " does not exist."));
+
         // call get process instance from the pms
         // get the task list
-
+        List<String> taskList = getTaskList(connector);
+        System.out.println(taskList);
 
         // transfer the task list into NLP engine to get the keywords
-
+        List<ActionEvent> listActionEvent = new ArrayList<>();
+        for (String taskName : taskList) {
+            // example by taking substring!!!
+            // TODO: connect to a NLP service to get the keywords
+            String suggestedKeywords = taskName.substring(2);
+            ActionEvent actionEvent = new ActionEvent("push-commit", suggestedKeywords, "endTask", taskName);
+            listActionEvent.add(actionEvent);
+        }
 
         // generate the action linkage table
+        StringBuilder actionLinkage = new StringBuilder();
+        for (int i = 0; i < listActionEvent.size(); i++) {
+            actionLinkage.append(listActionEvent.get(i).toString());
+            if (i < listActionEvent.size() - 1)
+                actionLinkage.append("\n");
+        }
+
+        return actionLinkage.toString();
     }
 }

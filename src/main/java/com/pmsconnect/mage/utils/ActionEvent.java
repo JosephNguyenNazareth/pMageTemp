@@ -67,4 +67,9 @@ public class ActionEvent {
                 && otherActionEvent.getActionDetail().equals(this.getActionDetail())
                 && otherActionEvent.getTask().equals(this.getTask());
     }
+
+    @Override
+    public String toString() {
+        return action + ", " + actionDetail + ", " + event + ", " + task;
+    }
 }

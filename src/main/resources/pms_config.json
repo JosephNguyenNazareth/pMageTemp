@@ -1,0 +1,150 @@
+[
+    {
+        "pms": "core-bape",
+        "url": "localhost:8081/api/process-instance",
+        "api_info": {
+            "verify": {
+                "method" : "GET",
+                "url" : "{url}/{processInstanceId}",
+                "param" : []
+            },
+            "createProcess": {
+                "method" : "POST",
+                "url" : "{url}",
+                "param" : ["processName","creatorName"]
+            },
+            "changeProcessState" : {
+                "method" : "PUT",
+                "url" : "{url}/{processInstanceId}/change-state",
+                "param" : ["processInstanceState"]
+            },
+            "getTask" : {
+                "method" : "GET",
+                "url" : "{url}/{processInstanceId}/get-task",
+                "param" : []
+            },
+            "validateTask" : {
+                "method" : "GET",
+                "url" : "{url}/{processInstanceId}/validate-task",
+                "param" : ["taskName","actorName"]
+            },
+            "startTask" : {
+                "method" : "PUT",
+                "url" : "{url}/{processInstanceId}/start-task",
+                "param" : ["taskName","actorName"]
+            },
+            "endTask" : {
+                "method" : "PUT",
+                "url" : "{url}/{processInstanceId}/end-task",
+                "param" : ["taskId"]
+            }
+        }
+    },
+    {
+        "pms": "core-bape2",
+        "url": "https://corebape2.josephnazareth.repl.co/api/process-instance",
+        "api_info": {
+            "verify": {
+                "method" : "GET",
+                "url" : "{url}/{processInstanceId}",
+                "param" : []
+            },
+            "createProcess": {
+                "method" : "POST",
+                "url" : "{url}",
+                "param" : ["processName","creatorName"]
+            },
+            "changeProcessState" : {
+                "method" : "PUT",
+                "url" : "{url}/{processInstanceId}/change-state",
+                "param" : ["processInstanceState"]
+            },
+            "validateTask" : {
+                "method" : "GET",
+                "url" : "{url}/{processInstanceId}/validate-task",
+                "param" : ["taskName","actorName"]
+            },
+            "startTask" : {
+                "method" : "PUT",
+                "url" : "{url}/{processInstanceId}/start-task",
+                "param" : ["taskName","actorName"]
+            },
+            "endTask" : {
+                "method" : "PUT",
+                "url" : "{url}/{processInstanceId}/end-task",
+                "param" : ["taskId"]
+            }
+        }
+    },
+    {
+        "pms" : "jBPM",
+        "url" : "http://localhost:8080/kie-server/services/rest",
+        "user_info" : {
+            "method" : "Basic Auth",
+            "username" : "wbadmin",
+            "password" : "wbadmin"
+        },
+        "api_info": {
+            "verify": {
+                "method" : "GET",
+                "url" : "{url}/server/queries/processes/instances/{processInstanceId}",
+                "param" : []
+            },
+            "createProcess": {
+                "method" : "POST",
+                "url" : "{url}/server/containers/{containerId}/processes/{processName}/instances",
+                "param" : []
+            },
+            "validateTask" : {
+                "method" : "GET",
+                "url" : "{url}/server/containers/{containerId}/tasks/{taskInstanceId}",
+                "param" : []
+            },
+            "startTask" : {
+                "method" : "PUT",
+                "url" : "{url}/server/containers/{containerId}/tasks/{taskInstanceId}/states/started",
+                "param" : []
+            },
+            "endTask" : {
+                "method" : "PUT",
+                "url" : "{url}/server/containers/{containerId}/tasks/{taskInstanceId}/states/completed",
+                "param" : []
+            }
+        }
+    },
+    {
+        "pms" : "bonita",
+        "url" : "http://localhost:1662/bonita",
+        "user_info" : {
+            "method" : "x-www-form-urlencoded",
+            "username" : "walter.bates",
+            "password" : "walter",
+            "redirect" : "false"
+        },
+        "api_info": {
+            "verify": {
+                "method" : "GET",
+                "url" : "{url}/API/bpm/case/{processInstanceId}",
+                "param" : []
+            },
+            "createProcess": {
+                "method" : "POST",
+                "url" : "{url}/API/bpm/process/{processId}/instantiation",
+                "param" : []
+            },
+            "validateTask" : {
+                "method" : "GET",
+                "url" : "{url}/API/bpm/task/{taskInstanceId}",
+                "param" : []
+            },
+            "endTask" : {
+                "method" : "PUT",
+                "url" : "{url}API/bpm/task/{taskInstanceId}",
+                "param" : [],
+                "body" : [
+                    {"state" :  "completed"}
+                ]
+            }
+        }
+    }
+]

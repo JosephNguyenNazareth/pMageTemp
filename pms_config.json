@@ -1,7 +1,7 @@
 [
     {
         "pms": "core-bape",
-        "url": "https://corebapeweb.josephnazareth.repl.co/api/process-instance",
+        "url": "localhost:8081/api/process-instance",
         "api_info": {
             "verify": {
                 "method" : "GET",
@@ -17,6 +17,11 @@
                 "method" : "PUT",
                 "url" : "{url}/{processInstanceId}/change-state",
                 "param" : ["processInstanceState"]
+            },
+            "getTask" : {
+                "method" : "GET",
+                "url" : "{url}/{processInstanceId}/get-task",
+                "param" : []
             },
             "validateTask" : {
                 "method" : "GET",
