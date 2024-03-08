@@ -2,6 +2,7 @@ package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.user.Bridge;
+import com.pmsconnect.mage.utils.ExternalService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -243,21 +244,40 @@ public class ConnectorService {
         }
     }
 
+    public List<String> extractKeywords(List<String> taskList) {
+        StringBuilder taskListEntire = new StringBuilder();
+        for (int i = 0; i < taskList.size(); i++) {
+            taskListEntire.append("end task ");
+            taskListEntire.append(taskList.get(i));
+            if (i < taskList.size() - 1)
+                taskListEntire.append(" | ");
+        }
+
+        File directory = new File("./src/main/python");
+        List<String> commands = new ArrayList<>();
+        commands.add("/home/nguyenminhkhoi/mambaforge/envs/fouille/bin/python");
+        commands.add("keyword_extract.py");
+        commands.add("\"" + taskListEntire + "\"");
+        try {
+            String keywords = ExternalService.runCommand(directory, commands);
+            return Arrays.asList(keywords.split(";"));
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     public String generateActionEventTable(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + " does not exist."));
 
         // call get process instance from the pms
         // get the task list
         List<String> taskList = getTaskList(connector);
-        System.out.println(taskList);
 
         // transfer the task list into NLP engine to get the keywords
+        List<String> keywordList = extractKeywords(taskList);
         List<ActionEvent> listActionEvent = new ArrayList<>();
-        for (String taskName : taskList) {
-            // example by taking substring!!!
-            // TODO: connect to a NLP service to get the keywords
-            String suggestedKeywords = taskName.substring(2);
-            ActionEvent actionEvent = new ActionEvent("push-commit", suggestedKeywords, "endTask", taskName);
+        for (int i = 0; i < taskList.size(); i++) {
+            ActionEvent actionEvent = new ActionEvent("push-commit", keywordList.get(i), "endTask", taskList.get(i));
             listActionEvent.add(actionEvent);
         }
 
@@ -268,7 +288,6 @@ public class ConnectorService {
             if (i < listActionEvent.size() - 1)
                 actionLinkage.append("\n");
         }
-
         return actionLinkage.toString();
     }
 }

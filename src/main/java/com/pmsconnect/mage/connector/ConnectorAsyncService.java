@@ -269,7 +269,8 @@ public class ConnectorAsyncService {
                     completeTaskCommitted(connector, taskDetected, commitMessage, monitoringMess);
                     connectorRepository.save(connector);
                 } else {
-                    monitoringMess.append("Task corresponding with commit ").append(commitId).append(" not found\n");
+                    // TODO: AI-aumengted experience should provide users with more profound helpful info
+                    monitoringMess.append("Task corresponding with commit ").append(commitId).append(" not found by the process instance" + connector.getBridge().getProcessId() + "\n");
                     alertCommit(commitId, connector, monitoringMess);
                 }
 //
