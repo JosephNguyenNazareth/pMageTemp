@@ -290,4 +290,29 @@ public class ConnectorService {
         }
         return actionLinkage.toString();
     }
+
+
+    public void loadHistoryCommit(String connectorId) {
+        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + " does not exist."));
+        connector.getRetriever().setRepoLink(connector.getBridge().getProjectLink());
+        List<Dictionary<String, String>> commitList = connector.getRetriever().getLatestCommitLog(true);
+
+
+        for (Dictionary<String, String> commit : commitList) {
+            String commitId = commit.get("id");
+            String commitTime = commit.get("created_at");
+
+            // if this commit is already in the history commit log of that connection
+            if (connector.findCommitId(commitId) != null)
+                continue;
+
+            // skip validating the commit if the connector's owner is not the committer
+            String committerName = commit.get("committer_name");
+            if (!committerName.equals(connector.getBridge().getUserNameApp()))
+                continue;
+
+            connector.addHistoryCommitList(commitId, commitTime, false);
+        }
+        connectorRepository.save(connector);
+    }
 }

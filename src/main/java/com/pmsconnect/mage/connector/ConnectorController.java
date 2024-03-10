@@ -90,4 +90,9 @@ public class ConnectorController {
     public String generateActionTable(@PathVariable("connectorId") String connectorId) {
         return connectorService.generateActionEventTable(connectorId);
     }
+
+    @GetMapping(path = "{connectorId}/history")
+    public void loadHistory(@PathVariable("connectorId") String connectorId) {
+        connectorService.loadHistoryCommit(connectorId);
+    }
 }

@@ -91,40 +91,6 @@ public class ConnectorAsyncService {
         }
     }
 
-    public void retrieveAllCommit(Connector connector, StringBuilder monitoringMess) {
-        connector.getRetriever().setRepoLink(connector.getBridge().getProjectLink());
-        List<Dictionary<String, String>> commitList = connector.getRetriever().getLatestCommitLog(true);
-
-        for (Dictionary<String, String> commit : commitList) {
-            String commitMessage = commit.get("title");
-            String commitId = commit.get("id");
-            String commitTime = commit.get("time");
-
-            // if this commit is already in the history commit log of that connection
-            if (connector.findCommitId(commitId) != null)
-                continue;
-
-            // skip validating the commit if the connector's owner is not the committer
-            String committerName = commit.get("committer_name");
-            if (!committerName.equals(connector.getBridge().getUserNameApp()))
-                continue;
-
-            connector.addHistoryCommitList(commitId, commitTime, false);
-            String taskFound = detectTaskFromCommit(connector, commitMessage, monitoringMess);
-
-            // skip reverted commit
-            if (taskFound.equals("revert")) {
-                detectRevertedCommit(commitMessage, connector);
-            }
-            else if (taskFound.equals("unknown")) {
-                monitoringMess.append("Task unknown\n");
-                alertCommit(commitId, connector, monitoringMess);
-            } else {
-                validateCommit(connector, commitMessage, taskFound, commitId, monitoringMess);
-            }
-        }
-        connectorRepository.save(connector);
-    }
 
     public List<Dictionary<String, String>> getAllCommit(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
