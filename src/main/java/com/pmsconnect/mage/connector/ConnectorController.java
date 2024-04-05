@@ -1,6 +1,7 @@
 package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.user.Bridge;
+import com.pmsconnect.mage.user.PMSConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,19 @@ public class ConnectorController {
     @GetMapping(path = "{connectorId}")
     public Connector getConnector(@PathVariable("connectorId") String connectorId) {
         return connectorService.getConnector(connectorId);
+    }
+
+    @GetMapping(path = "/user/{userName}")
+    public List<Connector> getConnectorsByUserName(@PathVariable("userName") String userName) {
+        return connectorService.getConnectorsByUserName(userName);
+    }
+
+
+    @PostMapping(path = "/add-supp/{connectorId}")
+    public String addSupplementaryConnector(
+            @PathVariable("connectorId") String connectorId,
+            @RequestBody PMSConnection suppPMSConnection) {
+        return connectorService.addSupplementaryConnectors(suppPMSConnection, connectorId);
     }
 
     @PostMapping(path = "/add")
@@ -94,5 +108,15 @@ public class ConnectorController {
     @GetMapping(path = "{connectorId}/history")
     public void loadHistory(@PathVariable("connectorId") String connectorId) {
         connectorService.loadHistoryCommit(connectorId);
+    }
+
+    @GetMapping(path = "pms-config")
+    public List<String> getPMSConfig() {
+        return connectorService.getPMSConfig();
+    }
+
+    @PostMapping(path = "pms-config")
+    public String updatePMSConfig(@RequestBody String pmsConfig) {
+        return connectorService.addPMSConfig(pmsConfig);
     }
 }

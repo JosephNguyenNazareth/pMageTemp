@@ -25,6 +25,7 @@ public class Connector {
     private boolean monitoring;
     private Retriever retriever;
     private PmsConfig pmsConfig;
+    private String userName;
 
     public Connector() {
         this.loadProperties();
@@ -63,11 +64,11 @@ public class Connector {
         this.historyCommitList = historyCommitList;
     }
 
-    public void addHistoryCommitList(String historyCommit, String processInstanceChange, String commitTime, String changeTime, boolean isViolated, String taskFound, String monitoringMessage) {
+    public void addHistoryCommitList(String historyCommit, String processInstanceChange, String commitTime, String changeTime, Boolean isViolated, String taskFound, String monitoringMessage) {
         this.historyCommitList.add(new Alignment(historyCommit, processInstanceChange, commitTime, changeTime, isViolated, taskFound, monitoringMessage));
     }
 
-    public void addHistoryCommitList(String historyCommit, String commitTime, boolean isViolated) {
+    public void addHistoryCommitList(String historyCommit, String commitTime, Boolean isViolated) {
         this.historyCommitList.add(new Alignment(historyCommit, "", commitTime, "", isViolated, "", ""));
     }
 
@@ -141,6 +142,14 @@ public class Connector {
 
     public String getActionEventDescription() {
         return actionEventDescription;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public void setActionEventDescription(String actionEventDescription) {

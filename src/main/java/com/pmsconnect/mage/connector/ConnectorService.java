@@ -1,7 +1,9 @@
 package com.pmsconnect.mage.connector;
 
+import com.pmsconnect.mage.config.PMSConfigManager;
 import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.user.Bridge;
+import com.pmsconnect.mage.user.PMSConnection;
 import com.pmsconnect.mage.utils.ExternalService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -11,9 +13,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +34,7 @@ public class ConnectorService {
     }
 
     public List<Connector> getConnectors() {
+
         return connectorRepository.findAll();
     }
 
@@ -45,6 +45,16 @@ public class ConnectorService {
         return connector;
     }
 
+    public List<Connector> getConnectorsByUserName(String userName) {
+        List<Connector> allConnectors = connectorRepository.findAll();
+        List<Connector> userConnectors = new ArrayList<>();
+        for (Connector connector: allConnectors) {
+            if (connector.getUserName().equals(userName))
+                userConnectors.add(connector);
+        }
+        return userConnectors;
+    }
+
     public String addNewConnector(Bridge bridge) {
         if (!verifyPmsExist(bridge))
             throw new IllegalStateException("Cannot verify pms");
@@ -53,6 +63,18 @@ public class ConnectorService {
         connectorRepository.save(connector);
 
         return connector.getId();
+    }
+
+    public String addSupplementaryConnectors(PMSConnection suppPMSConnection, String connectorId) {
+        if (!verifyPmsExist(suppPMSConnection))
+            throw new IllegalStateException("Cannot verify pms");
+
+        Connector baseConnector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        Connector suppConnector = new Connector(new Bridge(baseConnector, suppPMSConnection));
+        connectorRepository.save(suppConnector);
+
+        return suppConnector.getId();
     }
 
     @Transactional
@@ -73,6 +95,29 @@ public class ConnectorService {
 
             urlMap.put("url", tmpConfig.getUrlPMS());
             urlMap.put("processInstanceId", bridge.getProcessId());
+
+            String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
+            HttpGet getMethod = new HttpGet(finalUri);
+            HttpResponse getResponse = client.execute(getMethod);
+
+            int getStatusCode = getResponse.getStatusLine()
+                    .getStatusCode();
+            return getStatusCode == 200;
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean verifyPmsExist(PMSConnection pmsConnection) {
+        HttpClient client = HttpClients.createDefault();
+        try {
+            PmsConfig tmpConfig = new PmsConfig(pmsConnection.getPMSConfig(), pmsConnection.getPmsName());
+
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+
+            urlMap.put("url", tmpConfig.getUrlPMS());
+            urlMap.put("processInstanceId", pmsConnection.getProcessId());
 
             String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
@@ -314,5 +359,26 @@ public class ConnectorService {
             connector.addHistoryCommitList(commitId, commitTime, false);
         }
         connectorRepository.save(connector);
+    }
+
+    public void loadProperties() {
+        try {
+            InputStream file = Connector.class.getResourceAsStream("/application.properties");
+            if (file!=null) System.getProperties().load(file);
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading application.properties", e);
+        }
+    }
+
+    public List<String> getPMSConfig() {
+        this.loadProperties();
+        PMSConfigManager pmsManager = new PMSConfigManager(System.getProperty("pmsconfig"));
+        return pmsManager.getListPMSName();
+    }
+
+    public String addPMSConfig(String pmsConfig) {
+        this.loadProperties();
+        PMSConfigManager pmsManager = new PMSConfigManager(System.getProperty("pmsconfig"));
+        return pmsManager.addPMSConfig(pmsConfig);
     }
 }

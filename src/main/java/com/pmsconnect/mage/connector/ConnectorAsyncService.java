@@ -86,7 +86,7 @@ public class ConnectorAsyncService {
 
     private void notifyViolatedCommit(Connector connector, StringBuilder monitoringMess) {
         for (Alignment align : connector.getHistoryCommitList()) {
-            if (align.getViolated())
+            if (align.getViolated().equals(false))
                 alertCommit(align.getCommitId(), connector, monitoringMess);
         }
     }

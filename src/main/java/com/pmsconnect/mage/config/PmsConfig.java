@@ -7,7 +7,6 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
 import java.net.URISyntaxException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class PmsConfig {
@@ -15,10 +14,20 @@ public class PmsConfig {
     private JSONObject config;
     private String configPath;
 
+    public PmsConfig() {
+
+    }
+
     public PmsConfig(String configPath, String pms) {
         this.configPath = configPath;
         this.pms = pms;
         this.readConfig();
+    }
+
+    public PmsConfig(String configPath, String pms, JSONObject config) {
+        this.configPath = configPath;
+        this.pms = pms;
+        this.config = config;
     }
 
     public String getPms() {
@@ -67,11 +76,11 @@ public class PmsConfig {
     }
 
     public String buildAPI(String function, Map<String, String> url, Map<String, String> param) throws URISyntaxException {
-        JSONObject infoAPI = new JSONObject((LinkedHashMap)this.config.get("api_info"));
+        JSONObject infoAPI = (JSONObject) this.config.get("api_info");
         if (!infoAPI.containsKey(function))
             return "";
 
-        JSONObject functionInfo = new JSONObject((LinkedHashMap) infoAPI.get(function));
+        JSONObject functionInfo = (JSONObject) infoAPI.get(function);
 
         String urlToBeReplaced = functionInfo.get("url").toString();
         int index = urlToBeReplaced.indexOf("{");

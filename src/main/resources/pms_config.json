@@ -1,7 +1,7 @@
 [
     {
         "pms": "core-bape",
-        "url": "localhost:8081/api/process-instance",
+        "url": "http://localhost:8081/api/process-instance",
         "api_info": {
             "verify": {
                 "method" : "GET",

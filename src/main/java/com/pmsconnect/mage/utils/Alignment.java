@@ -7,7 +7,7 @@ public class Alignment {
     private String processInstanceChangeTime;
     private String taskFound;
     private String monitoringMessage;
-    private Boolean isViolated;
+    private Boolean violated;
 
     public Alignment() {
     }
@@ -17,7 +17,7 @@ public class Alignment {
         this.processInstanceChange = processInstanceChange;
         this.commitTime = commitTime;
         this.processInstanceChangeTime = processInstanceChangeTime;
-        this.isViolated = isViolated;
+        this.violated = isViolated;
         this.taskFound = taskFound;
         this.monitoringMessage = monitoringMessage;
     }
@@ -55,11 +55,11 @@ public class Alignment {
     }
 
     public Boolean getViolated() {
-        return isViolated;
+        return violated;
     }
 
     public void setViolated(Boolean violated) {
-        isViolated = violated;
+        violated = violated;
     }
 
     public String getTaskFound() {
