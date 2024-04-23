@@ -114,32 +114,100 @@
     },
     {
         "pms" : "bonita",
-        "url" : "http://localhost:1662/bonita",
-        "user_info" : {
-            "method" : "x-www-form-urlencoded",
-            "username" : "walter.bates",
-            "password" : "walter",
-            "redirect" : "false"
-        },
+        "url" : "http://localhost:8080/bonita",
         "api_info": {
+            "login" : {
+                "method" : "POST",
+                "url" : "{url}/loginservice",
+                "header" : {
+                    "fixed": {
+                        "Content-type": "application/x-www-form-urlencoded"
+                    }
+                },
+                "body" : ["username", "password"],
+                "return" : {
+                    "JSESSIONID":  {
+                        "header": "Set-Cookie"
+                    },
+                    "X-Bonita-API-Token":  {
+                        "header": "Set-Cookie"
+                    }
+                }
+            },
             "verify": {
                 "method" : "GET",
                 "url" : "{url}/API/bpm/case/{processInstanceId}",
+                "cookie": {
+                    "dynamic": {
+                        "JSESSIONID": {
+                            "login" : "return"
+                        }
+                    }
+                },
+                "header": {
+                    "dynamic": {
+                        "X-Bonita-API-Token": {
+                            "login" : "return"
+                        }
+                    }
+                },
                 "param" : []
             },
             "createProcess": {
                 "method" : "POST",
                 "url" : "{url}/API/bpm/process/{processId}/instantiation",
+                "cookie": {
+                    "dynamic": {
+                        "JSESSIONID": {
+                            "login" : "return"
+                        }
+                    }
+                },
+                "header": {
+                    "dynamic": {
+                        "X-Bonita-API-Token": {
+                            "login" : "return"
+                        }
+                    }
+                },
                 "param" : []
             },
             "validateTask" : {
                 "method" : "GET",
                 "url" : "{url}/API/bpm/task/{taskInstanceId}",
+                "cookie": {
+                    "dynamic": {
+                        "JSESSIONID": {
+                            "login" : "return"
+                        }
+                    }
+                },
+                "header": {
+                    "dynamic": {
+                        "X-Bonita-API-Token": {
+                            "login" : "return"
+                        }
+                    }
+                },
                 "param" : []
             },
             "endTask" : {
                 "method" : "PUT",
                 "url" : "{url}API/bpm/task/{taskInstanceId}",
+                "cookie": {
+                    "dynamic": {
+                        "JSESSIONID": {
+                            "login" : "return"
+                        }
+                    }
+                },
+                "header": {
+                    "dynamic": {
+                        "X-Bonita-API-Token": {
+                            "login" : "return"
+                        }
+                    }
+                },
                 "param" : [],
                 "body" : [
                     {"state" :  "completed"}

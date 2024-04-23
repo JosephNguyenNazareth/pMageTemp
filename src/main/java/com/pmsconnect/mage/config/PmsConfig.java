@@ -7,6 +7,8 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PmsConfig {
@@ -103,5 +105,54 @@ public class PmsConfig {
         }
 
         return builder.build().toString();
+    }
+
+    private void provideFixedHeaders(JSONObject infoHeader, Map<String, String> headerSet) {
+        JSONObject infoFixed = (JSONObject) infoHeader.get("fixed");
+        Iterator<String> keys = infoFixed.keySet().iterator();
+
+        while(keys.hasNext()) {
+            String key = keys.next();
+            String value  = infoFixed.get(key).toString();
+            headerSet.put(key, value);
+        }
+    }
+
+    private void provideDynamicHeaders(JSONObject infoHeader, Map<String, String> headerSet) {
+        JSONObject infoDynamic = (JSONObject) infoHeader.get("dynamic");
+
+        Iterator<String> keys = infoDynamic.keySet().iterator();
+
+        while(keys.hasNext()) {
+            String key = keys.next();
+            JSONObject sourceInfo = (JSONObject) infoDynamic.get(key);
+            Iterator<String> keysSource = sourceInfo.keySet().iterator();
+            while (keysSource.hasNext()) {
+                String key2 = keysSource.next();
+                String value = sourceInfo.get(key2).toString();
+                headerSet.put(key, key2 + ":" + value);
+            }
+        }
+    }
+
+    public Map<String, String> provideExtraInfo(String infoPlace, String function) {
+        JSONObject infoAPI = (JSONObject) this.config.get("api_info");
+        if (!infoAPI.containsKey(function))
+            return null;
+
+        JSONObject infoFunction = (JSONObject) infoAPI.get(function);
+        if (!infoFunction.containsKey(infoPlace))
+            return null;
+
+        JSONObject infoHeader = (JSONObject) infoFunction.get(infoPlace);
+        Map<String, String> headerSet = new HashMap<>();
+
+        if (infoHeader.containsKey("fixed")) {
+            provideFixedHeaders(infoHeader, headerSet);
+        }
+        if (infoHeader.containsKey("dynamic")) {
+            provideDynamicHeaders(infoHeader, headerSet);
+        }
+        return headerSet;
     }
 }

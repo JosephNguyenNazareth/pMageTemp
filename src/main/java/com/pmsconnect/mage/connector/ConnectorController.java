@@ -39,8 +39,8 @@ public class ConnectorController {
     @PostMapping(path = "/add-supp/{connectorId}")
     public String addSupplementaryConnector(
             @PathVariable("connectorId") String connectorId,
-            @RequestBody PMSConnection suppPMSConnection) {
-        return connectorService.addSupplementaryConnectors(suppPMSConnection, connectorId);
+            @RequestBody Bridge bridge) {
+        return connectorService.addSupplementaryConnectors(bridge, connectorId);
     }
 
     @PostMapping(path = "/add")
@@ -115,8 +115,15 @@ public class ConnectorController {
         return connectorService.getPMSConfig();
     }
 
+
     @PostMapping(path = "pms-config")
     public String updatePMSConfig(@RequestBody String pmsConfig) {
         return connectorService.addPMSConfig(pmsConfig);
+    }
+
+
+    @PostMapping(path = "login-pms")
+    public String loginPMS() {
+        return connectorService.loginPMS();
     }
 }

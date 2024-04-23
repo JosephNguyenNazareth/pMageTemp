@@ -5,21 +5,26 @@ import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.user.Bridge;
 import com.pmsconnect.mage.user.PMSConnection;
 import com.pmsconnect.mage.utils.ExternalService;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import javax.transaction.Transactional;
 import java.io.*;
-import java.net.URISyntaxException;
+import java.net.*;
+import java.time.Duration;
 import java.util.*;
 
 import com.pmsconnect.mage.utils.ActionEvent;
@@ -65,13 +70,14 @@ public class ConnectorService {
         return connector.getId();
     }
 
-    public String addSupplementaryConnectors(PMSConnection suppPMSConnection, String connectorId) {
-        if (!verifyPmsExist(suppPMSConnection))
+    public String addSupplementaryConnectors(Bridge bridge, String connectorId) {
+        if (!verifyPmsExist(bridge))
             throw new IllegalStateException("Cannot verify pms");
 
         Connector baseConnector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
-        Connector suppConnector = new Connector(new Bridge(baseConnector, suppPMSConnection));
+        Connector suppConnector = new SupplementaryConnector(bridge, baseConnector.getBridge().getAppName(),
+                baseConnector.getBridge().getProjectDir(), baseConnector.getBridge().getProjectLink());
         connectorRepository.save(suppConnector);
 
         return suppConnector.getId();
@@ -98,10 +104,15 @@ public class ConnectorService {
 
             String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
+
+            String loginInfo = this.loginPMS();
+            String[] loginInfoList = loginInfo.split(";");
+            getMethod.setHeader("X-Bonita-API-Token", loginInfoList[1]);
+            getMethod.setHeader("Cookie", "JSESSIONID=" + loginInfoList[0]);
+
             HttpResponse getResponse = client.execute(getMethod);
 
-            int getStatusCode = getResponse.getStatusLine()
-                    .getStatusCode();
+            int getStatusCode = getResponse.getStatusLine().getStatusCode();
             return getStatusCode == 200;
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
@@ -121,6 +132,13 @@ public class ConnectorService {
 
             String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
+
+
+            // TODO: add handling headers, cookies and body
+//            Map<String, Map<String, String>> extraInfo = searchEssentialInfo(pmsConnection, tmpConfig, "verify");
+//            fillEssentialInfo(getMethod, extraInfo);
+
+
             HttpResponse getResponse = client.execute(getMethod);
 
             int getStatusCode = getResponse.getStatusLine()
@@ -129,6 +147,139 @@ public class ConnectorService {
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void fillEssentialInfo(HttpGet request, Map<String, Map<String, String>> extraInfo) {
+        for (Map.Entry<String,Map<String, String>> entry : extraInfo.entrySet()) {
+            if (entry.getKey().equals("header")) {
+                Map<String, String> headerSet = entry.getValue();
+                for (Map.Entry<String, String> headerEntry : headerSet.entrySet())
+                    request.setHeader(headerEntry.getKey(), headerEntry.getValue());
+            } else if (entry.getKey().equals("cookie")) {
+            } else if (entry.getKey().equals("body")) {
+    
+            }
+        }
+    }
+
+    private Map<String, Map<String, String>> searchEssentialInfo(PMSConnection pmsConnection, PmsConfig pmsConfig, String functionName) {
+        Map<String, String> headerSet = pmsConfig.provideExtraInfo("header", functionName);
+        Map<String, String> cookieSet = pmsConfig.provideExtraInfo("cookie", functionName);
+        Map<String, String> bodySet = pmsConfig.provideExtraInfo("body", functionName);
+
+        Map<String, Map<String, String>> finalSet = new HashMap<>();
+        finalSet.put("header", headerSet);
+        finalSet.put("cookie", cookieSet);
+        finalSet.put("body", bodySet);
+
+        return loadEssentialInfo(pmsConnection, finalSet);
+    }
+
+    private Map<String, Map<String, String>> loadEssentialInfo(PMSConnection pmsConnection, Map<String, Map<String, String>> extraInfoSet) {
+        Map<String, Map<String, String>> extraInfoSetCompleted = new HashMap<>(extraInfoSet);
+        Map<String, Map<String, String>> requestedInfo = new HashMap<>();
+
+        for (Map.Entry<String,Map<String, String>> entryField : extraInfoSet.entrySet()) {
+            for (Map.Entry<String, String> entry : entryField.getValue().entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (value.contains(":")) {
+                    String[] valueDetail = value.split(":");
+                    if (!requestedInfo.containsKey(valueDetail[0])) {
+                        Map<String, String> fields = new HashMap<>();
+                        fields.put(key, valueDetail[1]);
+                        requestedInfo.put(valueDetail[0], fields);
+                    } else {
+                        requestedInfo.get(valueDetail[0]).put(key, valueDetail[1]);
+                    }
+                }
+            }
+        }
+
+        for (Map.Entry<String,Map<String, String>> entry : requestedInfo.entrySet()) {
+            String key = entry.getKey();
+            if (key.equals("login")) {
+                Map<String, String> returnedMap= loginPMS(pmsConnection, entry.getValue());
+                for (String returnedKey: returnedMap.keySet()) {
+                    for (Map.Entry<String,Map<String, String>> entryCompleted : extraInfoSetCompleted.entrySet())
+                        if (entryCompleted.getValue().containsKey(returnedKey))
+                            extraInfoSetCompleted.get(entryCompleted.getKey()).put(returnedKey, returnedMap.get(returnedKey));
+                }
+            }
+        }
+
+        return extraInfoSetCompleted;
+    }
+
+    public String loginPMS() {
+//        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        HttpClient client = HttpClients.createDefault();
+        try {
+            PmsConfig tmpConfig = new PmsConfig("./src/main/resources/pms_config.json", "bonita");
+
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+            urlMap.put("url", tmpConfig.getUrlPMS());
+
+            List<NameValuePair> pairs = new ArrayList<>();
+            pairs.add(new BasicNameValuePair("username", "walter.bates"));
+            pairs.add(new BasicNameValuePair("password", "bpm"));
+
+            String finalUri = tmpConfig.buildAPI("login", urlMap, paramMap);
+            HttpPost postMethod = new HttpPost(finalUri);
+            postMethod.setHeader("Content-type", "application/x-www-form-urlencoded");
+            postMethod.setEntity(new UrlEncodedFormEntity(pairs));
+
+            HttpResponse response = client.execute(postMethod);
+            String jSessionId = "";
+            String bonitaToken = "";
+
+            Header[] headers = response.getAllHeaders();
+            for (Header header : headers) {
+                if (header.getName().equals("Set-Cookie")) {
+                    String headerValue = header.getValue();
+                    if (headerValue.contains("JSESSIONID")) {
+                        jSessionId = headerValue.substring(headerValue.indexOf("JSESSIONID") + 11, headerValue.indexOf(";", headerValue.indexOf("JSESSIONID")));
+                    } else if (headerValue.contains("X-Bonita-API-Token")) {
+                        bonitaToken = headerValue.substring(headerValue.indexOf("X-Bonita-API-Token") + 19, headerValue.indexOf(";", headerValue.indexOf("X-Bonita-API-Token")));
+                    }
+                }
+            }
+
+            System.out.println(jSessionId);
+            System.out.println(bonitaToken);
+
+            int statusCode = response.getStatusLine()
+                    .getStatusCode();
+            return jSessionId + ";" + bonitaToken;
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Map<String, String> loginPMS(PMSConnection pmsConnection, Map<String, String> extractInfo) {
+        HttpClient client = HttpClients.createDefault();
+        try {
+            PmsConfig tmpConfig = new PmsConfig(pmsConnection.getPMSConfig(), pmsConnection.getPmsName());
+
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+
+            urlMap.put("url", tmpConfig.getUrlPMS());
+
+            String finalUri = tmpConfig.buildAPI("login", urlMap, paramMap);
+            HttpPost postMethod = new HttpPost(finalUri);
+            HttpResponse getResponse = client.execute(postMethod);
+
+            int getStatusCode = getResponse.getStatusLine()
+                    .getStatusCode();
+
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 
     public String getProcessInstance(String connectorId) {
