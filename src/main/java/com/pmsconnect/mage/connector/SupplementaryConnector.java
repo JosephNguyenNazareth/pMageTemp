@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "connector")
 public class SupplementaryConnector extends Connector {
+    private String suppConnectorId;
     private String suppAppName;
     private String suppProjectLink;
     private String suppProjectDir;
@@ -13,11 +14,20 @@ public class SupplementaryConnector extends Connector {
         super();
     }
 
-    public SupplementaryConnector(Bridge bridge, String suppAppName, String suppProjectDir, String suppProjectLink) {
+    public SupplementaryConnector(Bridge bridge, String suppConnectorId,  String suppAppName, String suppProjectDir, String suppProjectLink) {
         super(bridge);
+        this.suppConnectorId = suppConnectorId;
         this.suppAppName = suppAppName;
         this.suppProjectDir = suppProjectDir;
         this.suppProjectLink = suppProjectLink;
+    }
+
+    public String getSuppConnectorId() {
+        return suppConnectorId;
+    }
+
+    public void setSuppConnectorId(String suppConnectorId) {
+        this.suppConnectorId = suppConnectorId;
     }
 
     public String getSuppAppName() {

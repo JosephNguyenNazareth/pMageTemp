@@ -37,6 +37,11 @@
                 "method" : "PUT",
                 "url" : "{url}/{processInstanceId}/end-task",
                 "param" : ["taskId"]
+            },
+            "getArtifact" : {
+                "method": "GET",
+                "url": "{url}/{processInstanceId}/data-object",
+                "param": []
             }
         }
     },
@@ -156,6 +161,25 @@
             "createProcess": {
                 "method" : "POST",
                 "url" : "{url}/API/bpm/process/{processId}/instantiation",
+                "cookie": {
+                    "dynamic": {
+                        "JSESSIONID": {
+                            "login" : "return"
+                        }
+                    }
+                },
+                "header": {
+                    "dynamic": {
+                        "X-Bonita-API-Token": {
+                            "login" : "return"
+                        }
+                    }
+                },
+                "param" : []
+            },
+            "getTask" : {
+                "method" : "GET",
+                "url" : "{url}/API/bpm/task?f=caseId={processInstanceId}",
                 "cookie": {
                     "dynamic": {
                         "JSESSIONID": {

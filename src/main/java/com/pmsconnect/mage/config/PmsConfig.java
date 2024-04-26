@@ -56,7 +56,7 @@ public class PmsConfig {
         this.configPath = configPath;
     }
 
-    private void readConfig() {
+    public void readConfig() {
         JSONParser parser = new JSONParser();
         try {
             Object obj = parser.parse(new FileReader(this.configPath));
@@ -78,7 +78,7 @@ public class PmsConfig {
     }
 
     public String buildAPI(String function, Map<String, String> url, Map<String, String> param) throws URISyntaxException {
-        JSONObject infoAPI = (JSONObject) this.config.get("api_info");
+        JSONObject infoAPI =  new JSONObject((Map) this.config.get("api_info"));
         if (!infoAPI.containsKey(function))
             return "";
 

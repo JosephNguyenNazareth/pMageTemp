@@ -5,6 +5,7 @@ import com.pmsconnect.mage.config.Retriever;
 import com.pmsconnect.mage.utils.ActionEvent;
 import com.pmsconnect.mage.utils.Alignment;
 
+import com.pmsconnect.mage.utils.Artifact;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -196,7 +197,7 @@ public class ConnectorAsyncService {
         return taskDetect;
     }
 
-    public List<PreDefinedArtifactInstance> detectArtifactFromCommit(String commitMessage, StringBuilder monitoringMess) {
+    public List<PreDefinedArtifactInstance> detectArtifactFromCommit(Connector connector, String commitMessage, StringBuilder monitoringMess) {
         List<PreDefinedArtifactInstance> preDefinedArtifactInstanceList = new ArrayList<>();
         if (commitMessage.contains(";")) {
             String importantMessage = commitMessage.contains("|") ? commitMessage.substring(0, commitMessage.indexOf("|")) : commitMessage;
@@ -205,7 +206,9 @@ public class ConnectorAsyncService {
                 String[] artifact = terms[i].split(":");
                 if (artifact.length < 2)
                     monitoringMess.append("Invalid syntax. Cannot detect artifact\n");
-                preDefinedArtifactInstanceList.add(new PreDefinedArtifactInstance(artifact[0], artifact[1], Integer.parseInt(artifact[2])));
+
+                if (possibleAddingArtifact(connector, artifact[0]))
+                    preDefinedArtifactInstanceList.add(new PreDefinedArtifactInstance(artifact[0], artifact[1], Integer.parseInt(artifact[2])));
             }
         }
         return preDefinedArtifactInstanceList;
@@ -275,7 +278,9 @@ public class ConnectorAsyncService {
 
     private void completeTaskCommitted(Connector connector, String taskDetected, String commitMessage, StringBuilder monitoringMess) {
         String newTaskInstanceId = startTaskInstance(connector, taskDetected);
-        endTaskInstance(connector, newTaskInstanceId, detectArtifactFromCommit(commitMessage, monitoringMess));
+        List<PreDefinedArtifactInstance> detectedArtifacts = detectArtifactFromCommit(connector, commitMessage, monitoringMess);
+        endTaskInstance(connector, newTaskInstanceId, detectedArtifacts);
+        updateArtifactPool(connector, detectedArtifacts);
     }
 
     private String startTaskInstance(Connector connector, String taskDetected) {
@@ -395,5 +400,54 @@ public class ConnectorAsyncService {
             return lastUpdateTimePMage.equals(lastUpdateTimePMS);
         }
         return false;
+    }
+
+    public boolean possibleAddingArtifact(Connector connector, String detectedArtifactName) {
+        Connector baseConnector = connectorRepository.findById(((SupplementaryConnector) connector).getSuppConnectorId()).orElseThrow(() -> new IllegalStateException("Connector with id " + ((SupplementaryConnector) connector).getSuppConnectorId() + "does not exist."));
+        Map<String, Artifact> mainArtifactPool = connector.getArtifactMap();
+        Map<String, Artifact> monitoredArtifactPool = baseConnector.getArtifactMap();
+
+        if (monitoredArtifactPool.containsKey(detectedArtifactName))
+            if (monitoredArtifactPool.get(detectedArtifactName).isAvailable())
+                return true;
+        else
+            return true;
+        return false;
+    }
+
+    public void updateArtifactPool(Connector connector, List<PreDefinedArtifactInstance> detectedArtifacts) {
+        if (connector instanceof SupplementaryConnector) {
+            Connector baseConnector = connectorRepository.findById(((SupplementaryConnector) connector).getSuppConnectorId()).orElseThrow(() -> new IllegalStateException("Connector with id " + ((SupplementaryConnector) connector).getSuppConnectorId() + "does not exist."));
+            Map<String, Artifact> mainArtifactPool = connector.getArtifactMap();
+            Map<String, Artifact> monitoredArtifactPool = baseConnector.getArtifactMap();
+
+            for(PreDefinedArtifactInstance artifact: detectedArtifacts) {
+                String detectedArtifactName = artifact.getName();
+                if (monitoredArtifactPool.containsKey(detectedArtifactName))
+                    if (monitoredArtifactPool.get(detectedArtifactName).isAvailable())
+                        if (mainArtifactPool.containsKey(detectedArtifactName))
+                            mainArtifactPool.get(detectedArtifactName).setAvailable(true);
+                        else
+                            mainArtifactPool.put(detectedArtifactName, new Artifact(detectedArtifactName, true));
+                    else
+                        throw new IllegalStateException("Cannot update artifact due to conflicts of monitored connector " + ((SupplementaryConnector) connector).getSuppConnectorId());
+                else
+                    if (mainArtifactPool.containsKey(detectedArtifactName))
+                        mainArtifactPool.get(detectedArtifactName).setAvailable(true);
+                    else
+                        mainArtifactPool.put(detectedArtifactName, new Artifact(detectedArtifactName, true));
+            }
+        } else {
+            Map<String, Artifact> artifactPool = connector.getArtifactMap();
+            for(PreDefinedArtifactInstance artifact: detectedArtifacts) {
+                String detectedArtifactName = artifact.getName();
+                if (artifactPool.containsKey(detectedArtifactName))
+                    artifactPool.get(detectedArtifactName).setAvailable(true);
+                else
+                    artifactPool.put(detectedArtifactName, new Artifact(detectedArtifactName, true));
+            }
+        }
+
+        connectorRepository.save(connector);
     }
 }

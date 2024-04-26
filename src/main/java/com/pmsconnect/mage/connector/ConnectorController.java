@@ -2,6 +2,7 @@ package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.user.Bridge;
 import com.pmsconnect.mage.user.PMSConnection;
+import com.pmsconnect.mage.utils.Alignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +55,14 @@ public class ConnectorController {
             @PathVariable("connectorId") String connectorId,
             @RequestBody(required = false) Bridge bridge) {
         connectorService.updateConnector(connectorId, bridge);
+    }
+
+    @PutMapping(path = "/update-supp/{connectorId}")
+    public void updateSuppConnector(
+            @PathVariable("connectorId") String connectorId,
+            @RequestBody(required = false) Bridge bridge,
+            @RequestParam String baseConnectorId) {
+        connectorService.updateSuppConnector(connectorId, bridge, baseConnectorId);
     }
 
     @DeleteMapping(path = "/delete/{connectorId}")
@@ -121,9 +130,10 @@ public class ConnectorController {
         return connectorService.addPMSConfig(pmsConfig);
     }
 
-
-    @PostMapping(path = "login-pms")
-    public String loginPMS() {
-        return connectorService.loginPMS();
+    @GetMapping(path = "{connectorId}/collect-hist")
+    public List<Alignment> getConnectorHist(@PathVariable String connectorId) {
+        return connectorService.getConnectorHist(connectorId);
     }
+
+
 }

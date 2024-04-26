@@ -4,6 +4,7 @@ import com.pmsconnect.mage.config.PMSConfigManager;
 import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.user.Bridge;
 import com.pmsconnect.mage.user.PMSConnection;
+import com.pmsconnect.mage.utils.Alignment;
 import com.pmsconnect.mage.utils.ExternalService;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -18,6 +19,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +37,19 @@ import com.pmsconnect.mage.utils.ActionEvent;
 @Service
 public class ConnectorService {
     private final ConnectorRepository connectorRepository;
+    private final SuppConnectorRepository suppConnectorRepository;
 
     @Autowired
-    public ConnectorService(ConnectorRepository mageRepository) {
+    public ConnectorService(ConnectorRepository mageRepository, SuppConnectorRepository mageRepository2) {
         this.connectorRepository = mageRepository;
+        this.suppConnectorRepository = mageRepository2;
     }
+
+//    @Autowired
+//    public ConnectorService(SuppConnectorRepository mageRepository) {
+//        this.suppConnectorRepository = mageRepository;
+//        this.connectorRepository = null;
+//    }
 
     public List<Connector> getConnectors() {
 
@@ -64,6 +77,7 @@ public class ConnectorService {
         if (!verifyPmsExist(bridge))
             throw new IllegalStateException("Cannot verify pms");
         Connector connector = new Connector(bridge);
+        updateArtifactList(connector);
 
         connectorRepository.save(connector);
 
@@ -76,9 +90,10 @@ public class ConnectorService {
 
         Connector baseConnector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
-        Connector suppConnector = new SupplementaryConnector(bridge, baseConnector.getBridge().getAppName(),
+        SupplementaryConnector suppConnector = new SupplementaryConnector(bridge, baseConnector.getBridge().getAppName(),
                 baseConnector.getBridge().getProjectDir(), baseConnector.getBridge().getProjectLink());
-        connectorRepository.save(suppConnector);
+        assert suppConnectorRepository != null;
+        suppConnectorRepository.save(suppConnector);
 
         return suppConnector.getId();
     }
@@ -89,6 +104,20 @@ public class ConnectorService {
         connector.setBridge(bridge);
 
         connectorRepository.save(connector);
+    }
+
+    @Transactional
+    public void updateSuppConnector(String connectorId, Bridge bridge, String baseConnectorId) {
+        Connector baseConnector = connectorRepository.findById(baseConnectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        SupplementaryConnector connector = suppConnectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        connector.setBridge(bridge);
+        connector.setSuppAppName(baseConnector.getBridge().getAppName());
+        connector.setSuppProjectDir(baseConnector.getBridge().getProjectDir());
+        connector.setSuppProjectLink(baseConnector.getBridge().getProjectLink());
+
+        suppConnectorRepository.save(connector);
     }
 
     private boolean verifyPmsExist(Bridge bridge) {
@@ -105,7 +134,7 @@ public class ConnectorService {
             String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
 
-            String loginInfo = this.loginPMS();
+            String loginInfo = this.loginPMS(bridge.getPmsName());
             String[] loginInfoList = loginInfo.split(";");
             getMethod.setHeader("X-Bonita-API-Token", loginInfoList[1]);
             getMethod.setHeader("Cookie", "JSESSIONID=" + loginInfoList[0]);
@@ -149,74 +178,74 @@ public class ConnectorService {
         }
     }
 
-    private void fillEssentialInfo(HttpGet request, Map<String, Map<String, String>> extraInfo) {
-        for (Map.Entry<String,Map<String, String>> entry : extraInfo.entrySet()) {
-            if (entry.getKey().equals("header")) {
-                Map<String, String> headerSet = entry.getValue();
-                for (Map.Entry<String, String> headerEntry : headerSet.entrySet())
-                    request.setHeader(headerEntry.getKey(), headerEntry.getValue());
-            } else if (entry.getKey().equals("cookie")) {
-            } else if (entry.getKey().equals("body")) {
-    
-            }
-        }
-    }
+//    private void fillEssentialInfo(HttpGet request, Map<String, Map<String, String>> extraInfo) {
+//        for (Map.Entry<String,Map<String, String>> entry : extraInfo.entrySet()) {
+//            if (entry.getKey().equals("header")) {
+//                Map<String, String> headerSet = entry.getValue();
+//                for (Map.Entry<String, String> headerEntry : headerSet.entrySet())
+//                    request.setHeader(headerEntry.getKey(), headerEntry.getValue());
+//            } else if (entry.getKey().equals("cookie")) {
+//            } else if (entry.getKey().equals("body")) {
+//
+//            }
+//        }
+//    }
+//
+//    private Map<String, Map<String, String>> searchEssentialInfo(PMSConnection pmsConnection, PmsConfig pmsConfig, String functionName) {
+//        Map<String, String> headerSet = pmsConfig.provideExtraInfo("header", functionName);
+//        Map<String, String> cookieSet = pmsConfig.provideExtraInfo("cookie", functionName);
+//        Map<String, String> bodySet = pmsConfig.provideExtraInfo("body", functionName);
+//
+//        Map<String, Map<String, String>> finalSet = new HashMap<>();
+//        finalSet.put("header", headerSet);
+//        finalSet.put("cookie", cookieSet);
+//        finalSet.put("body", bodySet);
+//
+//        return loadEssentialInfo(pmsConnection, finalSet);
+//    }
+//
+//    private Map<String, Map<String, String>> loadEssentialInfo(PMSConnection pmsConnection, Map<String, Map<String, String>> extraInfoSet) {
+//        Map<String, Map<String, String>> extraInfoSetCompleted = new HashMap<>(extraInfoSet);
+//        Map<String, Map<String, String>> requestedInfo = new HashMap<>();
+//
+//        for (Map.Entry<String,Map<String, String>> entryField : extraInfoSet.entrySet()) {
+//            for (Map.Entry<String, String> entry : entryField.getValue().entrySet()) {
+//                String key = entry.getKey();
+//                String value = entry.getValue();
+//                if (value.contains(":")) {
+//                    String[] valueDetail = value.split(":");
+//                    if (!requestedInfo.containsKey(valueDetail[0])) {
+//                        Map<String, String> fields = new HashMap<>();
+//                        fields.put(key, valueDetail[1]);
+//                        requestedInfo.put(valueDetail[0], fields);
+//                    } else {
+//                        requestedInfo.get(valueDetail[0]).put(key, valueDetail[1]);
+//                    }
+//                }
+//            }
+//        }
+//
+//        for (Map.Entry<String,Map<String, String>> entry : requestedInfo.entrySet()) {
+//            String key = entry.getKey();
+//            if (key.equals("login")) {
+//                Map<String, String> returnedMap= loginPMS(pmsConnection, entry.getValue());
+//                for (String returnedKey: returnedMap.keySet()) {
+//                    for (Map.Entry<String,Map<String, String>> entryCompleted : extraInfoSetCompleted.entrySet())
+//                        if (entryCompleted.getValue().containsKey(returnedKey))
+//                            extraInfoSetCompleted.get(entryCompleted.getKey()).put(returnedKey, returnedMap.get(returnedKey));
+//                }
+//            }
+//        }
+//
+//        return extraInfoSetCompleted;
+//    }
 
-    private Map<String, Map<String, String>> searchEssentialInfo(PMSConnection pmsConnection, PmsConfig pmsConfig, String functionName) {
-        Map<String, String> headerSet = pmsConfig.provideExtraInfo("header", functionName);
-        Map<String, String> cookieSet = pmsConfig.provideExtraInfo("cookie", functionName);
-        Map<String, String> bodySet = pmsConfig.provideExtraInfo("body", functionName);
-
-        Map<String, Map<String, String>> finalSet = new HashMap<>();
-        finalSet.put("header", headerSet);
-        finalSet.put("cookie", cookieSet);
-        finalSet.put("body", bodySet);
-
-        return loadEssentialInfo(pmsConnection, finalSet);
-    }
-
-    private Map<String, Map<String, String>> loadEssentialInfo(PMSConnection pmsConnection, Map<String, Map<String, String>> extraInfoSet) {
-        Map<String, Map<String, String>> extraInfoSetCompleted = new HashMap<>(extraInfoSet);
-        Map<String, Map<String, String>> requestedInfo = new HashMap<>();
-
-        for (Map.Entry<String,Map<String, String>> entryField : extraInfoSet.entrySet()) {
-            for (Map.Entry<String, String> entry : entryField.getValue().entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if (value.contains(":")) {
-                    String[] valueDetail = value.split(":");
-                    if (!requestedInfo.containsKey(valueDetail[0])) {
-                        Map<String, String> fields = new HashMap<>();
-                        fields.put(key, valueDetail[1]);
-                        requestedInfo.put(valueDetail[0], fields);
-                    } else {
-                        requestedInfo.get(valueDetail[0]).put(key, valueDetail[1]);
-                    }
-                }
-            }
-        }
-
-        for (Map.Entry<String,Map<String, String>> entry : requestedInfo.entrySet()) {
-            String key = entry.getKey();
-            if (key.equals("login")) {
-                Map<String, String> returnedMap= loginPMS(pmsConnection, entry.getValue());
-                for (String returnedKey: returnedMap.keySet()) {
-                    for (Map.Entry<String,Map<String, String>> entryCompleted : extraInfoSetCompleted.entrySet())
-                        if (entryCompleted.getValue().containsKey(returnedKey))
-                            extraInfoSetCompleted.get(entryCompleted.getKey()).put(returnedKey, returnedMap.get(returnedKey));
-                }
-            }
-        }
-
-        return extraInfoSetCompleted;
-    }
-
-    public String loginPMS() {
+    public String loginPMS(String pmsName) {
 //        Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
         HttpClient client = HttpClients.createDefault();
         try {
-            PmsConfig tmpConfig = new PmsConfig("./src/main/resources/pms_config.json", "bonita");
+            PmsConfig tmpConfig = new PmsConfig("./src/main/resources/pms_config.json", pmsName);
 
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
@@ -417,6 +446,16 @@ public class ConnectorService {
 
             String finalUri = connector.getPmsConfig().buildAPI("getTask", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
+
+            // for early development only
+            // TODO: make it generic for all other PMSs
+            if (connector.getBridge().getPmsName().equals("bonita")) {
+                String loginInfo = this.loginPMS(connector.getBridge().getPmsName());
+                String[] loginInfoList = loginInfo.split(";");
+                getMethod.setHeader("X-Bonita-API-Token", loginInfoList[1]);
+                getMethod.setHeader("Cookie", "JSESSIONID=" + loginInfoList[0]);
+            }
+
             HttpResponse getResponse = client.execute(getMethod);
 
             int getStatusCode = getResponse.getStatusLine()
@@ -427,6 +466,17 @@ public class ConnectorService {
                 if (connector.getBridge().getPmsName().equals("core-bape")) {
                     content = content.replace("[","").replace("]","").replace("\"","");
                     return Arrays.asList(content.split(","));
+                } else if (connector.getBridge().getPmsName().equals("bonita")) {
+                    JSONParser parser = new JSONParser();
+                    JSONArray taskList = (JSONArray) parser.parse(content);
+
+                    List<String> taskNameList = new ArrayList<>();
+                    for (Object o : taskList) {
+                        JSONObject task = (JSONObject) o;
+                        String taskName = task.get("name").toString();
+                        taskNameList.add(taskName);
+                    }
+                    return taskNameList;
                 }
 //                JSONParser parser = new JSONParser();
 //                Object obj = parser.parse(content);
@@ -435,7 +485,7 @@ public class ConnectorService {
             }
 //                return EntityUtils.toString(getResponse.getEntity());
             return null;
-        } catch (URISyntaxException | IOException e) {
+        } catch (URISyntaxException | IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -467,6 +517,7 @@ public class ConnectorService {
 
         // call get process instance from the pms
         // get the task list
+        connector.updateConfig();
         List<String> taskList = getTaskList(connector);
 
         // transfer the task list into NLP engine to get the keywords
@@ -484,6 +535,8 @@ public class ConnectorService {
             if (i < listActionEvent.size() - 1)
                 actionLinkage.append("\n");
         }
+
+        connectorRepository.save(connector);
         return actionLinkage.toString();
     }
 
@@ -531,5 +584,48 @@ public class ConnectorService {
         this.loadProperties();
         PMSConfigManager pmsManager = new PMSConfigManager(System.getProperty("pmsconfig"));
         return pmsManager.addPMSConfig(pmsConfig);
+    }
+
+    public List<Alignment> getConnectorHist(String baseConnectorId) {
+        Connector baseConnector = connectorRepository.findById(baseConnectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + baseConnectorId + " does not exist."));
+
+        return baseConnector.getHistoryCommitList();
+    }
+
+    public void updateArtifactList(Connector connector) {
+        HttpClient client = HttpClients.createDefault();
+        try {
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+
+            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("processInstanceId", connector.getBridge().getProcessId());
+
+            String finalUri = connector.getPmsConfig().buildAPI("getArtifact", urlMap, paramMap);
+            HttpGet getMethod = new HttpGet(finalUri);
+
+            // for early development only
+            // TODO: make it generic for all other PMSs
+            HttpResponse getResponse = client.execute(getMethod);
+
+            int getStatusCode = getResponse.getStatusLine()
+                    .getStatusCode();
+            if (getStatusCode == 200) {
+                String content = EntityUtils.toString(getResponse.getEntity());
+
+                if (connector.getBridge().getPmsName().equals("core-bape")) {
+                    JSONParser parser = new JSONParser();
+                    JSONArray taskList = (JSONArray) parser.parse(content);
+
+                    for (Object o : taskList) {
+                        JSONObject task = (JSONObject) o;
+                        String artifactName = task.get("name").toString();
+                        connector.addArtifact(artifactName);
+                    }
+                }
+            }
+        } catch (URISyntaxException | IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

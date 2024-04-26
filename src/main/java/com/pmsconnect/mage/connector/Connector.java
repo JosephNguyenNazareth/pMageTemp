@@ -5,6 +5,7 @@ import com.pmsconnect.mage.config.Retriever;
 import com.pmsconnect.mage.user.Bridge;
 import com.pmsconnect.mage.utils.ActionEvent;
 import com.pmsconnect.mage.utils.Alignment;
+import com.pmsconnect.mage.utils.Artifact;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -26,6 +27,7 @@ public class Connector {
     private Retriever retriever;
     private PmsConfig pmsConfig;
     private String userName;
+    private Map<String, Artifact> artifactMap;
 
     public Connector() {
         this.loadProperties();
@@ -50,6 +52,7 @@ public class Connector {
         this.loadProperties();
         this.retriever = new Retriever(System.getProperty("appconfig"));
         this.pmsConfig = new PmsConfig(System.getProperty("pmsconfig"), this.getBridge().getPmsName());
+        this.artifactMap = new HashMap<>();
     }
 
     public String getId() {
@@ -156,11 +159,32 @@ public class Connector {
         this.actionEventDescription = actionEventDescription;
     }
 
+    public Map<String, Artifact> getArtifactMap() {
+        return artifactMap;
+    }
+
+    public void setArtifactMap(Map<String, Artifact> artifactMap) {
+        this.artifactMap = artifactMap;
+    }
+
+    public void addArtifact(Artifact artifact) {
+        this.artifactMap.put(artifact.getName(), artifact);
+    }
+
+    public void addArtifact(String name) {
+        this.artifactMap.put(name, new Artifact(name));
+    }
+
     public boolean existActionEventType(String eventType) {
         for (ActionEvent actionEvent : this.getActionEventTable()) {
             if (actionEvent.getEvent().equals(eventType))
                 return true;
         }
         return false;
+    }
+
+    public void updateConfig() {
+        this.pmsConfig.readConfig();
+        this.retriever.readConfig();
     }
 }

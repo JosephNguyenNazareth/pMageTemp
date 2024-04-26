@@ -53,7 +53,7 @@ public class Retriever {
         this.repoLink = repoLink;
     }
 
-    private void readConfig() {
+    public void readConfig() {
         JSONParser parser = new JSONParser();
         try {
             Object obj = parser.parse(new FileReader(this.configPath));
