@@ -90,7 +90,8 @@ public class ConnectorService {
 
         Connector baseConnector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
-        SupplementaryConnector suppConnector = new SupplementaryConnector(bridge, baseConnector.getBridge().getAppName(),
+        SupplementaryConnector suppConnector = new SupplementaryConnector(bridge, connectorId,
+                baseConnector.getBridge().getAppName(),
                 baseConnector.getBridge().getProjectDir(), baseConnector.getBridge().getProjectLink());
         assert suppConnectorRepository != null;
         suppConnectorRepository.save(suppConnector);
@@ -134,10 +135,12 @@ public class ConnectorService {
             String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);
 
-            String loginInfo = this.loginPMS(bridge.getPmsName());
-            String[] loginInfoList = loginInfo.split(";");
-            getMethod.setHeader("X-Bonita-API-Token", loginInfoList[1]);
-            getMethod.setHeader("Cookie", "JSESSIONID=" + loginInfoList[0]);
+            if (bridge.getPmsName().equals("bonita")) {
+                String loginInfo = this.loginPMS(bridge.getPmsName());
+                String[] loginInfoList = loginInfo.split(";");
+                getMethod.setHeader("X-Bonita-API-Token", loginInfoList[1]);
+                getMethod.setHeader("Cookie", "JSESSIONID=" + loginInfoList[0]);
+            }
 
             HttpResponse getResponse = client.execute(getMethod);
 
@@ -148,35 +151,7 @@ public class ConnectorService {
         }
     }
 
-    private boolean verifyPmsExist(PMSConnection pmsConnection) {
-        HttpClient client = HttpClients.createDefault();
-        try {
-            PmsConfig tmpConfig = new PmsConfig(pmsConnection.getPMSConfig(), pmsConnection.getPmsName());
 
-            Map<String, String> urlMap = new HashMap<>();
-            Map<String, String> paramMap = new HashMap<>();
-
-            urlMap.put("url", tmpConfig.getUrlPMS());
-            urlMap.put("processInstanceId", pmsConnection.getProcessId());
-
-            String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
-            HttpGet getMethod = new HttpGet(finalUri);
-
-
-            // TODO: add handling headers, cookies and body
-//            Map<String, Map<String, String>> extraInfo = searchEssentialInfo(pmsConnection, tmpConfig, "verify");
-//            fillEssentialInfo(getMethod, extraInfo);
-
-
-            HttpResponse getResponse = client.execute(getMethod);
-
-            int getStatusCode = getResponse.getStatusLine()
-                    .getStatusCode();
-            return getStatusCode == 200;
-        } catch (URISyntaxException | IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 //    private void fillEssentialInfo(HttpGet request, Map<String, Map<String, String>> extraInfo) {
 //        for (Map.Entry<String,Map<String, String>> entry : extraInfo.entrySet()) {
@@ -286,6 +261,63 @@ public class ConnectorService {
             throw new RuntimeException(e);
         }
     }
+
+    public List<String> getProcessInstanceIdList(String pmsName, String pmsURL, String usernamePMS, String passwordPMS, String processDef) {
+        HttpClient client = HttpClients.createDefault();
+        PmsConfig pmsConfig = new PmsConfig(System.getProperty("pmsconfig"), pmsName);
+        try {
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+
+            urlMap.put("url", pmsURL);
+            urlMap.put("processDef", processDef);
+
+            String finalUri = pmsConfig.buildAPI("getCase", urlMap, paramMap);
+            HttpGet getMethod = new HttpGet(finalUri);
+
+            // for early development only
+            // TODO: make it generic for all other PMSs
+            if (pmsName.equals("bonita")) {
+                String loginInfo = this.loginPMS(pmsName);
+                String[] loginInfoList = loginInfo.split(";");
+                getMethod.setHeader("X-Bonita-API-Token", loginInfoList[1]);
+                getMethod.setHeader("Cookie", "JSESSIONID=" + loginInfoList[0]);
+            }
+
+            HttpResponse getResponse = client.execute(getMethod);
+
+            int getStatusCode = getResponse.getStatusLine()
+                    .getStatusCode();
+            if (getStatusCode == 200) {
+                String content = EntityUtils.toString(getResponse.getEntity());
+
+                if (pmsName.equals("core-bape")) {
+                    content = content.replace("[","").replace("]","").replace("\"","");
+                    return Arrays.asList(content.split(","));
+                } else if (pmsName.equals("bonita")) {
+                    JSONParser parser = new JSONParser();
+                    JSONArray caseList = (JSONArray) parser.parse(content);
+
+                    List<String> caseIdList = new ArrayList<>();
+                    for (Object o : caseList) {
+                        JSONObject task = (JSONObject) o;
+                        String caseId = task.get("id").toString();
+                        caseIdList.add(caseId);
+                    }
+                    return caseIdList;
+                }
+//                JSONParser parser = new JSONParser();
+//                Object obj = parser.parse(content);
+//                JSONArray contentJSON = (JSONArray) obj;
+//                for (JSONObject)
+            }
+//                return EntityUtils.toString(getResponse.getEntity());
+            return null;
+        } catch (URISyntaxException | IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private Map<String, String> loginPMS(PMSConnection pmsConnection, Map<String, String> extractInfo) {
         HttpClient client = HttpClients.createDefault();

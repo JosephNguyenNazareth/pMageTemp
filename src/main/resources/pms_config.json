@@ -177,6 +177,25 @@
                 },
                 "param" : []
             },
+            "getCase" : {
+                "method" : "GET",
+                "url" : "{url}/API/bpm/case?s={processDef}",
+                "cookie": {
+                    "dynamic": {
+                        "JSESSIONID": {
+                            "login" : "return"
+                        }
+                    }
+                },
+                "header": {
+                    "dynamic": {
+                        "X-Bonita-API-Token": {
+                            "login" : "return"
+                        }
+                    }
+                },
+                "param" : []
+            },
             "getTask" : {
                 "method" : "GET",
                 "url" : "{url}/API/bpm/task?f=caseId={processInstanceId}",
@@ -217,7 +236,7 @@
             },
             "endTask" : {
                 "method" : "PUT",
-                "url" : "{url}API/bpm/task/{taskInstanceId}",
+                "url" : "{url}/API/bpm/task/{taskInstanceId}",
                 "cookie": {
                     "dynamic": {
                         "JSESSIONID": {

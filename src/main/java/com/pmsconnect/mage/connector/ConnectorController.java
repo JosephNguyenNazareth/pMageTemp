@@ -135,5 +135,12 @@ public class ConnectorController {
         return connectorService.getConnectorHist(connectorId);
     }
 
-
+    @GetMapping(path = "caseid")
+    public List<String> login(@RequestParam String pmsName,
+                      @RequestParam String pmsURL,
+                      @RequestParam String usernamePMS,
+                      @RequestParam String passwordPMS,
+                      @RequestParam String processDef){
+        return connectorService.getProcessInstanceIdList(pmsName, pmsURL, usernamePMS, passwordPMS, processDef);
+    }
 }
