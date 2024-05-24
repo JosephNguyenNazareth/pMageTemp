@@ -4,8 +4,9 @@ import com.pmsconnect.mage.config.PMSConfigManager;
 import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.user.Bridge;
 import com.pmsconnect.mage.user.PMSConnection;
-import com.pmsconnect.mage.utils.Alignment;
-import com.pmsconnect.mage.utils.ExternalService;
+import com.pmsconnect.mage.user.User;
+import com.pmsconnect.mage.user.UserRepository;
+import com.pmsconnect.mage.utils.*;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -32,24 +33,18 @@ import java.net.*;
 import java.time.Duration;
 import java.util.*;
 
-import com.pmsconnect.mage.utils.ActionEvent;
-
 @Service
 public class ConnectorService {
     private final ConnectorRepository connectorRepository;
     private final SuppConnectorRepository suppConnectorRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ConnectorService(ConnectorRepository mageRepository, SuppConnectorRepository mageRepository2) {
+    public ConnectorService(ConnectorRepository mageRepository, SuppConnectorRepository mageRepository2, UserRepository userRepository) {
         this.connectorRepository = mageRepository;
         this.suppConnectorRepository = mageRepository2;
+        this.userRepository = userRepository;
     }
-
-//    @Autowired
-//    public ConnectorService(SuppConnectorRepository mageRepository) {
-//        this.suppConnectorRepository = mageRepository;
-//        this.connectorRepository = null;
-//    }
 
     public List<Connector> getConnectors() {
 
@@ -93,6 +88,7 @@ public class ConnectorService {
         SupplementaryConnector suppConnector = new SupplementaryConnector(bridge, connectorId,
                 baseConnector.getBridge().getAppName(),
                 baseConnector.getBridge().getProjectDir(), baseConnector.getBridge().getProjectLink());
+        updateArtifactList(suppConnector);
         assert suppConnectorRepository != null;
         suppConnectorRepository.save(suppConnector);
 
@@ -100,7 +96,7 @@ public class ConnectorService {
     }
 
     @Transactional
-    public void updateConnector(String connectorId, Bridge bridge) {
+    public void updateConnector(String connectorId, Bridge bridge, String taskArtifact) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
         connector.setBridge(bridge);
 
@@ -108,7 +104,7 @@ public class ConnectorService {
     }
 
     @Transactional
-    public void updateSuppConnector(String connectorId, Bridge bridge, String baseConnectorId) {
+    public void updateSuppConnector(String connectorId, Bridge bridge, String baseConnectorId, String taskArtifact) {
         Connector baseConnector = connectorRepository.findById(baseConnectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
         SupplementaryConnector connector = suppConnectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
@@ -372,6 +368,11 @@ public class ConnectorService {
     public String createProcessInstance(String connectorId, String processName) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
+        // check role of user
+        User userPMage = userRepository.findById(connector.getUserName()).orElseThrow(() -> new IllegalStateException("User with username " + connector.getUserName() + "does not exist."));
+        if (!userPMage.getRole().equals("process-owner"))
+            throw new IllegalStateException("Error. Unsatisfied privilege. Cannot create new process instance");
+
         if (!createPMSProcessInstance(connector, processName, connector.getBridge().getUserNamePms()))
             throw new IllegalStateException("Cannot create new process instance");
         connectorRepository.save(connector);
@@ -625,6 +626,22 @@ public class ConnectorService {
     }
 
     public void updateArtifactList(Connector connector) {
+        if (connector.getBridge().getPmsName().equals("bonita")) {
+            for (TaskArtifact taskArtifact: connector.getTaskArtifactList()) {
+                for (Artifact input: taskArtifact.getInput()) {
+                    if (!connector.getArtifactPool().containsKey(input.getName())) {
+                        connector.addArtifact(input);
+                    }
+                }
+
+                for (Artifact output: taskArtifact.getOutput()) {
+                    if (!connector.getArtifactPool().containsKey(output.getName())) {
+                        connector.addArtifact(output);
+                    }
+                }
+            }
+        }
+
         HttpClient client = HttpClients.createDefault();
         try {
             Map<String, String> urlMap = new HashMap<>();

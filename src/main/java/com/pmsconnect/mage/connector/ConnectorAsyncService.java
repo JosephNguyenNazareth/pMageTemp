@@ -404,8 +404,8 @@ public class ConnectorAsyncService {
 
     public boolean possibleAddingArtifact(Connector connector, String detectedArtifactName) {
         Connector baseConnector = connectorRepository.findById(((SupplementaryConnector) connector).getSuppConnectorId()).orElseThrow(() -> new IllegalStateException("Connector with id " + ((SupplementaryConnector) connector).getSuppConnectorId() + "does not exist."));
-        Map<String, Artifact> mainArtifactPool = connector.getArtifactMap();
-        Map<String, Artifact> monitoredArtifactPool = baseConnector.getArtifactMap();
+        Map<String, Artifact> mainArtifactPool = connector.getArtifactPool();
+        Map<String, Artifact> monitoredArtifactPool = baseConnector.getArtifactPool();
 
         if (monitoredArtifactPool.containsKey(detectedArtifactName))
             if (monitoredArtifactPool.get(detectedArtifactName).isAvailable())
@@ -418,10 +418,10 @@ public class ConnectorAsyncService {
     public void updateArtifactPool(Connector connector, List<PreDefinedArtifactInstance> detectedArtifacts) {
         if (connector instanceof SupplementaryConnector) {
             Connector baseConnector = connectorRepository.findById(((SupplementaryConnector) connector).getSuppConnectorId()).orElseThrow(() -> new IllegalStateException("Connector with id " + ((SupplementaryConnector) connector).getSuppConnectorId() + "does not exist."));
-            Map<String, Artifact> mainArtifactPool = connector.getArtifactMap();
-            Map<String, Artifact> monitoredArtifactPool = baseConnector.getArtifactMap();
+            Map<String, Artifact> mainArtifactPool = connector.getArtifactPool();
+            Map<String, Artifact> monitoredArtifactPool = baseConnector.getArtifactPool();
 
-            for(PreDefinedArtifactInstance artifact: detectedArtifacts) {
+            for (PreDefinedArtifactInstance artifact: detectedArtifacts) {
                 String detectedArtifactName = artifact.getName();
                 if (monitoredArtifactPool.containsKey(detectedArtifactName))
                     if (monitoredArtifactPool.get(detectedArtifactName).isAvailable())
@@ -438,8 +438,8 @@ public class ConnectorAsyncService {
                         mainArtifactPool.put(detectedArtifactName, new Artifact(detectedArtifactName, true));
             }
         } else {
-            Map<String, Artifact> artifactPool = connector.getArtifactMap();
-            for(PreDefinedArtifactInstance artifact: detectedArtifacts) {
+            Map<String, Artifact> artifactPool = connector.getArtifactPool();
+            for (PreDefinedArtifactInstance artifact: detectedArtifacts) {
                 String detectedArtifactName = artifact.getName();
                 if (artifactPool.containsKey(detectedArtifactName))
                     artifactPool.get(detectedArtifactName).setAvailable(true);

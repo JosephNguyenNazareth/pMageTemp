@@ -53,16 +53,18 @@ public class ConnectorController {
     @PutMapping(path = "/update/{connectorId}")
     public void updateConnector(
             @PathVariable("connectorId") String connectorId,
-            @RequestBody(required = false) Bridge bridge) {
-        connectorService.updateConnector(connectorId, bridge);
+            @RequestBody(required = false) Bridge bridge,
+            @RequestParam(required = false) String taskArtifact) {
+        connectorService.updateConnector(connectorId, bridge, taskArtifact);
     }
 
     @PutMapping(path = "/update-supp/{connectorId}")
     public void updateSuppConnector(
             @PathVariable("connectorId") String connectorId,
             @RequestBody(required = false) Bridge bridge,
-            @RequestParam String baseConnectorId) {
-        connectorService.updateSuppConnector(connectorId, bridge, baseConnectorId);
+            @RequestParam String baseConnectorId,
+            @RequestParam(required = false) String taskArtifact) {
+        connectorService.updateSuppConnector(connectorId, bridge, baseConnectorId, taskArtifact);
     }
 
     @DeleteMapping(path = "/delete/{connectorId}")

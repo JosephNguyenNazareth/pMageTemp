@@ -6,6 +6,7 @@ import com.pmsconnect.mage.user.Bridge;
 import com.pmsconnect.mage.utils.ActionEvent;
 import com.pmsconnect.mage.utils.Alignment;
 import com.pmsconnect.mage.utils.Artifact;
+import com.pmsconnect.mage.utils.TaskArtifact;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -27,7 +28,8 @@ public class Connector {
     private Retriever retriever;
     private PmsConfig pmsConfig;
     private String userName;
-    private Map<String, Artifact> artifactMap;
+    private Map<String, Artifact> artifactPool;
+    private List<TaskArtifact> taskArtifactList;
 
     public Connector() {
         this.loadProperties();
@@ -52,7 +54,7 @@ public class Connector {
         this.loadProperties();
         this.retriever = new Retriever(System.getProperty("appconfig"));
         this.pmsConfig = new PmsConfig(System.getProperty("pmsconfig"), this.getBridge().getPmsName());
-        this.artifactMap = new HashMap<>();
+        this.artifactPool = new HashMap<>();
     }
 
     public String getId() {
@@ -159,20 +161,20 @@ public class Connector {
         this.actionEventDescription = actionEventDescription;
     }
 
-    public Map<String, Artifact> getArtifactMap() {
-        return artifactMap;
+    public Map<String, Artifact> getArtifactPool() {
+        return artifactPool;
     }
 
-    public void setArtifactMap(Map<String, Artifact> artifactMap) {
-        this.artifactMap = artifactMap;
+    public void setArtifactPool(Map<String, Artifact> artifactPool) {
+        this.artifactPool = artifactPool;
     }
 
     public void addArtifact(Artifact artifact) {
-        this.artifactMap.put(artifact.getName(), artifact);
+        this.artifactPool.put(artifact.getName(), artifact);
     }
 
     public void addArtifact(String name) {
-        this.artifactMap.put(name, new Artifact(name));
+        this.artifactPool.put(name, new Artifact(name));
     }
 
     public boolean existActionEventType(String eventType) {
@@ -186,5 +188,24 @@ public class Connector {
     public void updateConfig() {
         this.pmsConfig.readConfig();
         this.retriever.readConfig();
+    }
+
+    public List<TaskArtifact> getTaskArtifactList() {
+        return taskArtifactList;
+    }
+
+    public void setTaskArtifactList(List<TaskArtifact> taskArtifactList) {
+        this.taskArtifactList = taskArtifactList;
+    }
+
+    public void updateTaskArtifactList(List<String> taskArtifactStringList) {
+        for (String taskArtifactString : taskArtifactStringList) {
+            String[] taskArtifactStringParse = taskArtifactString.split(" : ");
+            String[] input = taskArtifactStringParse[0].split(",");
+            String taskName = taskArtifactStringParse[1];
+            String[] output = taskArtifactStringParse[0].split(",");
+
+            this.taskArtifactList.add(new TaskArtifact(taskName, input, output, "string"));
+        }
     }
 }
