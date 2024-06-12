@@ -1,10 +1,13 @@
 package com.pmsconnect.mage.user;
 
+import com.pmsconnect.mage.connector.Connector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping(path = "api/pmage/user")
+@RequestMapping(path = "pmage/user")
 public class UserController {
     private final UserService userService;
 
@@ -13,9 +16,20 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping
+    public List<User> getUsers() {
+        return userService.getUsers();
+    }
+
     @GetMapping(path = "{userName}")
     public User getUser(@PathVariable("userName") String userName) {
         return userService.getUser(userName);
+    }
+
+    @GetMapping(path = "/login")
+    public User login(@RequestParam String userName,
+                      @RequestParam String password) {
+        return userService.login(userName, password);
     }
 
     @PostMapping(path = "/add")
@@ -25,4 +39,5 @@ public class UserController {
             @RequestParam String role) {
         return userService.addNewUser(userName, password, role);
     }
+
 }

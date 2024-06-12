@@ -1,7 +1,6 @@
 package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.user.Bridge;
-import com.pmsconnect.mage.user.PMSConnection;
 import com.pmsconnect.mage.utils.Alignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +30,7 @@ public class ConnectorController {
         return connectorService.getConnector(connectorId);
     }
 
-    @GetMapping(path = "/user/{userName}")
+    @GetMapping(path = "/user-connector/{userName}")
     public List<Connector> getConnectorsByUserName(@PathVariable("userName") String userName) {
         return connectorService.getConnectorsByUserName(userName);
     }

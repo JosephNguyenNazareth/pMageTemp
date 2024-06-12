@@ -57,6 +57,10 @@ public class User {
         this.listConnectorId.add(connectorId);
     }
 
+    public void removeConnectorId(String connectorId) {
+        this.listConnectorId.remove(connectorId);
+    }
+
     public String getRole() {
         return role;
     }

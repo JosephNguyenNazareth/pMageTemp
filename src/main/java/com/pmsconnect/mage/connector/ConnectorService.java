@@ -3,7 +3,6 @@ package com.pmsconnect.mage.connector;
 import com.pmsconnect.mage.config.PMSConfigManager;
 import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.user.Bridge;
-import com.pmsconnect.mage.user.PMSConnection;
 import com.pmsconnect.mage.user.User;
 import com.pmsconnect.mage.user.UserRepository;
 import com.pmsconnect.mage.utils.*;
@@ -74,6 +73,10 @@ public class ConnectorService {
         Connector connector = new Connector(bridge);
         updateArtifactList(connector);
 
+        User userPMage = userRepository.findById(connector.getUserName()).orElseThrow(() -> new IllegalStateException("User with username " + connector.getUserName() + "does not exist."));
+        userPMage.addConnectorId(connector.getId());
+        userRepository.save(userPMage);
+
         connectorRepository.save(connector);
 
         return connector.getId();
@@ -89,6 +92,11 @@ public class ConnectorService {
                 baseConnector.getBridge().getAppName(),
                 baseConnector.getBridge().getProjectDir(), baseConnector.getBridge().getProjectLink());
         updateArtifactList(suppConnector);
+
+        User userPMage = userRepository.findById(suppConnector.getUserName()).orElseThrow(() -> new IllegalStateException("User with username " + suppConnector.getUserName() + "does not exist."));
+        userPMage.addConnectorId(suppConnector.getId());
+        userRepository.save(userPMage);
+
         assert suppConnectorRepository != null;
         suppConnectorRepository.save(suppConnector);
 
@@ -315,29 +323,29 @@ public class ConnectorService {
     }
 
 
-    private Map<String, String> loginPMS(PMSConnection pmsConnection, Map<String, String> extractInfo) {
-        HttpClient client = HttpClients.createDefault();
-        try {
-            PmsConfig tmpConfig = new PmsConfig(pmsConnection.getPMSConfig(), pmsConnection.getPmsName());
-
-            Map<String, String> urlMap = new HashMap<>();
-            Map<String, String> paramMap = new HashMap<>();
-
-            urlMap.put("url", tmpConfig.getUrlPMS());
-
-            String finalUri = tmpConfig.buildAPI("login", urlMap, paramMap);
-            HttpPost postMethod = new HttpPost(finalUri);
-            HttpResponse getResponse = client.execute(postMethod);
-
-            int getStatusCode = getResponse.getStatusLine()
-                    .getStatusCode();
-
-        } catch (URISyntaxException | IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
+//    private Map<String, String> loginPMS(PMSConnection pmsConnection, Map<String, String> extractInfo) {
+//        HttpClient client = HttpClients.createDefault();
+//        try {
+//            PmsConfig tmpConfig = new PmsConfig(pmsConnection.getPMSConfig(), pmsConnection.getPmsName());
+//
+//            Map<String, String> urlMap = new HashMap<>();
+//            Map<String, String> paramMap = new HashMap<>();
+//
+//            urlMap.put("url", tmpConfig.getUrlPMS());
+//
+//            String finalUri = tmpConfig.buildAPI("login", urlMap, paramMap);
+//            HttpPost postMethod = new HttpPost(finalUri);
+//            HttpResponse getResponse = client.execute(postMethod);
+//
+//            int getStatusCode = getResponse.getStatusLine()
+//                    .getStatusCode();
+//
+//        } catch (URISyntaxException | IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        return null;
+//    }
 
     public String getProcessInstance(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + " does not exist."));
@@ -442,6 +450,10 @@ public class ConnectorService {
 
     public void deleteConnector(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+
+        User userPMage = userRepository.findById(connector.getUserName()).orElseThrow(() -> new IllegalStateException("User with username " + connector.getUserName() + "does not exist."));
+        userPMage.removeConnectorId(connector.getId());
+        userRepository.save(userPMage);
 
         connectorRepository.delete(connector);
     }
