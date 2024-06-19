@@ -61,13 +61,27 @@ public class ConnectorService {
         List<Connector> allConnectors = connectorRepository.findAll();
         List<Connector> userConnectors = new ArrayList<>();
         for (Connector connector: allConnectors) {
-            if (connector.getUserName().equals(userName))
+            if (connector.getUserName().equals(userName)) {
                 userConnectors.add(connector);
+
+                // update user list connectorId in case it does not have it yet
+                User user = userRepository.findById(userName).orElseThrow(() -> new IllegalStateException("User with userName " + userName + "does not exist."));
+                if (user.getListConnectorId() == null) {
+                    List<String> connectorList = new ArrayList<>();
+                    connectorList.add(connector.getId());
+                    user.setListConnectorId(connectorList);
+                } else {
+                    if (!user.getListConnectorId().contains(connector.getId()))
+                        user.addConnectorId(connector.getId());
+                }
+                userRepository.save(user);
+            }
+
         }
         return userConnectors;
     }
 
-    public String addNewConnector(Bridge bridge) {
+    public String addNewConnector(Bridge bridge, boolean inviteCollab) {
         if (!verifyPmsExist(bridge))
             throw new IllegalStateException("Cannot verify pms");
         Connector connector = new Connector(bridge);
@@ -76,6 +90,12 @@ public class ConnectorService {
         User userPMage = userRepository.findById(connector.getUserName()).orElseThrow(() -> new IllegalStateException("User with username " + connector.getUserName() + "does not exist."));
         userPMage.addConnectorId(connector.getId());
         userRepository.save(userPMage);
+
+        if (inviteCollab)
+            if (userPMage.getRole().equals("manager")) {
+                List<String> collaborators = this.getProcessActors(bridge);
+
+            }
 
         connectorRepository.save(connector);
 
@@ -91,6 +111,23 @@ public class ConnectorService {
         SupplementaryConnector suppConnector = new SupplementaryConnector(bridge, connectorId,
                 baseConnector.getBridge().getAppName(),
                 baseConnector.getBridge().getProjectDir(), baseConnector.getBridge().getProjectLink());
+        updateArtifactList(suppConnector);
+
+        User userPMage = userRepository.findById(suppConnector.getUserName()).orElseThrow(() -> new IllegalStateException("User with username " + suppConnector.getUserName() + "does not exist."));
+        userPMage.addConnectorId(suppConnector.getId());
+        userRepository.save(userPMage);
+
+        assert suppConnectorRepository != null;
+        suppConnectorRepository.save(suppConnector);
+
+        return suppConnector.getId();
+    }
+
+    public String addSupplementaryConnectorsPast(Bridge bridge, String artifactList) {
+        if (!verifyPmsExist(bridge))
+            throw new IllegalStateException("Cannot verify pms");
+
+        SupplementaryConnector suppConnector = new SupplementaryConnector(bridge, artifactList);
         updateArtifactList(suppConnector);
 
         User userPMage = userRepository.findById(suppConnector.getUserName()).orElseThrow(() -> new IllegalStateException("User with username " + suppConnector.getUserName() + "does not exist."));
@@ -153,6 +190,44 @@ public class ConnectorService {
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private List<String> getProcessActors(Bridge bridge) {
+        HttpClient client = HttpClients.createDefault();
+        try {
+            PmsConfig tmpConfig = new PmsConfig(bridge.getPMSConfig(), bridge.getPmsName());
+
+            Map<String, String> urlMap = new HashMap<>();
+            Map<String, String> paramMap = new HashMap<>();
+
+            urlMap.put("url", tmpConfig.getUrlPMS());
+            urlMap.put("processInstanceId", bridge.getProcessId());
+
+            String finalUri = tmpConfig.buildAPI("getActors", urlMap, paramMap);
+            HttpGet getMethod = new HttpGet(finalUri);
+
+//            if (bridge.getPmsName().equals("bonita")) {
+//                String loginInfo = this.loginPMS(bridge.getPmsName());
+//                String[] loginInfoList = loginInfo.split(";");
+//                getMethod.setHeader("X-Bonita-API-Token", loginInfoList[1]);
+//                getMethod.setHeader("Cookie", "JSESSIONID=" + loginInfoList[0]);
+//            }
+
+            HttpResponse getResponse = client.execute(getMethod);
+
+            int getStatusCode = getResponse.getStatusLine().getStatusCode();
+            if (getStatusCode == 200) {
+                String content = EntityUtils.toString(getResponse.getEntity());
+                if (bridge.getPmsName().equals("core-bape")) {
+                    content = content.replace("[", "").replace("]", "").replace("\"", "");
+                    return Arrays.asList(content.split(","));
+                }
+            }
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 
 

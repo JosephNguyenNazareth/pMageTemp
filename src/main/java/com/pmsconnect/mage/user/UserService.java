@@ -1,17 +1,22 @@
 package com.pmsconnect.mage.user;
 
+import com.pmsconnect.mage.connector.Connector;
+import com.pmsconnect.mage.connector.ConnectorRepository;
+import com.pmsconnect.mage.utils.PMSScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserService {
     @Autowired
     private final UserRepository userRepository;
+    private final ConnectorRepository connectorRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, ConnectorRepository connectorRepository) {
         this.userRepository = userRepository;
+        this.connectorRepository = connectorRepository;
     }
 
     public List<User> getUsers() {
@@ -40,5 +45,27 @@ public class UserService {
 
     public boolean userExist(String userName) {
         return userRepository.existsById(userName);
+    }
+
+    public List<PMSScore> getUserCommonPMSInfo(String userName, String selectedPMS) {
+        List<PMSScore> infoConfidence = new ArrayList<>();
+        User user = userRepository.findById(userName).orElseThrow(() -> new IllegalStateException("User with userName " + userName + "does not exist."));
+        for (String connectorId: user.getListConnectorId()) {
+            Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+            if (connector.getBridge().getPmsName().equals(selectedPMS)) {
+                PMSScore pmsScore = new PMSScore(selectedPMS,
+                                                connector.getBridge().getUserNamePms(),
+                                                connector.getBridge().getPasswordPms(),
+                                                connector.getBridge().getPmsUrl());
+                if (!infoConfidence.contains(pmsScore))
+                    infoConfidence.add(pmsScore);
+                else
+                    infoConfidence.get(infoConfidence.indexOf(pmsScore)).increase();
+            }
+        }
+        infoConfidence.sort(Collections.reverseOrder());
+        System.out.println(infoConfidence);
+
+        return infoConfidence;
     }
 }

@@ -35,7 +35,6 @@ public class ConnectorController {
         return connectorService.getConnectorsByUserName(userName);
     }
 
-
     @PostMapping(path = "/add-supp/{connectorId}")
     public String addSupplementaryConnector(
             @PathVariable("connectorId") String connectorId,
@@ -46,7 +45,7 @@ public class ConnectorController {
     @PostMapping(path = "/add")
     public String addNewConnector(
             @RequestBody Bridge bridge) {
-        return connectorService.addNewConnector(bridge);
+        return connectorService.addNewConnector(bridge, false);
     }
 
     @PutMapping(path = "/update/{connectorId}")
@@ -143,5 +142,10 @@ public class ConnectorController {
                       @RequestParam String passwordPMS,
                       @RequestParam String processDef){
         return connectorService.getProcessInstanceIdList(pmsName, pmsURL, usernamePMS, passwordPMS, processDef);
+    }
+
+    @GetMapping(path = "pms-resources")
+    public List<String> getPMSResources() {
+        return connectorService.getPMSConfig();
     }
 }

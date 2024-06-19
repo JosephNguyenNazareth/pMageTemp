@@ -7,9 +7,7 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class PmsConfig {
     private String pms;
@@ -18,6 +16,10 @@ public class PmsConfig {
 
     public PmsConfig() {
 
+    }
+
+    public PmsConfig(String configPath) {
+        this.configPath = configPath;
     }
 
     public PmsConfig(String configPath, String pms) {

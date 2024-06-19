@@ -1,8 +1,10 @@
 package com.pmsconnect.mage.user;
 
+import com.pmsconnect.mage.utils.Invitation;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "user")
@@ -12,7 +14,8 @@ public class User {
     private String password;
     private List<String> listConnectorId;
     private String role;
-
+    private List<Invitation> invitationSentList;
+    private List<Invitation> invitationReceivedList;
 
     public User() {};
 
@@ -21,6 +24,8 @@ public class User {
         this.password = password;
         this.listConnectorId = listConnectorId;
         this.role = role;
+        this.invitationSentList = new ArrayList<>();
+        this.invitationReceivedList = new ArrayList<>();
     }
 
     public User(String userName, String password, String role) {
@@ -67,5 +72,29 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public List<Invitation> getInvitationSentList() {
+        return invitationSentList;
+    }
+
+    public void setInvitationSentList(List<Invitation> invitationSentList) {
+        this.invitationSentList = invitationSentList;
+    }
+
+    public void addInvitationSentList(Invitation invitation) {
+        this.invitationSentList.add(invitation);
+    }
+
+    public List<Invitation> getInvitationReceivedList() {
+        return invitationReceivedList;
+    }
+
+    public void setInvitationReceivedList(List<Invitation> invitationReceivedList) {
+        this.invitationReceivedList = invitationReceivedList;
+    }
+
+    public void addInvitationReceivedList(Invitation invitation) {
+        this.invitationReceivedList.add(invitation);
     }
 }
