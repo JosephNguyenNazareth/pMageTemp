@@ -1,6 +1,7 @@
 package com.pmsconnect.mage.user;
 
 import com.pmsconnect.mage.connector.Connector;
+import com.pmsconnect.mage.utils.AppScore;
 import com.pmsconnect.mage.utils.PMSScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,5 +46,11 @@ public class UserController {
     public List<PMSScore> getUserCommonPMSInfo(@PathVariable("userName") String userName,
                                                @RequestParam String selectedPMS) {
         return userService.getUserCommonPMSInfo(userName, selectedPMS);
+    }
+
+    @GetMapping(path = "/{userName}/app-info")
+    public List<AppScore> getUserCommonAppInfo(@PathVariable("userName") String userName,
+                                               @RequestParam String selectedApp) {
+        return userService.getUserCommonAppInfo(userName, selectedApp);
     }
 }

@@ -148,4 +148,9 @@ public class ConnectorController {
     public List<String> getPMSResources() {
         return connectorService.getPMSConfig();
     }
+
+    @GetMapping(path = "app-resources")
+    public List<String> getAppResources() {
+        return connectorService.getAppConfig();
+    }
 }

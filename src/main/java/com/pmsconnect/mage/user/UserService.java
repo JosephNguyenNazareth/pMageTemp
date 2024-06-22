@@ -2,6 +2,7 @@ package com.pmsconnect.mage.user;
 
 import com.pmsconnect.mage.connector.Connector;
 import com.pmsconnect.mage.connector.ConnectorRepository;
+import com.pmsconnect.mage.utils.AppScore;
 import com.pmsconnect.mage.utils.PMSScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,20 +48,44 @@ public class UserService {
         return userRepository.existsById(userName);
     }
 
-    public List<PMSScore> getUserCommonPMSInfo(String userName, String selectedPMS) {
+    public List<PMSScore> getUserCommonPMSInfo(String userName, String selectedApp) {
         List<PMSScore> infoConfidence = new ArrayList<>();
         User user = userRepository.findById(userName).orElseThrow(() -> new IllegalStateException("User with userName " + userName + "does not exist."));
         for (String connectorId: user.getListConnectorId()) {
             Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
-            if (connector.getBridge().getPmsName().equals(selectedPMS)) {
-                PMSScore pmsScore = new PMSScore(selectedPMS,
+            if (connector.getBridge().getPmsName().equals(selectedApp)) {
+                PMSScore appScore = new PMSScore(selectedApp,
                                                 connector.getBridge().getUserNamePms(),
                                                 connector.getBridge().getPasswordPms(),
                                                 connector.getBridge().getPmsUrl());
-                if (!infoConfidence.contains(pmsScore))
-                    infoConfidence.add(pmsScore);
+                if (!infoConfidence.contains(appScore))
+                    infoConfidence.add(appScore);
                 else
-                    infoConfidence.get(infoConfidence.indexOf(pmsScore)).increase();
+                    infoConfidence.get(infoConfidence.indexOf(appScore)).increase();
+            }
+        }
+        infoConfidence.sort(Collections.reverseOrder());
+        System.out.println(infoConfidence);
+
+        return infoConfidence;
+    }
+
+    public List<AppScore> getUserCommonAppInfo(String userName, String selectedApp) {
+        List<AppScore> infoConfidence = new ArrayList<>();
+        User user = userRepository.findById(userName).orElseThrow(() -> new IllegalStateException("User with userName " + userName + "does not exist."));
+
+        for (String connectorId: user.getListConnectorId()) {
+            Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
+            if (connector.getBridge().getPmsName().equals(selectedApp)) {
+                AppScore appScore = new AppScore(selectedApp,
+                        connector.getBridge().getUserNameApp(),
+                        connector.getBridge().getPasswordApp(),
+                        connector.getBridge().getProjectLink(),
+                        connector.getBridge().getProjectDir());
+                if (!infoConfidence.contains(appScore))
+                    infoConfidence.add(appScore);
+                else
+                    infoConfidence.get(infoConfidence.indexOf(appScore)).increase();
             }
         }
         infoConfidence.sort(Collections.reverseOrder());

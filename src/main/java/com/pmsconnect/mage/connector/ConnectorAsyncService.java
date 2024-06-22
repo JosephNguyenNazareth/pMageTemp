@@ -1,7 +1,7 @@
 package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.casestudy.PreDefinedArtifactInstance;
-import com.pmsconnect.mage.config.Retriever;
+import com.pmsconnect.mage.config.AppConfig;
 import com.pmsconnect.mage.utils.ActionEvent;
 import com.pmsconnect.mage.utils.Alignment;
 
@@ -97,14 +97,14 @@ public class ConnectorAsyncService {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
         String configPath =  connector.getBridge().getAppConfig();
-        Retriever retriever = new Retriever(configPath);
-        retriever.setRepoLink(connector.getBridge().getProjectLink());
-        return retriever.getLatestCommitLog(true);
+        AppConfig appConfig = new AppConfig(configPath);
+        appConfig.setProjectLink(connector.getBridge().getProjectLink());
+        return appConfig.getLatestCommitLog(true);
     }
 
 
     public void retrieveLatestCommit(Connector connector, StringBuilder monitoringMess) {
-        connector.getRetriever().setRepoLink(connector.getBridge().getProjectLink());
+        connector.getRetriever().setProjectLink(connector.getBridge().getProjectLink());
         List<Dictionary<String, String>> commitList = connector.getRetriever().getLatestCommitLog(false);
 
         Dictionary<String, String> commit = commitList.get(0);

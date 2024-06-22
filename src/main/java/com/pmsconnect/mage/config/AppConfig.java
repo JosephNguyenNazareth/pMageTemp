@@ -4,7 +4,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -19,25 +18,33 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class Retriever {
-    private String repoLink;
-    private JSONArray config;
+public class AppConfig {
+    private String projectLink;
+    private JSONObject config;
     private String configPath;
+    private String app;
 
-    public Retriever(String configPath) {
+    public AppConfig(String configPath) {
         this.configPath = configPath;
         this.readConfig();
     }
 
-    public String getRepoLink() {
-        return repoLink;
+    public AppConfig(String configPath, String projectLink, JSONObject config) {
+        this.projectLink = projectLink;
+        this.config = config;
+        this.configPath = configPath;
+        this.readConfig();
     }
 
-    public JSONArray getConfig() {
+    public String getProjectLink() {
+        return projectLink;
+    }
+
+    public JSONObject getConfig() {
         return config;
     }
 
-    public void setConfig(JSONArray config) {
+    public void setConfig(JSONObject config) {
         this.config = config;
     }
 
@@ -49,15 +56,23 @@ public class Retriever {
         this.configPath = configPath;
     }
 
-    public void setRepoLink(String repoLink) {
-        this.repoLink = repoLink;
+    public void setProjectLink(String projectLink) {
+        this.projectLink = projectLink;
     }
 
     public void readConfig() {
         JSONParser parser = new JSONParser();
         try {
             Object obj = parser.parse(new FileReader(this.configPath));
-            this.config = (JSONArray)obj;
+            JSONArray configList = (JSONArray)obj;
+            for (Object o : configList) {
+                JSONObject configApp = (JSONObject) o;
+                if (this.projectLink.contains(configApp.get("origin").toString())){
+                    this.config = configApp;
+                    this.app = configApp.get("origin").toString();
+                    return;
+                }
+            }
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -170,9 +185,9 @@ public class Retriever {
     public List<Dictionary<String, String>> getLatestCommitLog(Boolean takeAll) {
         List<Dictionary<String, String>> extractCommits = new ArrayList<>();
 
-        JSONObject repoDetected = this.getRepoOrigin(repoLink);
+        JSONObject repoDetected = this.getRepoOrigin(projectLink);
 
-        String apiLink = this.buildAPILinkCommit(repoLink, repoDetected);
+        String apiLink = this.buildAPILinkCommit(projectLink, repoDetected);
         JSONArray originalCommits = this.callAPI(apiLink, repoDetected);
 
         if (!takeAll) {
@@ -181,7 +196,7 @@ public class Retriever {
             originalCommits.add(tmp);
         }
 
-        extractCommits.addAll(this.extractInfoCommit(repoLink, originalCommits, repoDetected));
+        extractCommits.addAll(this.extractInfoCommit(projectLink, originalCommits, repoDetected));
 
         return extractCommits;
     }

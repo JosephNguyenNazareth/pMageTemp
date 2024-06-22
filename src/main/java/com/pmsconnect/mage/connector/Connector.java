@@ -1,7 +1,7 @@
 package com.pmsconnect.mage.connector;
 
 import com.pmsconnect.mage.config.PmsConfig;
-import com.pmsconnect.mage.config.Retriever;
+import com.pmsconnect.mage.config.AppConfig;
 import com.pmsconnect.mage.user.Bridge;
 import com.pmsconnect.mage.utils.ActionEvent;
 import com.pmsconnect.mage.utils.Alignment;
@@ -25,7 +25,7 @@ public class Connector {
     private List<Alignment> historyCommitList;
     private Map<String, String> monitoringLog;
     private boolean monitoring;
-    private Retriever retriever;
+    private AppConfig appConfig;
     private PmsConfig pmsConfig;
     private String userName;
     private Map<String, Artifact> artifactPool;
@@ -52,7 +52,7 @@ public class Connector {
         this.monitoring = false;
         this.bridge = bridge;
         this.loadProperties();
-        this.retriever = new Retriever(System.getProperty("appconfig"));
+        this.appConfig = new AppConfig(System.getProperty("appconfig"));
         this.pmsConfig = new PmsConfig(System.getProperty("pmsconfig"), this.getBridge().getPmsName());
         this.artifactPool = new HashMap<>();
     }
@@ -97,12 +97,12 @@ public class Connector {
         this.monitoring = monitoring;
     }
 
-    public Retriever getRetriever() {
-        return retriever;
+    public AppConfig getRetriever() {
+        return appConfig;
     }
 
-    public void setRetriever(Retriever retriever) {
-        this.retriever = retriever;
+    public void setRetriever(AppConfig appConfig) {
+        this.appConfig = appConfig;
     }
 
     public PmsConfig getPmsConfig() {
@@ -187,7 +187,7 @@ public class Connector {
 
     public void updateConfig() {
         this.pmsConfig.readConfig();
-        this.retriever.readConfig();
+        this.appConfig.readConfig();
     }
 
     public List<TaskArtifact> getTaskArtifactList() {

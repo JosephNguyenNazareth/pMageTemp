@@ -1,5 +1,6 @@
 package com.pmsconnect.mage.connector;
 
+import com.pmsconnect.mage.config.AppConfigManager;
 import com.pmsconnect.mage.config.PMSConfigManager;
 import com.pmsconnect.mage.config.PmsConfig;
 import com.pmsconnect.mage.user.Bridge;
@@ -15,7 +16,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.*;
-import java.time.Duration;
 import java.util.*;
 
 @Service
@@ -613,7 +612,7 @@ public class ConnectorService {
     public List<String> extractKeywords(List<String> taskList) {
         StringBuilder taskListEntire = new StringBuilder();
         for (int i = 0; i < taskList.size(); i++) {
-            taskListEntire.append("end task ");
+//            taskListEntire.append("end task ");
             taskListEntire.append(taskList.get(i));
             if (i < taskList.size() - 1)
                 taskListEntire.append(" | ");
@@ -621,12 +620,16 @@ public class ConnectorService {
 
         File directory = new File("./src/main/python");
         List<String> commands = new ArrayList<>();
-        commands.add("/home/nguyenminhkhoi/mambaforge/envs/fouille/bin/python");
-        commands.add("keyword_extract.py");
+//        commands.add("/home/nguyenminhkhoi/mambaforge/envs/fouille/bin/python");
+//        commands.add("keyword_extract.py");
+        commands.add("C:" + File.separator + "Users" + File.separator + "iohkg" + File.separator + "miniconda3"
+                + File.separator + "envs" + File.separator + "dl" + File.separator + "python");
+        commands.add("text_transform.py");
         commands.add("\"" + taskListEntire + "\"");
+        commands.add("false");
         try {
-            String keywords = ExternalService.runCommand(directory, commands);
-            return Arrays.asList(keywords.split(";"));
+            String summary = ExternalService.runCommand(directory, commands);
+            return Arrays.asList(summary.split(";"));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -663,7 +666,7 @@ public class ConnectorService {
 
     public void loadHistoryCommit(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + " does not exist."));
-        connector.getRetriever().setRepoLink(connector.getBridge().getProjectLink());
+        connector.getRetriever().setProjectLink(connector.getBridge().getProjectLink());
         List<Dictionary<String, String>> commitList = connector.getRetriever().getLatestCommitLog(true);
 
 
@@ -698,6 +701,12 @@ public class ConnectorService {
         this.loadProperties();
         PMSConfigManager pmsManager = new PMSConfigManager(System.getProperty("pmsconfig"));
         return pmsManager.getListPMSName();
+    }
+
+    public List<String> getAppConfig() {
+        this.loadProperties();
+        AppConfigManager appManager = new AppConfigManager(System.getProperty("appconfig"));
+        return appManager.getListAppName();
     }
 
     public String addPMSConfig(String pmsConfig) {
