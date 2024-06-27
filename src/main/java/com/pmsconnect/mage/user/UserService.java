@@ -76,7 +76,7 @@ public class UserService {
 
         for (String connectorId: user.getListConnectorId()) {
             Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
-            if (connector.getBridge().getPmsName().equals(selectedApp)) {
+            if (connector.getBridge().getAppName().equals(selectedApp)) {
                 AppScore appScore = new AppScore(selectedApp,
                         connector.getBridge().getUserNameApp(),
                         connector.getBridge().getPasswordApp(),

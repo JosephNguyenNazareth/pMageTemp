@@ -1,0 +1,9 @@
+gitlab
+github
+tableau
+openclassroom
+power bi
+figma
+draw.io
+office
+cisco

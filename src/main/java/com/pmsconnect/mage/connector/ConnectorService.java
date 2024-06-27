@@ -42,6 +42,7 @@ public class ConnectorService {
         this.connectorRepository = mageRepository;
         this.suppConnectorRepository = mageRepository2;
         this.userRepository = userRepository;
+        this.loadProperties();
     }
 
     public List<Connector> getConnectors() {
@@ -610,6 +611,7 @@ public class ConnectorService {
     }
 
     public List<String> extractKeywords(List<String> taskList) {
+        this.loadProperties();
         StringBuilder taskListEntire = new StringBuilder();
         for (int i = 0; i < taskList.size(); i++) {
 //            taskListEntire.append("end task ");
@@ -622,11 +624,10 @@ public class ConnectorService {
         List<String> commands = new ArrayList<>();
 //        commands.add("/home/nguyenminhkhoi/mambaforge/envs/fouille/bin/python");
 //        commands.add("keyword_extract.py");
-        commands.add("C:" + File.separator + "Users" + File.separator + "iohkg" + File.separator + "miniconda3"
-                + File.separator + "envs" + File.separator + "dl" + File.separator + "python");
+        String pythonPath = System.getProperty("python");
+        commands.add(pythonPath);
         commands.add("text_transform.py");
         commands.add("\"" + taskListEntire + "\"");
-        commands.add("false");
         try {
             String summary = ExternalService.runCommand(directory, commands);
             return Arrays.asList(summary.split(";"));
@@ -697,13 +698,13 @@ public class ConnectorService {
         }
     }
 
-    public List<String> getPMSConfig() {
+    public List<String> getPMSList() {
         this.loadProperties();
         PMSConfigManager pmsManager = new PMSConfigManager(System.getProperty("pmsconfig"));
         return pmsManager.getListPMSName();
     }
 
-    public List<String> getAppConfig() {
+    public List<String> getAppList() {
         this.loadProperties();
         AppConfigManager appManager = new AppConfigManager(System.getProperty("appconfig"));
         return appManager.getListAppName();
@@ -771,6 +772,24 @@ public class ConnectorService {
             }
         } catch (URISyntaxException | IOException | ParseException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public String getSuggestedApp(String processName) {
+        this.loadProperties();
+        System.out.println(processName);
+        File directory = new File("./src/main/python");
+        List<String> commands = new ArrayList<>();
+        String pythonPath = System.getProperty("python");
+        commands.add(pythonPath);
+        commands.add("suggest_app.py");
+        commands.add("\"" + processName + "\"");
+        try {
+            String appSuggested = ExternalService.runCommand(directory, commands);
+            System.out.println(appSuggested);
+            return appSuggested;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

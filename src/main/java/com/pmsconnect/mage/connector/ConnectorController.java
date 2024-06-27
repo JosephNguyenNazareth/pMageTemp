@@ -119,12 +119,6 @@ public class ConnectorController {
         connectorService.loadHistoryCommit(connectorId);
     }
 
-    @GetMapping(path = "pms-config")
-    public List<String> getPMSConfig() {
-        return connectorService.getPMSConfig();
-    }
-
-
     @PostMapping(path = "pms-config")
     public String updatePMSConfig(@RequestBody String pmsConfig) {
         return connectorService.addPMSConfig(pmsConfig);
@@ -146,11 +140,16 @@ public class ConnectorController {
 
     @GetMapping(path = "pms-resources")
     public List<String> getPMSResources() {
-        return connectorService.getPMSConfig();
+        return connectorService.getPMSList();
     }
 
     @GetMapping(path = "app-resources")
     public List<String> getAppResources() {
-        return connectorService.getAppConfig();
+        return connectorService.getAppList();
+    }
+
+    @GetMapping(path = "/suggested-app")
+    public String getSuggestedApp(@RequestParam String processName) {
+        return connectorService.getSuggestedApp(processName);
     }
 }

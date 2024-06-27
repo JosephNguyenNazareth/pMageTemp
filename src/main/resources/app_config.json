@@ -1,6 +1,6 @@
 [
     {
-        "origin": "github.com",
+        "origin": "github",
         "api_info": {
             "api_prefix": "api.github.com/repos",
             "api_postfix_commit": "commits",
@@ -24,7 +24,7 @@
         }
     },
     {
-        "origin": "gitlab.com",
+        "origin": "gitlab",
         "api_info": {
             "api_prefix": "gitlab.com/api/v4/projects",
             "api_postfix_commit": "repository/commits",
