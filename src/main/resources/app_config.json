@@ -1,51 +1,43 @@
 [
     {
-        "origin": "github",
-        "api_info": {
-            "api_prefix": "api.github.com/repos",
-            "api_postfix_commit": "commits",
-            "api_postfix_diff": "",
-            "time_format" : "%Y-%m-%dT%H:%M:%SZ"
-        },
-        "user_info": {
-            "user": "JosephNguyenNazareth",
-            "token": "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"
-        },
-        "message_info": {
-            "id": "sha",
-            "time": "commit|committer|date",
-            "title": "commit|message",
-            "committer": "commit|committer|name"
-        },
-        "diff_info": {
-            "file_change": "files",
-            "path": "filename",
-            "status": "status"
-        }
+        "app": "github",
+        "action": [
+            {
+                "name": "push",
+                "api_info": {
+                    "api_prefix": "api.github.com/repos",
+                    "api_postfix_commit": "commits",
+                    "api_postfix_diff": "",
+                    "time_format": "%Y-%m-%dT%H:%M:%SZ"
+                },
+                "message_info": {
+                    "id": "sha",
+                    "time": "commit|committer|date",
+                    "title": "commit|message",
+                    "committer": "commit|committer|name"
+                }
+            }
+        ]
     },
     {
-        "origin": "gitlab",
-        "api_info": {
-            "api_prefix": "gitlab.com/api/v4/projects",
-            "api_postfix_commit": "repository/commits",
-            "api_postfix_diff": "diff",
-            "api_postfix_revert": "revert",
-            "time_format" : "%Y-%m-%dT%H:%M:%S.%f%z"
-        },
-        "user_info": {
-            "user": "JosephNguyenNazareth",
-            "token": "glpat-pu-7q5wsFFMxSmXE-VJC"
-        },
-        "message_info": {
-            "id": "id",
-            "time": "created_at",
-            "title": "title",
-            "committer": "committer_name"
-        },
-        "diff_info": {
-            "file_change": "",
-            "path": "new_path",
-            "status": ["new_file", "renamed_file", "deleted_file"]
-        }
+        "app": "gitlab",
+        "action": [
+            {
+                "name": "push",
+                "api_info": {
+                    "api_prefix": "gitlab.com/api/v4/projects",
+                    "api_postfix_commit": "repository/commits",
+                    "api_postfix_diff": "diff",
+                    "api_postfix_revert": "revert",
+                    "time_format" : "%Y-%m-%dT%H:%M:%S.%f%z"
+                },
+                "message_info": {
+                    "id": "id",
+                    "time": "created_at",
+                    "title": "title",
+                    "committer": "committer_name"
+                }
+            }
+        ]
     }
 ]

@@ -67,9 +67,9 @@ public class AppConfig {
             JSONArray configList = (JSONArray)obj;
             for (Object o : configList) {
                 JSONObject configApp = (JSONObject) o;
-                if (this.projectLink.contains(configApp.get("origin").toString())){
+                if (this.projectLink.contains(configApp.get("app").toString())){
                     this.config = configApp;
-                    this.app = configApp.get("origin").toString();
+                    this.app = configApp.get("app").toString();
                     return;
                 }
             }
@@ -78,38 +78,25 @@ public class AppConfig {
         }
     }
 
-    private JSONObject getRepoOrigin(String repoLink) {
+    private JSONObject getAppFromLink(String projectLink) {
         for (int i = 0; i < this.config.size(); i++) {
             JSONObject jObject =  new JSONObject((LinkedHashMap)this.config.get(i));
-            String origin = jObject.get("origin").toString();
-            if (repoLink.contains(origin))
+            String app = jObject.get("app").toString();
+            if (projectLink.contains(app))
                 return jObject;
         }
         return null;
     }
 
-    private String buildAPILinkCommit(String repoLink, JSONObject currentConfig) {
+    private String buildAPILink(String projectLink, JSONObject currentConfig) {
         JSONObject configAPIInfo = new JSONObject((LinkedHashMap) currentConfig.get("api_info"));
-        String origin = currentConfig.get("origin").toString();
+        String app = currentConfig.get("app").toString();
 
-        if (origin.equals("github.com"))
-            return repoLink.replace(origin, configAPIInfo.get("api_prefix").toString()) + "/" + configAPIInfo.get("api_postfix_commit").toString();
-        else if (origin.equals("gitlab.com")) {
-            String urlPath = repoLink.substring(repoLink.indexOf(origin) + origin.length() + 1).replace("/", "%2F");
+        if (app.equals("github.com"))
+            return projectLink.replace(app, configAPIInfo.get("api_prefix").toString()) + "/" + configAPIInfo.get("api_postfix_commit").toString();
+        else if (app.equals("gitlab.com")) {
+            String urlPath = projectLink.substring(projectLink.indexOf(app) + app.length() + 1).replace("/", "%2F");
             return "https://" + configAPIInfo.get("api_prefix") + "/" + urlPath + "/" + configAPIInfo.get("api_postfix_commit");
-        }
-        return "";
-    }
-
-    private String buildAPILinkRevertCommit(String commitId, String repoLink, JSONObject currentConfig) {
-        JSONObject configAPIInfo = new JSONObject((LinkedHashMap) currentConfig.get("api_info"));
-        String origin = currentConfig.get("origin").toString();
-
-        if (origin.equals("github.com"))
-            return "";
-        else if (origin.equals("gitlab.com")) {
-            String urlPath = repoLink.substring(repoLink.indexOf(origin) + origin.length() + 1).replace("/", "%2F");
-            return "https://" + configAPIInfo.get("api_prefix") + "/" + urlPath + "/" + configAPIInfo.get("api_postfix_commit") + "/" + commitId + "/" + configAPIInfo.get("api_postfix_revert");
         }
         return "";
     }
@@ -161,7 +148,7 @@ public class AppConfig {
         return result;
     }
 
-    private List<Dictionary<String, String>> extractInfoCommit(String repoLink, JSONArray originMessage, JSONObject currentConfig) {
+    private List<Dictionary<String, String>> extractInfo(String projectLink, JSONArray originMessage, JSONObject currentConfig) {
         JSONObject messageInfoConfig = new JSONObject((LinkedHashMap) currentConfig.get("message_info"));
         List<Dictionary<String, String>> extractCommits = new ArrayList<>();
 
@@ -173,7 +160,7 @@ public class AppConfig {
             extractInfo.put("created_at", this.traverseMessageLevel(commit, messageInfoConfig.get("time").toString()));
             extractInfo.put("title", this.traverseMessageLevel(commit, messageInfoConfig.get("title").toString()).trim().replace("'", "\""));
             extractInfo.put("committer_name", this.traverseMessageLevel(commit, messageInfoConfig.get("committer").toString()).trim());
-            extractInfo.put("project_id", repoLink);
+            extractInfo.put("project_id", projectLink);
             extractInfo.put("origin", currentConfig.get("origin").toString());
 
             extractCommits.add(extractInfo);
@@ -182,21 +169,21 @@ public class AppConfig {
         return extractCommits;
     }
 
-    public List<Dictionary<String, String>> getLatestCommitLog(Boolean takeAll) {
+    public List<Dictionary<String, String>> getLatestTrigger(Boolean takeAll) {
         List<Dictionary<String, String>> extractCommits = new ArrayList<>();
 
-        JSONObject repoDetected = this.getRepoOrigin(projectLink);
+        JSONObject repoDetected = this.getAppFromLink(projectLink);
 
-        String apiLink = this.buildAPILinkCommit(projectLink, repoDetected);
-        JSONArray originalCommits = this.callAPI(apiLink, repoDetected);
+        String apiLink = this.buildAPILink(projectLink, repoDetected);
+        JSONArray originalTriggers = this.callAPI(apiLink, repoDetected);
 
         if (!takeAll) {
-            JSONObject tmp = (JSONObject) originalCommits.get(0);
-            originalCommits = new JSONArray();
-            originalCommits.add(tmp);
+            JSONObject tmp = (JSONObject) originalTriggers.get(0);
+            originalTriggers = new JSONArray();
+            originalTriggers.add(tmp);
         }
 
-        extractCommits.addAll(this.extractInfoCommit(projectLink, originalCommits, repoDetected));
+        extractCommits.addAll(this.extractInfo(projectLink, originalTriggers, repoDetected));
 
         return extractCommits;
     }

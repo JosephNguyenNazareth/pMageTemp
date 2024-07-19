@@ -1,0 +1,1191 @@
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-rss.html.twig' -->
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://www.bonitasoft.com/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:og="http://ogp.me/ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:schema="http://schema.org/" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:sioct="http://rdfs.org/sioc/types#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+  <channel>
+    <title></title>
+    <link>https://www.bonitasoft.com/</link>
+    <description></description>
+    <language>en</language>
+    
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>The new version of Bonita is here!</title>
+  <link>https://www.bonitasoft.com/news/the-new-version-of-bonita-is-here</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;The new version of Bonita is here!&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-06-25T12:07:55+02:00&quot; title=&quot;Tuesday, June 25, 2024 - 12:07&quot;&gt;Tue, 06/25/2024 - 12:07&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;p&gt;We understand how &lt;a href=&quot;https://www.bonitasoft.com/business-process-management-bpm&quot; rel=&quot;noopener&quot; target=&quot;_blank&quot; title=&quot;What is Business Process Management&quot;&gt;business process management&lt;/a&gt; contributes critically to business success.&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Tue, 25 Jun 2024 10:07:55 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20629 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>Bonitasoft obtains Great Place To Work® certification for the 5th time</title>
+  <link>https://www.bonitasoft.com/news/bonitasoft-obtains-great-place-to-workr-certification-for-the-5th-time</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;Bonitasoft obtains Great Place To Work® certification for the 5th time&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-06-19T13:50:31+02:00&quot; title=&quot;Wednesday, June 19, 2024 - 13:50&quot;&gt;Wed, 06/19/2024 - 13:50&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;h2&gt;Bonitasoft has just been certified as a Great Place To Work® for the fifth time since 2018&lt;/h2&gt;
+
+&lt;p&gt;This award is based entirely on employee testimonials about their experience working at Bonitasoft.&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Wed, 19 Jun 2024 11:50:31 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20628 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>Optimisation continue des processus métiers : maximiser l&#039;efficacité avec l&#039;automatisation</title>
+  <link>https://fr.bonitasoft.com/actualites/optimisation-continue-des-processus-metiers-maximiser-lefficacite-avec-lautomatisation</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;Continuous performance monitoring of business processes: the key to efficiency&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-06-11T08:33:57+02:00&quot; title=&quot;Tuesday, June 11, 2024 - 08:33&quot;&gt;Tue, 06/11/2024 - 08:33&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;h2&gt;Continuous monitoring and analysis to ensure business process efficiency&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.bonitasoft.com/bonita-for-process-automation&quot; rel=&quot;noopener&quot; target=&quot;_blank&quot;&gt;Business process automation&lt;/a&gt; enhances productivity, yet the specific advantages are not always clear.&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Tue, 11 Jun 2024 06:51:15 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20625 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>Streamlining business processes: The power of BPM in overcoming integration challenges</title>
+  <link>https://www.bonitasoft.com/news/streamlining-business-processes-the-power-of-bpm-in-overcoming-integration-challenges</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;Streamlining business processes: The power of BPM in overcoming integration challenges&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-06-06T08:58:55+02:00&quot; title=&quot;Thursday, June 6, 2024 - 08:58&quot;&gt;Thu, 06/06/2024 - 08:58&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;h2&gt;Streamlining business processes: The power of BPM in overcoming integration challenges&lt;/h2&gt;
+
+&lt;p&gt;&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Thu, 06 Jun 2024 06:58:55 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20624 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>L&#039;impact de l&#039;Intelligence Artificielle sur l&#039;efficacité et la durabilité des processsus métier </title>
+  <link>https://fr.bonitasoft.com/actualites/limpact-de-l-intelligence-artificielle-sur-lefficacite-et-la-durabilite-des-processsus-metier</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;Trends in IT: AI, business process analysis, and sustainability&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-06-04T04:51:21+02:00&quot; title=&quot;Tuesday, June 4, 2024 - 04:51&quot;&gt;Tue, 06/04/2024 - 04:51&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;p&gt;The rise of generative AI and the efficiency of business processes are redefining IT industry standards and expectations.&lt;/p&gt;&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Tue, 04 Jun 2024 02:13:34 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20616 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>The Legendre group accelerates its digital transformation with Bonitasoft</title>
+  <link>https://www.bonitasoft.com/news/the-legendre-group-accelerates-its-digital-transformation-with-bonitasoft</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;The Legendre group accelerates its digital transformation with Bonitasoft&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-05-28T08:02:20+02:00&quot; title=&quot;Tuesday, May 28, 2024 - 08:02&quot;&gt;Tue, 05/28/2024 - 08:02&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;h2&gt;Automation is key to Lengendre&#039;s digital transformation strategy&lt;/h2&gt;
+
+&lt;p&gt;With the increase of digitalization of the construction sector, the Legendre group - a major player in construction, real estate and energy - announced a strategic collaboration with Bonitasoft.&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Tue, 28 May 2024 06:02:20 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20617 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>Shamil Hassanaly appointed Chief Operating Officer of Bonitasoft</title>
+  <link>https://www.bonitasoft.com/news/shamil-hassanaly-appointed-chief-operating-officer-of-bonitasoft</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;Shamil Hassanaly appointed Chief Operating Officer of Bonitasoft&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-05-22T10:39:25+02:00&quot; title=&quot;Wednesday, May 22, 2024 - 10:39&quot;&gt;Wed, 05/22/2024 - 10:39&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;p&gt;Bonitasoft, an industry leader in process automation solutions with Business Process Management (BPM), has announced the appointment of Shamil Hassanaly as Chief Operating Officer.&amp;nbsp;&lt;/p&gt;&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Wed, 22 May 2024 08:39:25 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20615 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>New Process podcast: Rethinking processes, with Charles Souillard</title>
+  <link>https://www.bonitasoft.com/news/new-process-podcast-rethinking-processes-with-charles-souillard</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;New Process podcast: Rethinking processes, with Charles Souillard&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-04-10T16:15:22+02:00&quot; title=&quot;Wednesday, April 10, 2024 - 16:15&quot;&gt;Wed, 04/10/2024 - 16:15&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;h2&gt;The New Process podcast: Mirko Kloppenburg interviews Bonitasoft CEO Charles Souillard&lt;/h2&gt;
+
+&lt;p&gt;This episode of Mirko’s New Process podcast delves into the innovative approach of Bonitasoft in transforming process automation.&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Wed, 10 Apr 2024 14:15:22 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20593 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>Process Intelligence is key to process automation. Here’s why.</title>
+  <link>https://www.bonitasoft.com/news/process-intelligence-is-key-to-process-automation-heres-why</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;Process Intelligence is key to process automation. Here’s why.&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-03-27T06:56:14+01:00&quot; title=&quot;Wednesday, March 27, 2024 - 06:56&quot;&gt;Wed, 03/27/2024 - 06:56&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;h2&gt;Process Intelligence: the key to process automation&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.bonitasoft.com/process-intelligence-with-bonita-process-insights&quot; rel=&quot;noopener&quot; target=&quot;_blank&quot; title=&quot;Process Intelligence&quot;&gt;Process intelligence&lt;/a&gt; is essential for the best possible results of &lt;a /&gt;&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Wed, 27 Mar 2024 05:56:14 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20589 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_row_rss' -->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+<item>
+  <title>How process automation accelerates digital transformation in the public sector</title>
+  <link>https://www.bonitasoft.com/news/how-process-automation-accelerates-digital-transformation-in-the-public-sector</link>
+  <description>
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--title--blog.html.twig
+   x field--node--title.html.twig
+   * field--node--blog.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+&lt;span&gt;How process automation accelerates digital transformation in the public sector&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--title.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--uid--blog.html.twig
+   x field--node--uid.html.twig
+   * field--node--blog.html.twig
+   * field--uid.html.twig
+   * field--entity-reference.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;username&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+&lt;span lang=&quot;&quot; about=&quot;https://www.bonitasoft.com/user/3972&quot; typeof=&quot;schema:Person&quot; property=&quot;schema:name&quot; datatype=&quot;&quot;&gt;Mickey Farrance&lt;/span&gt;
+&lt;!-- END OUTPUT from &#039;core/modules/user/templates/username.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--uid.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--created--blog.html.twig
+   x field--node--created.html.twig
+   * field--node--blog.html.twig
+   * field--created.html.twig
+   * field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+&lt;span&gt;
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;time&#039; --&gt;
+&lt;!-- BEGIN OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+&lt;time datetime=&quot;2024-02-29T08:53:51+01:00&quot; title=&quot;Thursday, February 29, 2024 - 08:53&quot;&gt;Thu, 02/29/2024 - 08:53&lt;/time&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/system/templates/time.html.twig&#039; --&gt;
+
+&lt;/span&gt;
+
+&lt;!-- END OUTPUT from &#039;core/modules/node/templates/field--node--created.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;links__node&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * links--node.html.twig
+   x links.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/system/links.html.twig&#039; --&gt;
+
+
+
+&lt;!-- THEME DEBUG --&gt;
+&lt;!-- THEME HOOK: &#039;field&#039; --&gt;
+&lt;!-- FILE NAME SUGGESTIONS:
+   * field--node--body--blog.html.twig
+   * field--node--body.html.twig
+   * field--node--blog.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+--&gt;
+&lt;!-- BEGIN OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+            &lt;div class=&quot;field field--name-body field--type-text-with-summary field--label-hidden field--item&quot;&gt;&lt;p&gt;&lt;strong&gt;Faced with an aging software base, budgetary and personnel reductions, the public sector is still obligated to operate efficiently.&lt;/div&gt;
+      
+&lt;!-- END OUTPUT from &#039;themes/contrib/bootstrap/templates/field/field.html.twig&#039; --&gt;
+
+</description>
+  <pubDate>Thu, 29 Feb 2024 07:53:51 +0000</pubDate>
+    <dc:creator>Mickey Farrance</dc:creator>
+    <guid isPermaLink="false">20579 at https://www.bonitasoft.com</guid>
+    </item>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-row-rss.html.twig' -->
+
+
+  </channel>
+</rss>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-rss.html.twig' -->
+

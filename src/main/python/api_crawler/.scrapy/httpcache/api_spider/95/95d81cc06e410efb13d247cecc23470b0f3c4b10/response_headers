@@ -1,0 +1,15 @@
+Location: /learn/pathways/
+Refresh: 0;url=/learn/pathways/
+X-Github-Backend: Kubernetes
+X-Github-Request-Id: D747:2610D6:11F4BF6:190400A:667E7F47
+Accept-Ranges: bytes
+Via: 1.1 varnish, 1.1 varnish
+Set-Cookie: show_cookie_banner=1;SameSite=Lax; Secure; Path=/
+Set-Cookie: show_cookie_banner=1;SameSite=Lax; Secure; Path=/
+Date: Fri, 28 Jun 2024 09:15:51 GMT
+X-Served-By: cache-iad-kiad7000025-IAD, cache-lcy-eglc8600096-LCY
+X-Cache: MISS, MISS
+X-Cache-Hits: 0, 0
+Cross-Origin-Resource-Policy: cross-origin
+Strict-Transport-Security: max-age=31536000
+X-Fastly-Request-Id: 598a7082085d2827d5f629aea8e8e4720139cef4

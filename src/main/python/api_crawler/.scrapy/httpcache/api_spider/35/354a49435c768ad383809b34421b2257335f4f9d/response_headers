@@ -1,0 +1,16 @@
+Content-Length: 9270
+Server: GitHub.com
+Date: Fri, 28 Jun 2024 09:21:56 GMT
+Content-Type: text/html
+Retry-After: 120
+Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+X-Frame-Options: deny
+X-Content-Type-Options: nosniff
+X-Xss-Protection: 0
+Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'none'; base-uri 'self'; child-src github.com/assets-cdn/worker/ gist.github.com/assets-cdn/worker/; connect-src 'self' uploads.github.com www.githubstatus.com collector.github.com raw.githubusercontent.com api.github.com github-cloud.s3.amazonaws.com github-production-repository-file-5c1aeb.s3.amazonaws.com github-production-upload-manifest-file-7fdce7.s3.amazonaws.com github-production-user-asset-6210df.s3.amazonaws.com api.githubcopilot.com objects-origin.githubusercontent.com copilot-proxy.githubusercontent.com/v1/engines/github-completion/completions; font-src github.githubassets.com; form-action 'self' github.com gist.github.com copilot-workspace.githubnext.com objects-origin.githubusercontent.com; frame-ancestors 'none'; frame-src viewscreen.githubusercontent.com notebooks.githubusercontent.com; img-src 'self' data: blob: github.githubassets.com media.githubusercontent.com camo.githubusercontent.com identicons.github.com avatars.githubusercontent.com github-cloud.s3.amazonaws.com objects.githubusercontent.com secured-user-images.githubusercontent.com/ user-images.githubusercontent.com/ private-user-images.githubusercontent.com opengraph.githubassets.com github-production-user-asset-6210df.s3.amazonaws.com customer-stories-feed.github.com spotlights-feed.github.com objects-origin.githubusercontent.com; manifest-src 'self'; media-src github.com user-images.githubusercontent.com/ secured-user-images.githubusercontent.com/ private-user-images.githubusercontent.com github-production-user-asset-6210df.s3.amazonaws.com gist.github.com; script-src github.githubassets.com; style-src 'unsafe-inline' github.githubassets.com; upgrade-insecure-requests; worker-src github.com/assets-cdn/worker/ gist.github.com/assets-cdn/worker/
+Vary: Accept-Encoding, Accept, X-Requested-With
+Set-Cookie: _gh_sess=8UAtjYS0f8kCjQ4zlAwyyCBCxfTb6Kw%2B7Ml5NY0%2BEdMsPkjEE%2F9mzmiqXuY06NiaJRTQ9fZ%2FoKmU9KwsHZJOcH5rPF1fX4wOmDuzCTCLE9eMF%2BmQKavfQjIPX4kLXdMo%2BVXeP1mEtNuFA%2BMEW0JyuTiSfh3S5Sfc69nmr0egpWPg6dP%2BeMKnnuTJD48x%2FQDpKhJ%2FZiPIKc2Q164uVRdiLP0IgrMqLrEI3EOeTswtCHxUMugnKxN8IuX2lc%2B4T34t6GwW8KOIZGaWGf%2F7jgzZ7Q%3D%3D--s3WpMEejRnED9NY3--aRc14uvs0NpM1GnlZwMAKQ%3D%3D; Path=/; HttpOnly; Secure; SameSite=Lax
+Set-Cookie: _octo=GH1.1.37153011.1719566516; Path=/; Domain=github.com; Expires=Sat, 28 Jun 2025 09:21:56 GMT; Secure; SameSite=Lax
+Set-Cookie: logged_in=no; Path=/; Domain=github.com; Expires=Sat, 28 Jun 2025 09:21:56 GMT; HttpOnly; Secure; SameSite=Lax
+X-Github-Request-Id: C189:3325A6:3625C05:3740F5E:667E80B3

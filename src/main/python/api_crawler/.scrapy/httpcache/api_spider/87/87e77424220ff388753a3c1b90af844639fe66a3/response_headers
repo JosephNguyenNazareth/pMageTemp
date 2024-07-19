@@ -1,0 +1,21 @@
+Content-Length: 3359
+Server: GitHub.com
+Content-Type: text/html; charset=utf-8
+Last-Modified: Wed, 19 Jun 2024 08:50:10 GMT
+Access-Control-Allow-Origin: *
+Etag: W/"66729bc2-4d40"
+Expires: Fri, 28 Jun 2024 10:30:01 GMT
+Cache-Control: max-age=600
+Content-Encoding: gzip
+X-Proxy-Cache: MISS
+X-Github-Request-Id: 2AD5:215349:109CB69:1123DBB:667E8E51
+Accept-Ranges: bytes
+Age: 0
+Date: Fri, 28 Jun 2024 10:20:01 GMT
+Via: 1.1 varnish
+X-Served-By: cache-lcy-eglc8600092-LCY
+X-Cache: MISS
+X-Cache-Hits: 0
+X-Timer: S1719570001.484339,VS0,VE105
+Vary: Accept-Encoding
+X-Fastly-Request-Id: 5e8f0be4aff1910e1888e54d1e077ce271e4d4d2

@@ -1,9 +1,9 @@
 package com.pmsconnect.mage.utils;
 
 public class Alignment {
-    private String commitId;
+    private String triggeredActionId;
     private String processInstanceChange;
-    private String commitTime;
+    private String triggeredTime;
     private String processInstanceChangeTime;
     private String taskFound;
     private String monitoringMessage;
@@ -12,22 +12,22 @@ public class Alignment {
     public Alignment() {
     }
 
-    public Alignment(String commitId, String processInstanceChange, String commitTime, String processInstanceChangeTime, Boolean isViolated, String taskFound, String monitoringMessage) {
-        this.commitId = commitId;
+    public Alignment(String triggeredActionId, String processInstanceChange, String triggeredTime, String processInstanceChangeTime, Boolean isViolated, String taskFound, String monitoringMessage) {
+        this.triggeredActionId = triggeredActionId;
         this.processInstanceChange = processInstanceChange;
-        this.commitTime = commitTime;
+        this.triggeredTime = triggeredTime;
         this.processInstanceChangeTime = processInstanceChangeTime;
         this.violated = isViolated;
         this.taskFound = taskFound;
         this.monitoringMessage = monitoringMessage;
     }
 
-    public String getCommitId() {
-        return commitId;
+    public String getTriggeredActionId() {
+        return triggeredActionId;
     }
 
-    public void setCommitId(String commitId) {
-        this.commitId = commitId;
+    public void setTriggeredActionId(String triggeredActionId) {
+        this.triggeredActionId = triggeredActionId;
     }
 
     public String getProcessInstanceChange() {
@@ -38,12 +38,12 @@ public class Alignment {
         this.processInstanceChange = processInstanceChange;
     }
 
-    public String getCommitTime() {
-        return commitTime;
+    public String getTriggeredTime() {
+        return triggeredTime;
     }
 
-    public void setCommitTime(String commitTime) {
-        this.commitTime = commitTime;
+    public void setTriggeredTime(String triggeredTime) {
+        this.triggeredTime = triggeredTime;
     }
 
     public String getProcessInstanceChangeTime() {

@@ -1,0 +1,16 @@
+Strict-Transport-Security: max-age=31536000
+Accept-Ranges: bytes
+Etag: W/"667e6d80-15b"
+X-Envoy-Upstream-Service-Time: 1
+Via: HTTP/1.1 fringe, HTTP/2 edgeproxy, 1.1 google, 1.1 varnish, 1.1 varnish
+Content-Type: text/plain
+Last-Modified: Fri, 28 Jun 2024 08:00:00 GMT
+X-Content-Type-Options: nosniff
+Server: envoy
+Content-Encoding: gzip
+Date: Fri, 28 Jun 2024 09:27:59 GMT
+X-Served-By: cache-lcy-eglc8600037-LCY, cache-lcy-eglc8600093-LCY
+X-Cache: MISS, MISS
+X-Cache-Hits: 0, 0
+X-Timer: S1719566879.479023,VS0,VE28
+Vary: Accept-Encoding

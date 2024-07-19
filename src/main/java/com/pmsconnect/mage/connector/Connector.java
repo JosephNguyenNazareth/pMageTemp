@@ -22,7 +22,7 @@ public class Connector {
     private Bridge bridge;
     private List<ActionEvent> actionEventTable;
     private String actionEventDescription;
-    private List<Alignment> historyCommitList;
+    private List<Alignment> historyTriggerList;
     private Map<String, String> monitoringLog;
     private boolean monitoring;
     private AppConfig appConfig;
@@ -46,7 +46,7 @@ public class Connector {
 
     public Connector(Bridge bridge) {
         this.id = UUID.randomUUID().toString();
-        this.historyCommitList = new ArrayList<>();
+        this.historyTriggerList = new ArrayList<>();
         this.monitoringLog = new HashMap<>();
         this.actionEventTable = new ArrayList<>();
         this.monitoring = false;
@@ -61,29 +61,29 @@ public class Connector {
         return id;
     }
 
-    public List<Alignment> getHistoryCommitList() {
-        return historyCommitList;
+    public List<Alignment> getHistoryTriggerList() {
+        return historyTriggerList;
     }
 
-    public void setHistoryCommitList(List<Alignment> historyCommitList) {
-        this.historyCommitList = historyCommitList;
+    public void setHistoryTriggerList(List<Alignment> historyTriggerList) {
+        this.historyTriggerList = historyTriggerList;
     }
 
-    public void addHistoryCommitList(String historyCommit, String processInstanceChange, String commitTime, String changeTime, Boolean isViolated, String taskFound, String monitoringMessage) {
-        this.historyCommitList.add(new Alignment(historyCommit, processInstanceChange, commitTime, changeTime, isViolated, taskFound, monitoringMessage));
+    public void addHistoryTriggerList(String historyCommit, String processInstanceChange, String commitTime, String changeTime, Boolean isViolated, String taskFound, String monitoringMessage) {
+        this.historyTriggerList.add(new Alignment(historyCommit, processInstanceChange, commitTime, changeTime, isViolated, taskFound, monitoringMessage));
     }
 
-    public void addHistoryCommitList(String historyCommit, String commitTime, Boolean isViolated) {
-        this.historyCommitList.add(new Alignment(historyCommit, "", commitTime, "", isViolated, "", ""));
+    public void addHistoryTriggerList(String historyCommit, String commitTime, Boolean isViolated) {
+        this.historyTriggerList.add(new Alignment(historyCommit, "", commitTime, "", isViolated, "", ""));
     }
 
-    public void addHistoryCommitList(Alignment alignment) {
-        this.historyCommitList.add(alignment);
+    public void addHistoryTriggerList(Alignment alignment) {
+        this.historyTriggerList.add(alignment);
     }
 
-    public Alignment findCommitId(String commitId) {
-        for (Alignment alignment: this.historyCommitList) {
-            if (alignment.getCommitId().equals(commitId))
+    public Alignment findTriggeredActionId(String actionId) {
+        for (Alignment alignment: this.historyTriggerList) {
+            if (alignment.getTriggeredActionId().equals(actionId))
                 return alignment;
         }
         return null;
@@ -97,11 +97,11 @@ public class Connector {
         this.monitoring = monitoring;
     }
 
-    public AppConfig getRetriever() {
+    public AppConfig getAppConfig() {
         return appConfig;
     }
 
-    public void setRetriever(AppConfig appConfig) {
+    public void setAppConfig(AppConfig appConfig) {
         this.appConfig = appConfig;
     }
 
@@ -203,7 +203,7 @@ public class Connector {
             String[] taskArtifactStringParse = taskArtifactString.split(" : ");
             String[] input = taskArtifactStringParse[0].split(",");
             String taskName = taskArtifactStringParse[1];
-            String[] output = taskArtifactStringParse[0].split(",");
+            String[] output = taskArtifactStringParse[2].split(",");
 
             this.taskArtifactList.add(new TaskArtifact(taskName, input, output, "string"));
         }

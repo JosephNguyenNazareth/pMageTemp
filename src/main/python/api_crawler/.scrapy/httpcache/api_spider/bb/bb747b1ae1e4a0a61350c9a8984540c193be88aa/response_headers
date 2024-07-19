@@ -1,0 +1,27 @@
+Content-Length: 226
+Content-Type: text/html; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: public, max-age=60
+Location: /en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry
+Content-Security-Policy: default-src 'none';prefetch-src 'self';connect-src 'self';font-src 'self' data: githubdocs.azureedge.net;img-src 'self' github.com *.github.com *.githubusercontent.com *.githubassets.com data: githubdocs.azureedge.net placehold.it;object-src 'self';script-src 'self' data: githubdocs.azureedge.net;frame-src 'self' github.com *.github.com *.githubusercontent.com *.githubassets.com https://support.github.com https://www.youtube-nocookie.com;frame-ancestors 'self' github.com *.github.com *.githubusercontent.com *.githubassets.com;style-src 'self' 'unsafe-inline' data: githubdocs.azureedge.net;child-src 'self';manifest-src 'self';upgrade-insecure-requests;base-uri 'self';form-action 'self';script-src-attr 'none'
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: no-referrer-when-downgrade
+X-Content-Type-Options: nosniff
+X-Dns-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Permitted-Cross-Domain-Policies: none
+X-Xss-Protection: 0
+X-Azure-Ref: 20240628T091805Z-17649495c952hn7vhgd0s5s6aw0000000b1g000000012r10
+Via: 1.1 varnish, 1.1 varnish
+Accept-Ranges: bytes
+Age: 0
+Date: Fri, 28 Jun 2024 09:18:05 GMT
+X-Served-By: cache-iad-kjyo7100033-IAD, cache-lcy-eglc8600073-LCY
+X-Cache: CONFIG_NOCACHE, MISS, MISS
+X-Cache-Hits: 0, 0
+X-Timer: S1719566286.760267,VS0,VE107
+Vary: accept-language, x-user-language, Accept
+Strict-Transport-Security: max-age=31557600

@@ -1,0 +1,14 @@
+Content-Length: 1523
+Cache-Control: no-cache
+Content-Type: text/html; charset=utf-8
+Strict-Transport-Security: max-age=31536000
+X-Content-Type-Options: nosniff
+X-Frame-Options: deny
+X-Xss-Protection: 0
+Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'
+Retry-After: 300
+Date: Fri, 28 Jun 2024 09:23:59 GMT
+Set-Cookie: _gh_sess=K2KRbtTvu9bkT1SylJf5KUJL6giiS4tMtBIdhMckx1P%2B0t8JU5dKgVd%2B1Mbz6uPwRhO7XPgQzCSleipX%2BeL7FY4Ua67wlPR%2FporMv1el9shYg6GhtI4YMxffJ31AyH7knnUF9dVtePRwNxmmq5qK4AcMRDAB0zGTTmonECNcm94lMi37Kjd3ML8srQ8KZJl8pTDRV%2BaxeWtc9PkXqb1Ealg0lKik66oqwY6uWhHZo8crf4R%2FoCpz0UbOhi6qpdQ7yFnRvNKtnjfzvMWUtrSP1Q%3D%3D--TxWe4NXLvUcRc2BQ--l2C3fVXZkR7hFVXi%2FoqTBg%3D%3D; Path=/; HttpOnly; Secure; SameSite=Lax
+Set-Cookie: _octo=GH1.1.1734442378.1719566639; Path=/; Domain=github.com; Expires=Sat, 28 Jun 2025 09:23:59 GMT; Secure; SameSite=Lax
+Set-Cookie: logged_in=no; Path=/; Domain=github.com; Expires=Sat, 28 Jun 2025 09:23:59 GMT; HttpOnly; Secure; SameSite=Lax
+X-Github-Request-Id: C330:51693:35020A0:361E789:667E812F

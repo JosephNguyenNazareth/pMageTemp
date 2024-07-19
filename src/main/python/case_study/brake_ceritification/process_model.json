@@ -1,0 +1,48 @@
+{
+    "Brake System Assembling": [
+        {
+            "name": "Design brake system blueprint",
+            "order": 1,
+            "input": [{"name": "Brake system mechanical components",
+                    "type": "artifact"}],
+            "output": [{"name": "Brake system with mechanical components",
+                    "type": "artifact"}],
+            "role": ["Mechanical Engineer"]},
+        {
+            "name": "Implement RSDs braking activation",
+            "order": 1,
+            "input": [{"name": "Braking conditions",
+                    "type": "artifact"},
+                    {"name": "Remote sensing devices (RSD)",
+                    "type": "artifact"}],
+            "output": [{"name": "Braking recognition program",
+                    "type": "artifact"}],
+            "role": ["Embedded System Developer"]},
+        {
+            "name": "Connect RSD with brake control system",
+            "order": 2,
+            "input": [{"name": "Brake system with mechanical components",
+                    "type": "artifact"},
+                    {"name": "Braking recognition program",
+                    "type": "artifact"}],
+            "output": [{"name": "Complete braking system",
+                    "type": "artifact"}],
+            "role": ["Mechanical Engineer","Embedded System Developer"]},
+        {
+            "name": "Assemble the system into a prototype vehicle",
+            "order": 3,
+            "input": [{"name": "Complete braking system",
+                    "type": "artifact"}],
+            "output": [{"name": "Prototype vehicle with assmebled brake system",
+                    "type": "artifact"}],
+            "role": ["Mechanical Engineer","Embedded System Developer"]},
+        {
+            "name": "Assemble the system into the final version",
+            "order": 4,
+            "input": [{"name": "Prototype vehicle with assmebled brake system",
+                    "type": "artifact"}],
+            "output": [{"name": "Final vehicle with complete braking system",
+                    "type": "artifact"}],
+            "role": ["Mechanical Engineer","Embedded System Developer"]}
+    ]
+}

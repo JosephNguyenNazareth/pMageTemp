@@ -20,7 +20,7 @@
             },
             "getTask" : {
                 "method" : "GET",
-                "url" : "{url}/{processInstanceId}/get-task",
+                "url" : "{url}/{processInstanceId}/get-tasks",
                 "param" : []
             },
             "validateTask" : {
@@ -41,6 +41,11 @@
             "getArtifact" : {
                 "method": "GET",
                 "url": "{url}/{processInstanceId}/data-object",
+                "param": []
+            },
+            "log" : {
+                "method": "GET",
+                "url": "{url}/log",
                 "param": []
             }
         }

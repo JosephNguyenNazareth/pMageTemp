@@ -1,0 +1,22 @@
+Content-Length: 25762
+Referrer-Policy: no-referrer-when-downgrade
+Cache-Control: max-age=3600, s-maxage=14400, stale-while-revalidate=3600
+X-Powered-By: Next.js
+Etag: "4dwfnynad32xdc"
+Content-Type: text/html; charset=utf-8
+Content-Encoding: gzip
+X-Github-Backend: Kubernetes
+X-Github-Request-Id: A227:50325:1700FE:20D475:6675E941
+Accept-Ranges: bytes
+Via: 1.1 varnish, 1.1 varnish
+Age: 562700
+Set-Cookie: show_cookie_banner=1;SameSite=Lax; Secure; Path=/
+Set-Cookie: show_cookie_banner=1;SameSite=Lax; Secure; Path=/
+Date: Fri, 28 Jun 2024 09:15:58 GMT
+X-Served-By: cache-iad-kcgs7200137-IAD, cache-lcy-eglc8600096-LCY
+X-Cache: HIT, MISS
+X-Cache-Hits: 83, 0
+Vary: Accept-Language, Accept-Encoding
+Cross-Origin-Resource-Policy: cross-origin
+Strict-Transport-Security: max-age=31536000
+X-Fastly-Request-Id: c6334a0a42222b10a30df64aaf5a32f12c7ca574

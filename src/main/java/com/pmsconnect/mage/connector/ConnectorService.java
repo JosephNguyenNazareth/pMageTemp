@@ -667,8 +667,8 @@ public class ConnectorService {
 
     public void loadHistoryCommit(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + " does not exist."));
-        connector.getRetriever().setProjectLink(connector.getBridge().getProjectLink());
-        List<Dictionary<String, String>> commitList = connector.getRetriever().getLatestCommitLog(true);
+        connector.getAppConfig().setProjectLink(connector.getBridge().getProjectLink());
+        List<Dictionary<String, String>> commitList = connector.getAppConfig().getLatestTrigger(true);
 
 
         for (Dictionary<String, String> commit : commitList) {
@@ -676,7 +676,7 @@ public class ConnectorService {
             String commitTime = commit.get("created_at");
 
             // if this commit is already in the history commit log of that connection
-            if (connector.findCommitId(commitId) != null)
+            if (connector.findTriggeredActionId(commitId) != null)
                 continue;
 
             // skip validating the commit if the connector's owner is not the committer
@@ -684,7 +684,7 @@ public class ConnectorService {
             if (!committerName.equals(connector.getBridge().getUserNameApp()))
                 continue;
 
-            connector.addHistoryCommitList(commitId, commitTime, false);
+            connector.addHistoryTriggerList(commitId, commitTime, false);
         }
         connectorRepository.save(connector);
     }
@@ -719,7 +719,7 @@ public class ConnectorService {
     public List<Alignment> getConnectorHist(String baseConnectorId) {
         Connector baseConnector = connectorRepository.findById(baseConnectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + baseConnectorId + " does not exist."));
 
-        return baseConnector.getHistoryCommitList();
+        return baseConnector.getHistoryTriggerList();
     }
 
     public void updateArtifactList(Connector connector) {

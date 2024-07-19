@@ -1,0 +1,21 @@
+Content-Length: 108
+Content-Type: text/html; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+X-Xss-Protection: 0
+X-Content-Type-Options: nosniff
+X-Download-Options: noopen
+X-Permitted-Cross-Domain-Policies: none
+Referrer-Policy: strict-origin-when-cross-origin
+Location: https://support.github.com/request/landing
+Cache-Control: no-cache
+Content-Security-Policy: default-src 'none'; font-src https://support-assets.githubassets.com; img-src https: data:; style-src 'self' https: 'unsafe-inline'; script-src https://support-assets.githubassets.com; connect-src 'self' wss://ws.support.github.com wss://support.github.com https://enterprise-bundles.github.com https://github.zendesk.com https://esbtoolsproduction.blob.core.windows.net https://support-assets.githubassets.com https://us.yextevents.com edge.fullstory.com rs.fullstory.com github.blog
+Set-Cookie: return_to=fgHrHMaj5MJxfqeOSyNFl9IB1%2BL5rVsILmLmazSvmXFS%2FxTSrCyueN%2BwFJ7O137NA5av0LZpPuwdXjJ4az2%2FA%2B1I9F2ZvOFWd6QkMyONDcIpozdtMotGjau9jLPVt13nnvmaYwMwSHyuV%2B%2Fi0MH6Brv1tK3pwi0E60rCSPYH3YNTtnxcicE6I0QtgSbR4MG4tEUQbLVzIOdoFKauqvueI998VktSMz0d7UHa1BPjfgOsvhqJSvC%2BwGnqBrJ5slz8fwceICLxGXJxcV8eIwLCJM6IQvRGCygQs%2BWq%2FPJ54KwDAMJXs1Rp88wNbKsfBh0YcyXbEeWdoJXxAkCjhSuQxfibFdXe6raRpxZ4w%2FM%2FG%2F47FQKGJafx37DxWD2%2BIJHC8ql6NIj%2FHjwjwTanlGgD5ik%3D--zVgGWpEosswP%2BoEU--qb1I3AtdPC%2BcT7g1nhVUsA%3D%3D; path=/; SameSite=Lax; secure
+Set-Cookie: _support_session=jFS6FG2MR%2BKWuhKJOUUeD1vwZlu7ctiU%2BQ%2B%2BV4efblPZJ%2F%2Bu%2BZHCqEaEbyV%2BcfDdIKkksaZXDw5fNV%2Fu2Pppnbij3OOjd361mVv6xpBYDTIybVI4uFE1I1KjWP5vyT66DEd2w1jLIh3D359aJYrUXO5eo55JRLuckkuQtYXwox6u%2BZLKtqydrDXrw%2BXxwrtzLsG7E7mqg6Az7xIK4fiFUTJ%2BIHms9kbpHjiFPLTubpytwCenBYhMrMa%2BoBGQJB8srUtwDuAuWh6xFQ9%2BRqMVbIA57mvEz2X0RK07apzHrEeBel5nBAasHd9So5sBORlvXvjOs%2B2ZJG1uy7RdLFPiJO6XT6anOZM2WnVWCSJCT2GtURrgDO828w%3D%3D--As2upyYcGL3I8Nme--atLWbyL3VB6YdR8jxJrc9g%3D%3D; domain=support.github.com; path=/; secure; HttpOnly; SameSite=Lax
+Set-Cookie: _show_support_cookie_banner=1;SameSite=Lax; Secure; Path=/
+Set-Cookie: _show_support_cookie_banner=1;SameSite=Lax; Secure; Path=/
+X-Runtime: 0.025540
+Accept-Ranges: bytes
+Date: Fri, 28 Jun 2024 09:17:34 GMT
+Vary: Accept-Language
+Strict-Transport-Security: max-age=31536000
+X-Fastly-Request-Id: 9ad31f0afbaa7d79c2aaae41258a001bb8f9a1f4

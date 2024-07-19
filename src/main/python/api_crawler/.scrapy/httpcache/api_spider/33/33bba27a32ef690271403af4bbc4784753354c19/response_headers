@@ -1,0 +1,18 @@
+Server: GitHub.com
+Date: Fri, 28 Jun 2024 09:21:53 GMT
+Content-Type: text/html; charset=utf-8
+X-Xss-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+X-Download-Options: noopen
+X-Permitted-Cross-Domain-Policies: none
+Referrer-Policy: strict-origin-when-cross-origin
+Link: </assets/site_default-61b9587fa8e554b13d2b9d2a88b4742a6520d85cc331f75c67c15810e8fb9357.css>; rel=preload; as=style; nopush,</assets/application-d57be75a952bd5d2995cbf1acf486b235c47939dcc7f387d76f929181048f342.js>; rel=preload; as=script; nopush,</assets/analytics-67a7bad31173af37b5ea29bcee785371891df73a823b8c91df21cd23bb235563.js>; rel=preload; as=script; nopush
+Etag: W/"30767b9dd378f23d85cbf255da3f2996"
+Cache-Control: max-age=0, private, must-revalidate
+Set-Cookie: _enterprise_web=TDInwiAvWmQ73VCcGJDbxMokopJcvvFK3gbKNBczvwkyUfyRo5ispN1WymahEFa6nUFotp0ZVDPuTIPxHriBwy0rjlIy8gFDrpAriULPGY9furq%2FX%2BvBKXoeGCh27TqDG3PsopR0kBhApdQ%2BOehT6j9V9B1Qa3ekPHBD8KHeLygsGvznyOYurHw6oa%2B16PjWEKyyzRgcEaZBgiKsC9hnLrqnn81ymiYYPtrvkBrcll2fez%2BOd9dQEIubzK%2F0sY5DGufMtBV51yCsSMa7KgCw6KxU0dZglIN2jnH2XgORGxxBk4F%2FRs2YK%2F0eRHMQ--lpQk1SDDZSRNhImx--E4MYpF34YFq6%2B3tTwxXCjg%3D%3D; path=/; expires=Sun, 28 Jul 2024 09:21:53 GMT; HttpOnly; SameSite=Lax
+X-Runtime: 0.066512
+Timing-Allow-Origin: https://github.com
+Strict-Transport-Security: max-age=31536000
+Content-Encoding: gzip
+X-Github-Backend: Kubernetes
+X-Github-Request-Id: C217:14AC2F:147EEA4:1C50FEB:667E80AC

@@ -1,0 +1,28 @@
+Content-Length: 21930
+Content-Type: text/html; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: public, max-age=60
+Content-Security-Policy: default-src 'none';prefetch-src 'self';connect-src 'self';font-src 'self' data: githubdocs.azureedge.net;img-src 'self' github.com *.github.com *.githubusercontent.com *.githubassets.com data: githubdocs.azureedge.net placehold.it;object-src 'self';script-src 'self' data: githubdocs.azureedge.net;frame-src 'self' github.com *.github.com *.githubusercontent.com *.githubassets.com https://support.github.com https://www.youtube-nocookie.com;frame-ancestors 'self' github.com *.github.com *.githubusercontent.com *.githubassets.com;style-src 'self' 'unsafe-inline' data: githubdocs.azureedge.net;child-src 'self';manifest-src 'self';upgrade-insecure-requests;base-uri 'self';form-action 'self';script-src-attr 'none'
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: no-referrer-when-downgrade
+X-Content-Type-Options: nosniff
+X-Dns-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Permitted-Cross-Domain-Policies: none
+X-Xss-Protection: 0
+X-Powered-By: Next.js
+X-Azure-Ref: 20240627T230853Z-17649495c95rxjpxyv9au9z4b800000002dg00000001gup5
+Content-Encoding: br
+Via: 1.1 varnish, 1.1 varnish
+Accept-Ranges: bytes
+Age: 36429
+Date: Fri, 28 Jun 2024 09:16:02 GMT
+X-Served-By: cache-iad-kjyo7100059-IAD, cache-lcy-eglc8600064-LCY
+X-Cache: CONFIG_NOCACHE, HIT, HIT
+X-Cache-Hits: 34, 0
+X-Timer: S1719566163.871539,VS0,VE1
+Vary: Accept-Encoding
+Strict-Transport-Security: max-age=31557600
