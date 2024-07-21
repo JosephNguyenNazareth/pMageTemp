@@ -91,33 +91,33 @@ public class ConnectorAsyncService {
     private void notifyViolatedTrigger(Connector connector, StringBuilder monitoringMess) {
         for (Alignment align : connector.getHistoryTriggerList()) {
             if (align.getViolated().equals(false))
-                alertCommit(align.getTriggeredActionId(), connector, monitoringMess);
+                alertTriggeredAction(align.getTriggeredActionId(), connector, monitoringMess);
         }
     }
 
 
-    public List<Dictionary<String, String>> getAllCommit(String connectorId) {
+    public List<Dictionary<String, String>> getAllTrigger(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + "does not exist."));
 
         String configPath =  connector.getBridge().getAppConfig();
         AppConfig appConfig = new AppConfig(configPath);
         appConfig.setProjectLink(connector.getBridge().getProjectLink());
-        return appConfig.getLatestTrigger(true);
+        return appConfig.getLatestTrigger(true, connector.getActionEventTable(), connector.getBridge());
     }
 
 
     public void retrieveLatestTrigger(Connector connector, StringBuilder monitoringMess) {
         connector.getAppConfig().setProjectLink(connector.getBridge().getProjectLink());
-        List<Dictionary<String, String>> actionTriggeredList = connector.getAppConfig().getLatestTrigger(false);
+        List<Dictionary<String, String>> actionTriggeredList = connector.getAppConfig().getLatestTrigger(false, connector.getActionEventTable(), connector.getBridge());
 
-        Dictionary<String, String> commit = actionTriggeredList.get(0);
-        String commitMessage = commit.get("title");
-        String actionTriggeredId = commit.get("id");
-        String triggeredTime = commit.get("time");
+        Dictionary<String, String> triggeredAction = actionTriggeredList.get(0);
+        String triggeredActionTask = triggeredAction.get("task");
+        String actionTriggeredId = triggeredAction.get("id");
+        String triggeredTime = triggeredAction.get("time");
 
-        // if the latest commit is already in the list of retrieved commit, skip ths later work
+        // if the latest triggeredAction is already in the list of retrieved triggeredAction, skip ths later work
         if (connector.findTriggeredActionId(actionTriggeredId) != null) {
-            String currentMonitoringMessage = "Commit is up-to-date";
+            String currentMonitoringMessage = "Project is up-to-date";
             monitoringMess.append(currentMonitoringMessage);
             String[] updatePMS = currentProcessInstanceState(connector, monitoringMess);
             if (updatePMS != null) {
@@ -129,23 +129,23 @@ public class ConnectorAsyncService {
             return;
         }
 
-        // skip validating the commit if the connector's owner is not the committer
-        String committerName = commit.get("committer_name");
-        if (!committerName.equals(connector.getBridge().getUserNameApp()))
+        // skip validating the triggeredAction if the connector's owner is not the actor
+        String actor = triggeredAction.get("actor");
+        if (!actor.equals(connector.getBridge().getUserNameApp()))
             return;
 
         String[] updatePMS = currentProcessInstanceState(connector, monitoringMess);
-        String taskFound = detectTaskFromTriggeredAction(connector, commitMessage, monitoringMess);
+        String taskFound = detectTaskFromTriggeredAction(connector, triggeredActionTask, monitoringMess);
 
         // skip reverted commit
-        if (taskFound.equals("revert")) {
-            detectRevertedTriggeredAction(commitMessage, connector);
-        }
-        else if (taskFound.equals("unknown")) {
+//            if (taskFound.equals("revert")) {
+//                detectRevertedTriggeredAction(triggeredActionTask, connector);
+//            } else
+        if (taskFound.equals("unknown")) {
             monitoringMess.append("Task unknown\n");
-            alertCommit(actionTriggeredId, connector, monitoringMess);
+            alertTriggeredAction(actionTriggeredId, connector, monitoringMess);
         } else {
-            validateTask(connector, commitMessage, taskFound, actionTriggeredId, monitoringMess);
+            validateTask(connector, triggeredActionTask, taskFound, actionTriggeredId, monitoringMess);
         }
 
         if (updatePMS != null) {
@@ -156,6 +156,7 @@ public class ConnectorAsyncService {
         }
 
         connectorRepository.save(connector);
+
     }
 
     private void detectRevertedTriggeredAction(String extraInfo, Connector connector) {
@@ -164,19 +165,19 @@ public class ConnectorAsyncService {
         connector.findTriggeredActionId(revertedTriggeredActionId).setViolated(false);
     }
 
-    public String detectTaskFromTriggeredAction(Connector connector, String commitMessage, StringBuilder monitoringMess) {
+    public String detectTaskFromTriggeredAction(Connector connector, String triggeredActionTask, StringBuilder monitoringMess) {
         // TermDetect termDetector = new TermDetect();
         // return caseStudy.checkRelevant(commitMessage, termDetector);
         // cannot use this term detector in this use case, must build another system
         String taskDetect = "";
 
         // skip revert commit
-        if (commitMessage.contains("Revert"))
+        if (triggeredActionTask.contains("Revert"))
             return "revert";
 
         boolean found = false;
         for (ActionEvent actionEvent : connector.getActionEventTable()) {
-            if (commitMessage.contains(actionEvent.getActionDetail())) {
+            if (triggeredActionTask.contains(actionEvent.getActionDetail())) {
                 found = true;
                 taskDetect = actionEvent.getTask();
                 break;
@@ -200,10 +201,10 @@ public class ConnectorAsyncService {
         return taskDetect;
     }
 
-    public List<PreDefinedArtifactInstance> detectArtifactFromCommit(Connector connector, String commitMessage, StringBuilder monitoringMess) {
+    public List<PreDefinedArtifactInstance> detectArtifactFromTriggeredAction(Connector connector, String triggeredActionTask, StringBuilder monitoringMess) {
         List<PreDefinedArtifactInstance> preDefinedArtifactInstanceList = new ArrayList<>();
-        if (commitMessage.contains(";")) {
-            String importantMessage = commitMessage.contains("|") ? commitMessage.substring(0, commitMessage.indexOf("|")) : commitMessage;
+        if (triggeredActionTask.contains(";")) {
+            String importantMessage = triggeredActionTask.contains("|") ? triggeredActionTask.substring(0, triggeredActionTask.indexOf("|")) : triggeredActionTask;
             String[] terms = importantMessage.split(";");
             for (int i = 1; i < terms.length; i++) {
                 String[] artifact = terms[i].split(":");
@@ -217,7 +218,7 @@ public class ConnectorAsyncService {
         return preDefinedArtifactInstanceList;
     }
 
-    public void validateTask(Connector connector, String commitMessage, String taskDetected, String actionTriggeredId, StringBuilder monitoringMess) {
+    public void validateTask(Connector connector, String triggeredActionTask, String taskDetected, String actionTriggeredId, StringBuilder monitoringMess) {
         HttpClient client = HttpClients.createDefault();
         try {
             Map<String, String> urlMap = new HashMap<>();
@@ -237,13 +238,13 @@ public class ConnectorAsyncService {
             if (getStatusCode == 200) {
                 String responseBody = EntityUtils.toString(getResponse.getEntity());
                 if (responseBody.length() > 0) {
-                    monitoringMess.append("Commit is validated. Task is launched\n");
-                    completeTaskCommitted(connector, taskDetected, commitMessage, monitoringMess);
+                    monitoringMess.append("Triggered action is validated. Task is launched\n");
+                    completeTaskTriggered(connector, taskDetected, triggeredActionTask, monitoringMess);
                     connectorRepository.save(connector);
                 } else {
                     // TODO: AI-augmented experience should provide users with more profound helpful info
-                    monitoringMess.append("Task corresponding with commit ").append(actionTriggeredId).append(" not found by the process instance" + connector.getBridge().getProcessId() + "\n");
-                    alertCommit(actionTriggeredId, connector, monitoringMess);
+                    monitoringMess.append("Task corresponding with triggered action ").append(actionTriggeredId).append(" not found by the process instance" + connector.getBridge().getProcessId() + "\n");
+                    alertTriggeredAction(actionTriggeredId, connector, monitoringMess);
                 }
 //
 //                int isPermitted = Integer.parseInt(responseBody);
@@ -268,7 +269,7 @@ public class ConnectorAsyncService {
         }
     }
 
-    public void alertCommit(String actionTriggeredId, Connector connector, StringBuilder monitoringMess) {
+    public void alertTriggeredAction(String actionTriggeredId, Connector connector, StringBuilder monitoringMess) {
 //        String configPath =  "./src/main/resources/app_config.json";
 //        Retriever retriever = new Retriever(configPath);
 //        retriever.setRepoLink(connector.getUserRepo().getRepoLink());
@@ -276,12 +277,12 @@ public class ConnectorAsyncService {
         connector.findTriggeredActionId(actionTriggeredId).setViolated(true);
 //        boolean reverted = retriever.revertCommit(actionTriggeredId);
 
-        monitoringMess.append("Need reverting commit id " + actionTriggeredId + "\n");
+        monitoringMess.append("Triggered action " + actionTriggeredId + "is not validated. Please relaunch the task.\n");
     }
 
-    private void completeTaskCommitted(Connector connector, String taskDetected, String commitMessage, StringBuilder monitoringMess) {
+    private void completeTaskTriggered(Connector connector, String taskDetected, String triggeredActionTask, StringBuilder monitoringMess) {
         String newTaskInstanceId = startTaskInstance(connector, taskDetected);
-        List<PreDefinedArtifactInstance> detectedArtifacts = detectArtifactFromCommit(connector, commitMessage, monitoringMess);
+        List<PreDefinedArtifactInstance> detectedArtifacts = detectArtifactFromTriggeredAction(connector, triggeredActionTask, monitoringMess);
         endTaskInstance(connector, newTaskInstanceId, detectedArtifacts);
         updateArtifactPool(connector, detectedArtifacts);
     }

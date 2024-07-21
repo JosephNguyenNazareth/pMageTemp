@@ -4,17 +4,14 @@
         "action": [
             {
                 "name": "push",
-                "api_info": {
-                    "api_prefix": "api.github.com/repos",
-                    "api_postfix_commit": "commits",
-                    "api_postfix_diff": "",
-                    "time_format": "%Y-%m-%dT%H:%M:%SZ"
-                },
-                "message_info": {
+                "method": "GET",
+                "projectLink": "{server}/{userNameApp}/{projectName}",
+                "apiInfo": "api.github.com/repos/{userNameApp}/{projectName}",
+                "extraInfo": {
                     "id": "sha",
                     "time": "commit|committer|date",
-                    "title": "commit|message",
-                    "committer": "commit|committer|name"
+                    "task": "commit|message",
+                    "actor": "commit|committer|name"
                 }
             }
         ]
@@ -24,18 +21,14 @@
         "action": [
             {
                 "name": "push",
-                "api_info": {
-                    "api_prefix": "gitlab.com/api/v4/projects",
-                    "api_postfix_commit": "repository/commits",
-                    "api_postfix_diff": "diff",
-                    "api_postfix_revert": "revert",
-                    "time_format" : "%Y-%m-%dT%H:%M:%S.%f%z"
-                },
-                "message_info": {
+                "method": "GET",
+                "projectLink": "{server}/{userNameApp}/{projectName}",
+                "apiInfo": "gitlab.com/api/v4/projects/{userNameApp}%2F{projectLink}/repository/commits",
+                "extraInfo": {
                     "id": "id",
                     "time": "created_at",
-                    "title": "title",
-                    "committer": "committer_name"
+                    "task": "title",
+                    "actor": "committer_name"
                 }
             }
         ]

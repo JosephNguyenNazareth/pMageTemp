@@ -99,7 +99,7 @@ public class ConnectorController {
     @GetMapping(path = "{connectorId}/all-commit")
     public List<Dictionary<String, String>> getLatestCommit(
             @PathVariable("connectorId") String connectorId) {
-        return connectorAsyncService.getAllCommit(connectorId);
+        return connectorAsyncService.getAllTrigger(connectorId);
     }
 
     @PutMapping(path = "{connectorId}/add-table")
