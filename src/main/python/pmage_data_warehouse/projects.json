@@ -1,0 +1,34 @@
+{
+    "projects": [
+        {
+           "name": "Modify Test-bench Wiring",
+           "domain": "Aircraft Manufacturing",
+           "task": ["Define Component Requirements", "Define Electrical Specification", "Outline Instrumentation Model", "Purchase Components", "Specify Electrical Specification", "Define Instrumentation Model", "Install Components", "Define Specific ICD", "Define Bench Specification", "Define Bench Configuration", "Wire Components", "Validate Bench Configuration"]
+        },
+        {
+            "name": "Implement E-commerce Web Application",
+            "domain": "Software Engineering",
+            "task": ["Initialize Repository", "Create Views Module", "Create Controllers Module", "Connect Database", "Merge Branches for Final Product", "Deploy Web Application"]
+        },
+        {
+            "name": "Certification for Self-driving Car Brake",
+            "domain": "Car Engineering",
+            "task": ["Design brake system blueprint", "Implement Remote Sensing Devices braking activation", "Connect Remote Sensing Devices with brake control system", "Assemble the system into a prototype vehicle", "Assemble the system into the final version"]
+        },
+        {
+            "name": "Resign Procedure",
+            "domain": "Resources Management",
+            "task": ["Manager submits a staff member resignation form to HR", "HR assigns form to Accounts Management (AM) team requesting user access deletion", "AM team validates user account details", "AM team removes user from assigned groups in directory", "AM team removes user account from enterprise directory", "AM team removes user from cloud provider's IAM service", "AM team verifies if the user has SSH keys access to cloud resources", "AM team deletes the user's SSH key pairs"]
+        },
+        {
+            "name": "Item Ordering Process",
+            "domain": "Retailing Procedure",
+            "task": ["Receive Item Order Request", "Process Item Order", "Ship Item Order", "Send Invoice", "Make Payment via Paypal", "Paypal Payment Accepted", "Close Order"]
+        },
+        {
+            "name": "Apply for Schengen Visa",
+            "domain": "Immigration and Citizenship Services",
+            "task": ["Check if You Need a Schengen Visa", "Find Out Where to Submit Your Application", "Schedule an Appointment","Fill Out the Schengen Visa Application Form","Gather the Required Documents","Attend the Visa Interview","Pay the Visa Fee", "Wait for an Answer"]
+        }
+    ]
+}

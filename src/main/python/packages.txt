@@ -1,3 +1,4 @@
-conda instal -c conda-forge beautifulsoup4 certifi huggingface_hub keras nltk numpy pandas scikit-learn scipy tensorflow
+conda install -c conda-forge beautifulsoup4 certifi huggingface_hub keras nltk numpy pandas scikit-learn scipy tensorflow[and cuda] gensim transformers datasets
+conda install pytorch torchvision torchaudio cpuonly -c pytorch
 
 pip install duckduckgo-search

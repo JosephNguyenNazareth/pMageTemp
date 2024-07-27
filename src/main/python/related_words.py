@@ -39,7 +39,7 @@ def get_related_words_glove(word, model, top_n=5):
     return sorted_similarities[:top_n]
 
 # Load the GloVe model
-glove_file = '../../../../../glove/glove.6B.300d.txt'
+glove_file = '../../../../glove.6B.300d.txt'
 glove_model = load_glove_model(glove_file)
 
 def extract_related_words(tokens):
@@ -49,13 +49,13 @@ def extract_related_words(tokens):
     # Get related words for each token
     related_words_dict = {}
     for token in filtered_tokens:
-        related_words = get_related_words_glove(token, glove_model)
-        related_words_dict[token] = related_words
+        related_terms = get_related_words_glove(token, glove_model)
+        related_words_dict[token] = related_terms
 
     related_words_only = {}
-    for token, related_words in related_words_dict.items():
+    for token, related_words_found in related_words_dict.items():
         related_words_only[token] = []
-        for word, similarity in related_words:
-            related_words_only[token].append(word)
+        for word in related_words_found:
+            related_words_only[token].append(word[0])
 
     return related_words_only
