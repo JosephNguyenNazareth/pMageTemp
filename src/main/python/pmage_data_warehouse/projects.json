@@ -22,13 +22,109 @@
         },
         {
             "name": "Item Ordering Process",
-            "domain": "Retailing Procedure",
+            "domain": "Retail Procedure",
             "task": ["Receive Item Order Request", "Process Item Order", "Ship Item Order", "Send Invoice", "Make Payment via Paypal", "Paypal Payment Accepted", "Close Order"]
         },
         {
             "name": "Apply for Schengen Visa",
             "domain": "Immigration and Citizenship Services",
             "task": ["Check if You Need a Schengen Visa", "Find Out Where to Submit Your Application", "Schedule an Appointment","Fill Out the Schengen Visa Application Form","Gather the Required Documents","Attend the Visa Interview","Pay the Visa Fee", "Wait for an Answer"]
+        }
+    ],
+    "users": [
+        {
+            "name": "Navia",
+            "domain": "Aircraft Manufacturing"
+        },
+        {
+            "name": "Fischl der Verurteilung",
+            "domain": "Immigration and Citizenship Services"
+        },
+        {
+            "name": "Kazuha",
+            "domain": "Resources Management"
+        },
+        {
+            "name": "Furina de Fontaine",
+            "domain": "Car Engineering"
+        },
+        {
+            "name": "Freminet",
+            "domain": "Retail Procedure"
+        },
+        {
+            "name": "Alhaitham",
+            "domain": "Software Engineering"
+        },
+        {
+            "name": "Yae Miko",
+            "domain": "Aircraft Manufacturing"
+        },
+        {
+            "name": "Eula",
+            "domain": "Immigration and Citizenship Services"
+        },
+        {
+            "name": "Colei",
+            "domain": "Resources Management"
+        },
+        {
+            "name": "Charlotte",
+            "domain": "Car Engineering"
+        },
+        {
+            "name": "Pierro",
+            "domain": "Retail Procedure"
+        },
+        {
+            "name": "Lisa",
+            "domain": "Software Engineering"
+        }
+    ],
+    "app": [
+        {
+            "name": "AutoCAD",
+            "location": "C:\\Users\\[Username]\\AppData\\Local\\Autodesk\\AutoCAD [Version]\\",
+            "domain": ["Aircraft Manufacturing", "Car Engineering"]
+        },
+        {
+            "name": "Autodesk Vault",
+            "location": "C:\\Users\\[Username]\\AppData\\Local\\Autodesk\\Vault Client\\<version>\\Logs",
+            "domain": ["Aircraft Manufacturing", "Car Engineering"]
+        },
+        {
+            "name": "Matlab/Simulink",
+            "location": "SLF4M",
+            "domain": ["Aircraft Manufacturing", "Car Engineering", "Software Engineering"]
+        },
+        {
+            "name": "GitHub",
+            "location": "https://github.com/[Username]/[Project]",
+            "domain": ["Aircraft Manufacturing", "Car Engineering", "Software Engineering"]
+        },
+        {
+            "name": "Visa1794",
+            "location": "C:\\Users\\[Username]\\AppData\\Local\\Visa1794\\Logs",
+            "domain": ["Immigration and Citizenship Services"]
+        },
+        {
+            "name": "Microsoft Excel",
+            "location": "C:\\Users\\[Username]\\AppData\\Local\\Microsfot\\Logs",
+            "domain": ["Immigration and Citizenship Services", "Resources Management", "Retail Procedure"]
+        }
+    ],
+    "pms": [
+        {
+            "name": "BAPE",
+            "location": "http://localhost:8081/api/process-instance"
+        },
+        {
+            "name": "jBPM",
+            "location": "http://localhost:8080/kie-server/services/rest"
+        },
+        {
+            "name": "Bonita",
+            "location": "http://localhost:8080/bonita"
         }
     ]
 }
