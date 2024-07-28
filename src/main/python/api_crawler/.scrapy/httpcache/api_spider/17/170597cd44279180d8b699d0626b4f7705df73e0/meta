@@ -1,1 +1,0 @@
-{'url': 'https://github.com/github/vscode-codeql/pulls?q=is%3Apr+is%3Aopen+review%3Aapproved', 'method': 'GET', 'status': 200, 'response_url': 'https://github.com/github/vscode-codeql/pulls?q=is%3Apr+is%3Aopen+review%3Aapproved', 'timestamp': 1719566228.478843}
