@@ -32,6 +32,9 @@ public class User {
         this.userName = userName;
         this.password = password;
         this.role = role;
+        this.listConnectorId = new ArrayList<>();
+        this.invitationSentList = new ArrayList<>();
+        this.invitationReceivedList = new ArrayList<>();
     }
 
     public String getUserName() {

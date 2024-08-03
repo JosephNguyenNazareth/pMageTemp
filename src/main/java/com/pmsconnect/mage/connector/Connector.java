@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Document(collection = "connector")
+@Document(collection = "new_connector")
 public class Connector {
     @Id
     private String id;
@@ -38,7 +38,8 @@ public class Connector {
     public void loadProperties() {
         try {
             InputStream file = Connector.class.getResourceAsStream("/application.properties");
-            if (file!=null) System.getProperties().load(file);
+            if (file!=null)
+                System.getProperties().load(file);
         } catch (IOException e) {
             throw new RuntimeException("Error loading application.properties", e);
         }

@@ -19,10 +19,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,20 +80,20 @@ public class ConnectorService {
     }
 
     public String addNewConnector(Bridge bridge, boolean inviteCollab) {
-        if (!verifyPmsExist(bridge))
-            throw new IllegalStateException("Cannot verify pms");
+//        if (!verifyPmsExist(bridge))
+//            throw new IllegalStateException("Cannot verify pms");
         Connector connector = new Connector(bridge);
-        updateArtifactList(connector);
+//        updateArtifactList(connector);
 
         User userPMage = userRepository.findById(connector.getUserName()).orElseThrow(() -> new IllegalStateException("User with username " + connector.getUserName() + "does not exist."));
         userPMage.addConnectorId(connector.getId());
         userRepository.save(userPMage);
 
-        if (inviteCollab)
-            if (userPMage.getRole().equals("manager")) {
-                List<String> collaborators = this.getProcessActors(bridge);
-
-            }
+//        if (inviteCollab)
+//            if (userPMage.getRole().equals("manager")) {
+//                List<String> collaborators = this.getProcessActors(bridge);
+//
+//            }
 
         connectorRepository.save(connector);
 
@@ -170,7 +168,7 @@ public class ConnectorService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", tmpConfig.getUrlPMS());
+            urlMap.put("url", tmpConfig.getUrl());
             urlMap.put("processInstanceId", bridge.getProcessId());
 
             String finalUri = tmpConfig.buildAPI("verify", urlMap, paramMap);
@@ -200,7 +198,7 @@ public class ConnectorService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", tmpConfig.getUrlPMS());
+            urlMap.put("url", tmpConfig.getUrl());
             urlMap.put("processInstanceId", bridge.getProcessId());
 
             String finalUri = tmpConfig.buildAPI("getActors", urlMap, paramMap);
@@ -303,7 +301,7 @@ public class ConnectorService {
 
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
-            urlMap.put("url", tmpConfig.getUrlPMS());
+            urlMap.put("url", tmpConfig.getUrl());
 
             List<NameValuePair> pairs = new ArrayList<>();
             pairs.add(new BasicNameValuePair("username", "walter.bates"));
@@ -374,13 +372,12 @@ public class ConnectorService {
                     content = content.replace("[","").replace("]","").replace("\"","");
                     return Arrays.asList(content.split(","));
                 } else if (pmsName.equals("bonita")) {
-                    JSONParser parser = new JSONParser();
-                    JSONArray caseList = (JSONArray) parser.parse(content);
+                    JSONArray caseList = new JSONArray(content);
 
                     List<String> caseIdList = new ArrayList<>();
-                    for (Object o : caseList) {
-                        JSONObject task = (JSONObject) o;
-                        String caseId = task.get("id").toString();
+                    for (int i = 0; i < caseList.length(); i++) {
+                        JSONObject task = caseList.getJSONObject(i);
+                        String caseId = task.getString("id");
                         caseIdList.add(caseId);
                     }
                     return caseIdList;
@@ -392,7 +389,7 @@ public class ConnectorService {
             }
 //                return EntityUtils.toString(getResponse.getEntity());
             return null;
-        } catch (URISyntaxException | IOException | ParseException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -430,7 +427,7 @@ public class ConnectorService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             urlMap.put("processInstanceId", connector.getBridge().getProcessId());
 
             String finalUri = connector.getPmsConfig().buildAPI("verify", urlMap, paramMap);
@@ -469,7 +466,7 @@ public class ConnectorService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             paramMap.put("processName", processName);
             paramMap.put("creatorName", creatorName);
 
@@ -506,7 +503,7 @@ public class ConnectorService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             urlMap.put("processInstanceId", connector.getBridge().getProcessId());
             paramMap.put("processInstanceState", "true");
 
@@ -561,7 +558,7 @@ public class ConnectorService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             urlMap.put("processInstanceId", connector.getBridge().getProcessId());
 
             String finalUri = connector.getPmsConfig().buildAPI("getTask", urlMap, paramMap);
@@ -587,13 +584,12 @@ public class ConnectorService {
                     content = content.replace("[","").replace("]","").replace("\"","");
                     return Arrays.asList(content.split(","));
                 } else if (connector.getBridge().getPmsName().equals("bonita")) {
-                    JSONParser parser = new JSONParser();
-                    JSONArray taskList = (JSONArray) parser.parse(content);
+                    JSONArray taskList = new JSONArray(content);
 
                     List<String> taskNameList = new ArrayList<>();
-                    for (Object o : taskList) {
-                        JSONObject task = (JSONObject) o;
-                        String taskName = task.get("name").toString();
+                    for (int i = 0; i< taskList.length(); i++) {
+                        JSONObject task = taskList.getJSONObject(i);
+                        String taskName = task.getString("name");
                         taskNameList.add(taskName);
                     }
                     return taskNameList;
@@ -605,7 +601,7 @@ public class ConnectorService {
             }
 //                return EntityUtils.toString(getResponse.getEntity());
             return null;
-        } catch (URISyntaxException | IOException | ParseException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -668,7 +664,7 @@ public class ConnectorService {
     public void loadHistoryCommit(String connectorId) {
         Connector connector = connectorRepository.findById(connectorId).orElseThrow(() -> new IllegalStateException("Connector with id " + connectorId + " does not exist."));
         connector.getAppConfig().setProjectLink(connector.getBridge().getProjectLink());
-        List<Dictionary<String, String>> commitList = connector.getAppConfig().getLatestTrigger(true);
+        List<Dictionary<String, String>> commitList = connector.getAppConfig().getLatestTrigger(true, connector.getActionEventTable(), connector.getBridge());
 
 
         for (Dictionary<String, String> commit : commitList) {
@@ -744,7 +740,7 @@ public class ConnectorService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             urlMap.put("processInstanceId", connector.getBridge().getProcessId());
 
             String finalUri = connector.getPmsConfig().buildAPI("getArtifact", urlMap, paramMap);
@@ -760,17 +756,16 @@ public class ConnectorService {
                 String content = EntityUtils.toString(getResponse.getEntity());
 
                 if (connector.getBridge().getPmsName().equals("core-bape")) {
-                    JSONParser parser = new JSONParser();
-                    JSONArray taskList = (JSONArray) parser.parse(content);
+                    JSONArray taskList = new JSONArray(content);
 
-                    for (Object o : taskList) {
-                        JSONObject task = (JSONObject) o;
-                        String artifactName = task.get("name").toString();
+                    for (int i = 0; i < taskList.length(); i++) {
+                        JSONObject task = taskList.getJSONObject(i);
+                        String artifactName = task.getString("name");
                         connector.addArtifact(artifactName);
                     }
                 }
             }
-        } catch (URISyntaxException | IOException | ParseException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }

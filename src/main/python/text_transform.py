@@ -31,4 +31,4 @@ summary_list = []
 for text in doc_list:
     summary = summarize_text(text, 10, 10)[11:]
     summary_list.append(summary)
-    print(";".join(summary_list))
+print(";".join(summary_list))

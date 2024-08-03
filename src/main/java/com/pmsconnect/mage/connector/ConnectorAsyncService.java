@@ -13,10 +13,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -224,7 +222,7 @@ public class ConnectorAsyncService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             urlMap.put("processInstanceId", connector.getBridge().getProcessId());
             paramMap.put("taskName", taskDetected);
             paramMap.put("actorName", connector.getBridge().getUserNamePms());
@@ -293,7 +291,7 @@ public class ConnectorAsyncService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             urlMap.put("processInstanceId", connector.getBridge().getProcessId());
             paramMap.put("taskName", taskDetected);
             paramMap.put("actorName", connector.getBridge().getUserNamePms());
@@ -318,7 +316,7 @@ public class ConnectorAsyncService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             urlMap.put("processInstanceId", connector.getBridge().getProcessId());
             paramMap.put("taskId", newTaskInstanceId);
 
@@ -345,7 +343,7 @@ public class ConnectorAsyncService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             urlMap.put("processInstanceId", connector.getBridge().getProcessId());
             paramMap.put("processInstanceState", "false");
 
@@ -368,7 +366,7 @@ public class ConnectorAsyncService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
             urlMap.put("processInstanceId", connector.getBridge().getProcessId());
 
             String finalUri = connector.getPmsConfig().buildAPI("verify", urlMap, paramMap);
@@ -379,18 +377,16 @@ public class ConnectorAsyncService {
                     .getStatusCode();
             if (getStatusCode == 200) {
                 String content = EntityUtils.toString(getResponse.getEntity());
-                JSONParser parser = new JSONParser();
-                Object obj = parser.parse(content);
-                JSONObject contentJSON = (JSONObject) obj;
+                JSONObject contentJSON = new JSONObject(content);
 
-                JSONArray updateDetail = (JSONArray) contentJSON.get("updateDetail");
-                JSONObject objUpdate = (JSONObject) updateDetail.get(updateDetail.size() - 1);
+                JSONArray updateDetail = contentJSON.getJSONArray("updateDetail");
+                JSONObject objUpdate = updateDetail.getJSONObject(updateDetail.length() - 1);
                 String lastUpdateTimePMS = objUpdate.keySet().toArray()[0].toString();
-                String lastUpdatePMS = objUpdate.get(lastUpdateTimePMS).toString();
+                String lastUpdatePMS = objUpdate.getString(lastUpdateTimePMS);
 
                 return new String[]{lastUpdateTimePMS, lastUpdatePMS};
             }
-        } catch (URISyntaxException | IOException | ParseException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -463,7 +459,7 @@ public class ConnectorAsyncService {
             Map<String, String> urlMap = new HashMap<>();
             Map<String, String> paramMap = new HashMap<>();
 
-            urlMap.put("url", connector.getPmsConfig().getUrlPMS());
+            urlMap.put("url", connector.getPmsConfig().getUrl());
 
             String finalUri = connector.getPmsConfig().buildAPI("log", urlMap, paramMap);
             HttpGet getMethod = new HttpGet(finalUri);

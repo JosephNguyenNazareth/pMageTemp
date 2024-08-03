@@ -73,4 +73,9 @@ public class PMSConnection {
     public void loadProperties() {
         try {
             InputStream file = Connector.class.getResourceAsStream("/application.properties");
-            if (file!=null) System.getProperties().load
+            if (file != null) System.getProperties().load(file);
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading application.properties", e);
+        }
+    }
+}

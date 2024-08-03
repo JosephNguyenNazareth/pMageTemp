@@ -11,14 +11,13 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.awt.desktop.AppEvent;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class AppConfig {
@@ -26,6 +25,10 @@ public class AppConfig {
     private JSONObject config;
     private String configPath;
     private String app;
+
+    public AppConfig() {
+
+    }
 
     public AppConfig(String configPath) {
         this.configPath = configPath;
@@ -64,15 +67,14 @@ public class AppConfig {
     }
 
     public void readConfig() {
-        JSONParser parser = new JSONParser();
         try {
-            Object obj = parser.parse(new FileReader(this.configPath));
-            JSONArray configList = (JSONArray)obj;
-            for (Object o : configList) {
-                JSONObject configApp = (JSONObject) o;
-                if (this.projectLink.contains(configApp.get("app").toString())){
+            String content = new String(Files.readAllBytes(Paths.get(this.configPath)));
+            JSONArray configList = new JSONArray(content);
+            for (int i = 0; i < configList.length(); i++) {
+                JSONObject configApp = configList.getJSONObject(i);
+                if (this.projectLink.contains(configApp.getString("app"))){
                     this.config = configApp;
-                    this.app = configApp.get("app").toString();
+                    this.app = configApp.getString("app");
                     return;
                 }
             }
@@ -82,14 +84,13 @@ public class AppConfig {
     }
 
     private JSONObject getAppFromLink(String projectLink) {
-        JSONParser parser = new JSONParser();
         try {
-            Object obj = parser.parse(new FileReader(this.configPath));
-            JSONArray configList = (JSONArray)obj;
-            for (Object o : configList) {
-                JSONObject configApp = (JSONObject) o;
-                if (projectLink.contains(configApp.get("app").toString())){
-                   return (JSONObject) configApp.get("app");
+            String content = new String(Files.readAllBytes(Paths.get(this.configPath)));
+            JSONArray configList = new JSONArray(content);
+            for (int i = 0; i < configList.length(); i++) {
+                JSONObject configApp = configList.getJSONObject(i);
+                if (projectLink.contains(configApp.getString("app"))){
+                   return configApp;
                 }
             }
         } catch(Exception e) {
@@ -100,15 +101,15 @@ public class AppConfig {
 
 
     private String buildAPILink(String projectLink, JSONObject currentConfig, String targetAction) {
-        JSONArray appActions = (JSONArray) currentConfig.get("action");
+        JSONArray appActions = currentConfig.getJSONArray("action");
         JSONObject triggerAction = new JSONObject();
 
         int userNameIndex = -1; int projectNameIndex = -1;
         for (int i = 0, size = appActions.length(); i < size; i++){
             JSONObject action = appActions.getJSONObject(i);
-            if (action.get("name").equals(targetAction)) {
+            if (action.getString("name").equals(targetAction)) {
                 triggerAction = action;
-                String[] projectLinkPattern = action.get("projectLink").toString().split("/");
+                String[] projectLinkPattern = action.getString("projectLink").split("/");
                 userNameIndex = Arrays.binarySearch(projectLinkPattern, "{userNameApp}");
                 projectNameIndex = Arrays.binarySearch(projectLinkPattern, "{projectName}");
             }
@@ -119,7 +120,7 @@ public class AppConfig {
         if ((userNameIndex != -1) && (projectNameIndex != -1)){
             String userNameApp = projectLinkComponents[userNameIndex];
             String projectName = projectLinkComponents[projectNameIndex];
-            String apiInfo =  triggerAction.get("apiInfo").toString();
+            String apiInfo =  triggerAction.getString("apiInfo");
             if (apiInfo.contains("{userNameApp}"))
                 apiInfo = apiInfo.replace("{userNameApp}", userNameApp);
             if (apiInfo.contains("{projectName}"))
@@ -143,7 +144,7 @@ public class AppConfig {
 
             int postStatusCode = -1;
             HttpResponse response = null;
-            if (currentConfig.get("method").equals("GET")) {
+            if (currentConfig.getString("method").equals("GET")) {
                 HttpGet getMethod = new HttpGet(finalUri);
                 getMethod.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
                 response = client.execute(getMethod);
@@ -156,11 +157,9 @@ public class AppConfig {
                 return null;
             else {
                 String result = EntityUtils.toString(response.getEntity());
-                JSONParser jParser = new JSONParser();
-                Object obj = jParser.parse(result);
-                return (JSONArray) obj;
+                return new JSONArray(result);
             }
-        } catch (URISyntaxException | IOException | ParseException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -171,11 +170,11 @@ public class AppConfig {
         String[] levels = path.split("\\|");
 
         for (String keyword : levels) {
-            if (tmp.has(keyword)) {
+            if (tmp.keySet().contains(keyword)) {
                 if (tmp.get(keyword) instanceof String)
                     result = tmp.get(keyword).toString();
                 else
-                    tmp = new JSONObject((LinkedHashMap) tmp.get(keyword));
+                    tmp = tmp.getJSONObject(keyword);
             }
         }
 
@@ -184,19 +183,19 @@ public class AppConfig {
 
     // TODO: revision
     private List<Dictionary<String, String>> extractInfo(String projectLink, JSONArray originMessage, JSONObject currentConfig) {
-        JSONObject messageInfoConfig = new JSONObject((LinkedHashMap) currentConfig.get("extraInfo"));
+        JSONObject messageInfoConfig = currentConfig.getJSONObject("extraInfo");
         List<Dictionary<String, String>> extractTriggerActions = new ArrayList<>();
 
-        for (Object object : originMessage) {
-            JSONObject triggeredAction = (JSONObject) object;
+        for (int i = 0; i < originMessage.length(); i++) {
+            JSONObject triggeredAction = originMessage.getJSONObject(i);
             Dictionary<String, String> extractInfo = new Hashtable<>();
 
-            extractInfo.put("id", this.traverseMessageLevel(triggeredAction, messageInfoConfig.get("id").toString()));
-            extractInfo.put("created_at", this.traverseMessageLevel(triggeredAction, messageInfoConfig.get("time").toString()));
-            extractInfo.put("task", this.traverseMessageLevel(triggeredAction, messageInfoConfig.get("task").toString()).trim().replace("'", "\""));
-            extractInfo.put("actor", this.traverseMessageLevel(triggeredAction, messageInfoConfig.get("actor").toString()).trim());
+            extractInfo.put("id", this.traverseMessageLevel(triggeredAction, messageInfoConfig.getString("id")));
+            extractInfo.put("created_at", this.traverseMessageLevel(triggeredAction, messageInfoConfig.getString("time")));
+            extractInfo.put("task", this.traverseMessageLevel(triggeredAction, messageInfoConfig.getString("task")).trim().replace("'", "\""));
+            extractInfo.put("actor", this.traverseMessageLevel(triggeredAction, messageInfoConfig.getString("actor")).trim());
             extractInfo.put("project_id", projectLink);
-            extractInfo.put("app", currentConfig.get("app").toString());
+            extractInfo.put("app", currentConfig.getString("app"));
 
             extractTriggerActions.add(extractInfo);
         }
@@ -223,7 +222,8 @@ public class AppConfig {
             JSONArray originalTriggers = this.callAPI(apiLink, repoDetected, bridge);
 
             if (!takeAll) {
-                JSONObject tmp = (JSONObject) originalTriggers.get(0);
+                assert originalTriggers != null;
+                JSONObject tmp = originalTriggers.getJSONObject(0);
                 originalTriggers = new JSONArray();
                 originalTriggers.put(tmp);
             }

@@ -1,12 +1,12 @@
 package com.pmsconnect.mage.config;
 
 import org.apache.http.client.utils.URIBuilder;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.io.FileReader;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class PmsConfig {
@@ -15,7 +15,7 @@ public class PmsConfig {
     private String configPath;
 
     public PmsConfig() {
-
+        System.out.println("hello");
     }
 
     public PmsConfig(String configPath) {
@@ -59,13 +59,12 @@ public class PmsConfig {
     }
 
     public void readConfig() {
-        JSONParser parser = new JSONParser();
         try {
-            Object obj = parser.parse(new FileReader(this.configPath));
-            JSONArray configList = (JSONArray)obj;
-            for (Object o : configList) {
-                JSONObject configPms = (JSONObject) o;
-                if (configPms.get("pms").toString().equals(this.pms)){
+            String content = new String(Files.readAllBytes(Paths.get(this.configPath)));
+            JSONArray configList = new JSONArray(content);
+            for (int i = 0; i < configList.length(); i++) {
+                JSONObject configPms = configList.getJSONObject(i);
+                if (configPms.getString("pms").equals(this.pms)){
                     this.config = configPms;
                     return;
                 }
@@ -75,18 +74,18 @@ public class PmsConfig {
         }
     }
 
-    public String getUrlPMS() {
-        return this.config.get("url").toString();
+    public String getUrl() {
+        return this.config.getString("url");
     }
 
     public String buildAPI(String function, Map<String, String> url, Map<String, String> param) throws URISyntaxException {
-        JSONObject infoAPI =  new JSONObject((Map) this.config.get("api_info"));
-        if (!infoAPI.containsKey(function))
+        JSONObject infoAPI =  this.config.getJSONObject("api_info");
+        if (!infoAPI.keySet().contains(function))
             return "";
 
-        JSONObject functionInfo = (JSONObject) infoAPI.get(function);
+        JSONObject functionInfo = infoAPI.getJSONObject(function);
 
-        String urlToBeReplaced = functionInfo.get("url").toString();
+        String urlToBeReplaced = functionInfo.getString("url");
         int index = urlToBeReplaced.indexOf("{");
         while (index >= 0) {
             String keyword = urlToBeReplaced.substring(index + 1, urlToBeReplaced.indexOf("}"));
@@ -110,49 +109,49 @@ public class PmsConfig {
     }
 
     private void provideFixedHeaders(JSONObject infoHeader, Map<String, String> headerSet) {
-        JSONObject infoFixed = (JSONObject) infoHeader.get("fixed");
+        JSONObject infoFixed = infoHeader.getJSONObject("fixed");
         Iterator<String> keys = infoFixed.keySet().iterator();
 
         while(keys.hasNext()) {
             String key = keys.next();
-            String value  = infoFixed.get(key).toString();
+            String value  = infoFixed.getString(key);
             headerSet.put(key, value);
         }
     }
 
     private void provideDynamicHeaders(JSONObject infoHeader, Map<String, String> headerSet) {
-        JSONObject infoDynamic = (JSONObject) infoHeader.get("dynamic");
+        JSONObject infoDynamic = infoHeader.getJSONObject("dynamic");
 
         Iterator<String> keys = infoDynamic.keySet().iterator();
 
         while(keys.hasNext()) {
             String key = keys.next();
-            JSONObject sourceInfo = (JSONObject) infoDynamic.get(key);
+            JSONObject sourceInfo = infoDynamic.getJSONObject(key);
             Iterator<String> keysSource = sourceInfo.keySet().iterator();
             while (keysSource.hasNext()) {
                 String key2 = keysSource.next();
-                String value = sourceInfo.get(key2).toString();
+                String value = sourceInfo.getString(key2);
                 headerSet.put(key, key2 + ":" + value);
             }
         }
     }
 
     public Map<String, String> provideExtraInfo(String infoPlace, String function) {
-        JSONObject infoAPI = (JSONObject) this.config.get("api_info");
-        if (!infoAPI.containsKey(function))
+        JSONObject infoAPI = this.config.getJSONObject("api_info");
+        if (!infoAPI.keySet().contains(function))
             return null;
 
-        JSONObject infoFunction = (JSONObject) infoAPI.get(function);
-        if (!infoFunction.containsKey(infoPlace))
+        JSONObject infoFunction = infoAPI.getJSONObject(function);
+        if (!infoFunction.keySet().contains(infoPlace))
             return null;
 
-        JSONObject infoHeader = (JSONObject) infoFunction.get(infoPlace);
+        JSONObject infoHeader = infoFunction.getJSONObject(infoPlace);
         Map<String, String> headerSet = new HashMap<>();
 
-        if (infoHeader.containsKey("fixed")) {
+        if (infoHeader.keySet().contains("fixed")) {
             provideFixedHeaders(infoHeader, headerSet);
         }
-        if (infoHeader.containsKey("dynamic")) {
+        if (infoHeader.keySet().contains("dynamic")) {
             provideDynamicHeaders(infoHeader, headerSet);
         }
         return headerSet;

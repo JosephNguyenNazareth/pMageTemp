@@ -37,7 +37,7 @@ public class UserService {
 
     public String addNewUser(String userName, String password, String role) {
         if (userExist(userName))
-            return "User with userName" + userName + "already exist. Please choose another username.";
+            return "User with username " + userName + " already exists. Please choose another username.";
 
         User user = new User(userName, password, role);
         userRepository.save(user);
