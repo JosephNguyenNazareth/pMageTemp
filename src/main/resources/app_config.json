@@ -7,7 +7,7 @@
                 "method": "GET",
                 "projectLink": "{server}/{userNameApp}/{projectName}",
                 "apiInfo": "api.github.com/repos/{userNameApp}/{projectName}",
-                "extraInfo": {
+                "important": {
                     "id": "sha",
                     "time": "commit|committer|date",
                     "task": "commit|message",
@@ -24,7 +24,7 @@
                 "method": "GET",
                 "projectLink": "{server}/{userNameApp}/{projectName}",
                 "apiInfo": "gitlab.com/api/v4/projects/{userNameApp}%2F{projectLink}/repository/commits",
-                "extraInfo": {
+                "important": {
                     "id": "id",
                     "time": "created_at",
                     "task": "title",

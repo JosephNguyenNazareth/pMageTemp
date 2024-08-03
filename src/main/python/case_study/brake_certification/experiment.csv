@@ -1,3 +1,5 @@
 related_terms,general_terms,generate_time,train_time
 20,324,4m52s,19m25s
-500,8563,142m55s,
+500,8563,142m55s,x
+
+history_connections,500,140m
