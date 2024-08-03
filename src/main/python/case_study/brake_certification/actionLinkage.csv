@@ -1,0 +1,11 @@
+AppEvent,ExtraInfo,PMSEvent,Task
+INFO tag start,brakeke_system_design,startTask,Design brake system blueprint
+INFO tag complete,brakeke_system_design,endTask,Design brake system blueprint
+INFO tag start,brakebrake_activation,startTask,Implement Remote Sensing Devices braking activation
+INFO tag complete,brakebrake_activation,endTask,Implement Remote Sensing Devices braking activation
+INFO tag start,brakebrake_Vehicle,startTask,Connect Remote Sensing Devices with brake control system
+INFO tag complete,brakebrake_Vehicle,endTask,Connect Remote Sensing Devices with brake control system
+INFO tag start,autom/brake,startTask,Assemble the system into a prototype vehicle
+INFO tag complete,autom/brake,endTask,Assemble the system into a prototype vehicle
+INFO tag start,technician.Assemble,startTask,Assemble the system into the final version
+INFO tag complete,technician.Assemble,endTask,Assemble the system into the final version

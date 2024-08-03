@@ -11,9 +11,14 @@
             "task": ["Initialize Repository", "Create Views Module", "Create Controllers Module", "Connect Database", "Merge Branches for Final Product", "Deploy Web Application"]
         },
         {
-            "name": "Certification for Self-driving Car Brake",
+            "name": "Manufacture self-driving Car Brake",
             "domain": "Car Engineering",
             "task": ["Design brake system blueprint", "Implement Remote Sensing Devices braking activation", "Connect Remote Sensing Devices with brake control system", "Assemble the system into a prototype vehicle", "Assemble the system into the final version"]
+        },
+        {
+            "name": "Certify Car Brake",
+            "domain": "Certification",
+            "task": ["Prototype vehicle testing", "Dynamometer testing", "Bench testing", "Conduct testing"]
         },
         {
             "name": "Resign Procedure",
@@ -79,6 +84,14 @@
         {
             "name": "Lisa",
             "domain": "Software Engineering"
+        },
+        {
+            "name": "Erza",
+            "domain": "Certification"
+        },
+        {
+            "name": "Jellal",
+            "domain": "Certification"
         }
     ],
     "app": [
@@ -88,14 +101,14 @@
             "domain": ["Aircraft Manufacturing", "Car Engineering"]
         },
         {
-            "name": "Autodesk Vault",
-            "location": "C:\\Users\\[Username]\\AppData\\Local\\Autodesk\\Vault Client\\<version>\\Logs",
-            "domain": ["Aircraft Manufacturing", "Car Engineering"]
+            "name": "SIMATIC WinCC V8",
+            "location": "C:\\Program Files(x86)\\Siemens\\WinCC\\Diagnose",
+            "domain": ["Aircraft Manufacturing", "Car Engineering","Certification"]
         },
         {
             "name": "Matlab/Simulink",
-            "location": "SLF4M",
-            "domain": ["Aircraft Manufacturing", "Car Engineering", "Software Engineering"]
+            "location": "{projectDir}\\simulink_log.txt",
+            "domain": ["Aircraft Manufacturing", "Software Engineering","Ceritifcation"]
         },
         {
             "name": "GitHub",
@@ -124,7 +137,7 @@
         },
         {
             "name": "Bonita",
-            "location": "http://localhost:8080/bonita"
+            "location": "http://localhost:8083/bonita"
         }
     ]
 }

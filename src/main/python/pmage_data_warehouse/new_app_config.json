@@ -1,0 +1,93 @@
+[
+    {
+        "app": "github",
+        "action": [
+            {
+                "name": "push",
+                "method": "GET",
+                "projectLink": "{server}/{userNameApp}/{projectName}",
+                "apiInfo": "api.github.com/repos/{userNameApp}/{projectName}",
+                "important": {
+                    "id": "sha",
+                    "time": "commit|committer|date",
+                    "task": "commit|message",
+                    "actor": "commit|committer|name"
+                }
+            }
+        ]
+    },
+    {
+        "app": "gitlab",
+        "action": [
+            {
+                "name": "push",
+                "method": "GET",
+                "projectLink": "{server}/{userNameApp}/{projectName}",
+                "apiInfo": "gitlab.com/api/v4/projects/{userNameApp}%2F{projectLink}/repository/commits",
+                "important": {
+                    "id": "id",
+                    "time": "created_at",
+                    "task": "title",
+                    "actor": "committer_name"
+                }
+            }
+        ]
+    },
+    {
+        "app": "AutoCAD",
+        "action": [
+            {
+                "name": "Open file",
+                "method": "LOG",
+                "projectLink": "",
+                "apiInfo": "C:\\Users\\{userNameApp}\\AppData\\Local\\Autodesk\\AutoCAD 2024\\R24.0\\enu",
+                "important": "[{time}] Opening drawing: {task}"
+            },
+            {
+                "name": "Close file",
+                "method": "LOG",
+                "projectLink": "",
+                "apiInfo": "C:\\Users\\{userNameApp}\\AppData\\Local\\Autodesk\\AutoCAD 2024\\R24.0\\enu",
+                "important": "[{time}] Closing drawing: {task}"
+            }
+        ]
+    },
+    {
+        "app": "SIMATIC WinCC V8",
+        "action": [
+            {
+                "name": "INFO tag start",
+                "method": "LOG",
+                "projectLink": "",
+                "apiInfo": "C:\\Program Files(x86)\\Siemens\\WinCC\\Diagnose",
+                "important": "[{time}] INFO [{task}] {task} started for '{artifact}' by user '{userName}'."
+            },
+            {
+                "name": "INFO tag done",
+                "method": "LOG",
+                "projectLink": "",
+                "apiInfo": "C:\\Program Files(x86)\\Siemens\\WinCC\\Diagnose",
+                "important": "[{time}] INFO [{task}] {task} completed for '{artifact}' by user '{userName}'."
+            }
+        ]
+    },
+    {
+        "app": "Matlab/Simulink",
+        "action": [
+            {
+                "name": "INFO simulation start",
+                "method": "LOG",
+                "projectLink": "",
+                "apiInfo": "{projectDir}\\simulink_log.txt",
+                "important": "[{time}] INFO  [Simulation] Starting simulation for model '{task}'."
+            },
+            {
+                "name": "INFO simulation complete",
+                "method": "LOG",
+                "projectLink": "",
+                "apiInfo": "{projectDir}\\simulink_log.txt",
+                "important": "[{time}] INFO  [Simulation] Simulation completed for model '{task}'."
+            }
+        ]
+    }
+]

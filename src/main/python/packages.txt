@@ -2,3 +2,7 @@ conda install -c conda-forge beautifulsoup4 certifi huggingface_hub keras nltk n
 conda install pytorch torchvision torchaudio cpuonly -c pytorch
 
 pip install duckduckgo-search torch-directml
+
+pytorch=2.3.0
+tensorflow-cpu=2.10
+python=3.10.8

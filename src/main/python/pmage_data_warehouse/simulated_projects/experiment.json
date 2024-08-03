@@ -1,0 +1,57 @@
+[{
+    "name" : "Manufacture brake system for the new electric Peugeot",
+    "pms": "bonita",
+    "task": [
+        {
+            "name": "Design brake system blueprint",
+            "app": "AutoCAD",
+            "actor": ["Furina de Fontaine"]
+        },
+        {
+            "name": "Implement RSDs braking activation",
+            "app": "Github",
+            "actor":[ "Charlotte"]
+        },
+        {
+            "name": "Connection RSD with brake control system",
+            "app": "SIMATIC WinCC V8",
+            "actor": ["Furina de Fontaine", "Charlotte"]
+        },
+        {
+            "name": "Assemble the system into a prototype vehicle",
+            "app": "SIMATIC WinCC V8",
+            "actor": ["Furina de Fontaine", "Charlotte"]
+        },
+        {
+            "name": "Assemble the system into the final version",
+            "app": "SIMATIC WinCC V8",
+            "actor": ["Furina de Fontaine", "Charlotte"]
+        }
+    ]
+},
+{
+    "name" : "Certify brake system of the new electric Peugeot",
+    "pms": "core-bape",
+    "task" : [
+        {
+            "name": "Bench testing",
+            "app": "SIMATIC WinCC V8",
+            "actor": ["Louise"]
+        },
+        {
+            "name": "Dynamometer testing",
+            "app": "Matlab/Simulink",
+            "actor": ["Louise"]
+        },
+        {
+            "name": "Prototype vehicle testing",
+            "app": "Matlab/Simulink",
+            "actor": ["Louise"]
+        },
+        {
+            "name": "Conduct testing",
+            "app": "SIMATIC WinCC V8",
+            "actor": ["Louise"]
+        }
+    ]
+}]
