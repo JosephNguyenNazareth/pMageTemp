@@ -1,7 +1,7 @@
 [
     {
         "app": "github",
-        "action": [
+        "event": [
             {
                 "name": "push",
                 "method": "GET",
@@ -18,7 +18,7 @@
     },
     {
         "app": "gitlab",
-        "action": [
+        "event": [
             {
                 "name": "push",
                 "method": "GET",
@@ -35,7 +35,7 @@
     },
     {
         "app": "AutoCAD",
-        "action": [
+        "event": [
             {
                 "name": "Open file",
                 "method": "LOG",
@@ -54,7 +54,7 @@
     },
     {
         "app": "SIMATIC WinCC V8",
-        "action": [
+        "event": [
             {
                 "name": "INFO tag start",
                 "method": "LOG",
@@ -63,7 +63,7 @@
                 "important": "[{time}] INFO [{task}] {task} started for '{artifact}' by user '{userName}'."
             },
             {
-                "name": "INFO tag done",
+                "name": "INFO tag complete",
                 "method": "LOG",
                 "projectLink": "",
                 "apiInfo": "C:\\Program Files(x86)\\Siemens\\WinCC\\Diagnose",
@@ -73,7 +73,7 @@
     },
     {
         "app": "Matlab/Simulink",
-        "action": [
+        "event": [
             {
                 "name": "INFO simulation start",
                 "method": "LOG",
