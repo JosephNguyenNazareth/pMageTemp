@@ -50,7 +50,7 @@ public class ConnectorAsyncService {
     public void watchProject(Connector connector) {
         // allow process in pms to be run
 //        this.openProcess(connector);
-
+        System.out.println("Stop monitoring connector with id " + connector.getId());
         StringBuilder monitoringMessAll = new StringBuilder();
         monitoringMessAll.append("Fresh monitoring connector " + connector.getId() + " of project id" + connector.getBridge().getProcessId() + "\n");
         // just in case, retrieve all the commits of this project
